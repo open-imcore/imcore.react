@@ -1209,14 +1209,6 @@
   resolved "https://registry.npmjs.org/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
-"@ericrabil/react-window@^1.8.6":
-  version "1.8.6"
-  resolved "https://npm.pkg.github.com/download/@ericrabil/react-window/1.8.6/31f18c13550f2bcec735bd4363478ab3b254fc1069c5782d9e32d67aebcd4e88#fa420c7a63ad866a7e834f3cb35d8a222d819cb2"
-  integrity sha512-pPMfWgh8uTnHzWkwSBuCgfu0D5QYrBiVtrLdHQlBwmlp/z2DXzSYWLAcFDJea0cXY0PTVEbLsAWiEnIEPxJSJg==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    memoize-one ">=3.1.1 <6"
-
 "@erics-world/react-window@^1.8.6":
   version "1.8.6"
   resolved "https://registry.npmjs.org/@erics-world/react-window/-/react-window-1.8.6.tgz#722c7c62ebe8dc8aaa2ded23dbc13ffe88a90b54"
