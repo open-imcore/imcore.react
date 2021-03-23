@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@ericrabil/react-window": "^1.8.6",
+    "@erics-world/react-window": "^1.8.6",
     "@john-osullivan/react-window-dynamic-fork": "^1.9.0-alpha.1",
     "@reduxjs/toolkit": "^1.2.5",
     "@testing-library/jest-dom": "^4.2.4",

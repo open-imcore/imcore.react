@@ -1217,6 +1217,14 @@
     "@babel/runtime" "^7.0.0"
     memoize-one ">=3.1.1 <6"
 
+"@erics-world/react-window@^1.8.6":
+  version "1.8.6"
+  resolved "https://registry.npmjs.org/@erics-world/react-window/-/react-window-1.8.6.tgz#722c7c62ebe8dc8aaa2ded23dbc13ffe88a90b54"
+  integrity sha512-4oEIzcAHDS6fv3elKFwCQggCq2gXXV2dGqPBIk3JF03xLlivnkL/C4J1VmgMBYTu+Z2jp+Sh4pR9OoGkD86xEg==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    memoize-one ">=3.1.1 <6"
+
 "@eslint/eslintrc@^0.4.0":
   version "0.4.0"
   resolved "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-0.4.0.tgz#99cc0a0584d72f1df38b900fb062ba995f395547"

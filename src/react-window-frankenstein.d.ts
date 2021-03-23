@@ -1,3 +1,3 @@
-declare module "@ericrabil/react-window" {
+declare module "@erics-world/react-window" {
     export * from "react-window";
 }

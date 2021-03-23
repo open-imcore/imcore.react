@@ -1,5 +1,5 @@
 import { AutoSizer } from "react-virtualized";
-import { areEqual, ListChildComponentProps, VariableSizeList } from "@ericrabil/react-window";
+import { areEqual, ListChildComponentProps, VariableSizeList } from "@erics-world/react-window";
 import { ChatContext, useCurrentChat, useCurrentMessages } from "./ChatTranscriptFoundation";
 import React, { CSSProperties, MutableRefObject, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { MessageRepresentation } from "imcore-ajax-core";
