@@ -16,7 +16,7 @@
     "@types/react-redux": "^7.1.7",
     "browser-bunyan": "^1.6.3",
     "emoji-regex": "^9.2.1",
-    "imcore-ajax-core": "^1.0.2",
+    "imcore-ajax-core": "^1.0.3",
     "libphonenumber-js": "^1.9.8",
     "luxon": "^1.25.0",
     "prosemirror-commands": "^1.1.7",
