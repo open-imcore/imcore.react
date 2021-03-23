@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MessageRepresentation } from "imcore-ajax-core";
+import { ItemStatusChangedEvent, MessageRepresentation } from "imcore-ajax-core";
+import { RootState } from "../store";
 
 interface MessagesState {
     messages: Record<string, Record<string, MessageRepresentation>>;
@@ -30,10 +31,17 @@ export const messagesSlice = createSlice({
                 if (!chatID || !state.messages[chatID]) return;
                 delete state.messages[chatID][messageID];
             });
+        },
+        statusChanged(state, { payload: { chatID, id, timeDelivered, timePlayed, timeRead, time } }: PayloadAction<ItemStatusChangedEvent>) {
+            console.log({
+                chatID, id, time, timeDelivered, timeRead, timePlayed
+            })
         }
     }
 });
 
-export const { messagesChanged, messagesDeleted } = messagesSlice.actions;
+export const { messagesChanged, messagesDeleted, statusChanged } = messagesSlice.actions;
+
+export const selectMessages = (state: RootState) => state.messages.messages
 
 export default messagesSlice.reducer;

@@ -1,0 +1,460 @@
+$not-from-me-color: #E5E5EA;
+$from-me-color: blue;
+
+:root {
+    --imessage-gradient: linear-gradient(rgb(86,196,250), rgb(0,119,248));
+    --sms-gradient: linear-gradient(rgb(0,202,69), rgb(0,185,64));
+    --business-chat-gradient: linear-gradient(rgb(132,142,153), rgb(132,142,153));
+    --not-from-me-background: rgb(229,229,234);
+}
+
+.SocialUI {
+    --not-from-me-slice: 11 15 12 fill;
+    --from-me-slice: 11 17 12 fill;
+}
+
+.ChatKit {
+    --not-from-me-slice: 15 15 15 21 fill;
+    --not-from-me-width: 11.25px 11.25px 11.25px 15.75px;
+    --from-me-slice: 15 21 15 15 fill;
+    --from-me-width: 11.25px 15.75px 11.25px 11.25px;
+}
+
+.message-container {
+    display: flow-root;
+}
+
+@mixin animation($name, $property, $from, $to, $duration: 100ms, $timing: linear) {
+    @keyframes #{$name} {
+        0% {
+            #{$property}: $from;
+        }
+        @content;
+        100% {
+            #{$property}: $to;
+        }
+    }
+
+    animation: $name $duration $timing;
+    animation-fill-mode: forwards;
+}
+
+@keyframes receipt-fade-in {
+    0% {
+        transform: translateY(-18px) scale(0.5);
+        height: 0;
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        height: 2em;
+        opacity: 1;
+    }
+}
+
+.message {
+    position: relative;
+    border-radius: 25px;
+
+    margin: 0 12px 0 12px;
+
+    &[attr-service=iMessage] {
+        --bubble-background: var(--imessage-gradient);
+    }
+
+    &[attr-service=iMessageBiz] {
+        --bubble-background: var(--business-chat-gradient);
+    }
+
+    $buddy-picture-dimensions: 30px;
+
+    .items-track {
+        display: flex;
+        flex-flow: column;
+        position: relative;
+    }
+
+    .message-receipt {
+        margin-right: 5px;
+
+        z-index: -1;
+        line-height: 2em;
+
+        &[attr-is-transitioning=true] {
+            animation: receipt-fade-in 250ms ease-in-out;
+            animation-fill-mode: forwards;
+            transform-origin: top center;
+
+            &[attr-is-appearing=true] {
+            }
+
+            &[attr-is-disappearing=true] {
+                animation-direction: reverse;
+            }
+        }
+    }
+
+    .buddy-picture-track {
+        display: flex;
+        flex-flow: column-reverse;
+        width: $buddy-picture-dimensions;
+        position: relative;
+
+        .cn-bubble {
+            position: absolute;
+            height: $buddy-picture-dimensions;
+            width: $buddy-picture-dimensions;
+        }
+    }
+
+    &[attr-service=SMS] {
+        --bubble-background: var(--sms-gradient);
+    }
+
+    &[attr-from-me=false] {
+        --bubble-background: var(--not-from-me-background);
+
+        .items-track {
+            align-items: flex-start;
+        }
+    }
+
+    &[attr-next-contiguous=true] {
+        --from-me-border: var(--bubble-notail-url);
+        --not-from-me-border: var(--bubble-notail-flip-url);
+    }
+
+    &[attr-next-contiguous=true] {
+        margin-top: 2px;
+    }
+
+    &[attr-next-contiguous=false] {
+        --from-me-border: var(--bubble-tail-url);
+        --not-from-me-border: var(--bubble-tail-flip-url);
+        margin-top: 7px;
+    }
+
+    &[attr-from-me=false] {
+        .chat-item-container[data-has-acknowledgments=true]::after {
+            right: -15px;
+        }
+
+        .acknowledgment-overlay {
+            right: -20px;
+
+            &[data-acknowledgment-count='1'] {
+                --bubble-url: var(--ack-bubble-url);
+            }
+
+            &[data-acknowledgment-count='2'] {
+                --stack-url: var(--ack-middle-url);
+                --bubble-url: var(--ack-bubble-url);
+            }
+
+            &[data-acknowledgment-count='3'] {
+                --stack-url: var(--ack-stack-url);
+                --bubble-url: var(--ack-bubble-url);
+            }
+
+            flex-flow: row;
+
+            & > :first-child {
+                margin-left: 1.5px;
+            }
+        }
+    }
+
+    &[attr-from-me=true] {
+        .items-track {
+            align-items: flex-end;
+        }
+
+        .chat-item-container[data-has-acknowledgments=true]::after {
+            left: -14px;
+        }
+
+        .acknowledgment-overlay {
+            left: -20px;
+
+            &[data-acknowledgment-count='1'] {
+                --bubble-url: var(--ack-bubble-flip-url);
+            }
+
+            &[data-acknowledgment-count='2'] {
+                --stack-url: var(--ack-middle-flip-url);
+                --bubble-url: var(--ack-bubble-flip-url);
+            }
+
+            &[data-acknowledgment-count='3'] {
+                --stack-url: var(--ack-stack-flip-url);
+                --bubble-url: var(--ack-bubble-flip-url);
+            }
+
+            flex-flow: row-reverse;
+
+            & > :first-child {
+                margin-right: 1px;
+            }
+        }
+    }
+
+    .buddy-name {
+        margin-left: 1.5em;
+        font-size: 10px;
+        margin-bottom: 3px;
+        color: #7e7e7e;
+    }
+
+    .buddy-name + [data-has-acknowledgments=true] {
+        margin-top: 0px !important;
+    }
+
+    .chat-item-container {
+        width: max-content;
+
+        position: relative;
+
+        &[data-has-acknowledgments=true] {
+            margin-top: 11px;
+        }
+
+        &[data-has-acknowledgments=true]::after {
+            content: '';
+            position: absolute;
+
+            top: -13px;
+            height: 25.08px;
+            width: 25.08px;
+
+            background: white;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .acknowledgment-overlay {
+            --bubble-bg: rgb(229, 229, 234);
+            --bubble-from-me-bg: var(--imessage-gradient);
+            --glyph-color: rgb(124, 124, 124);
+            --glyph-from-me-color: white;
+            --heart-glyph-color: rgb(250, 90, 155);
+
+            z-index: 1;
+
+            @if false {
+                @media (prefers-color-scheme: dark) {
+                    --glyph-color: rgb(206, 206, 210);
+                    --bubble-bg: rgb(92, 86, 84);
+                }
+            }
+
+            position: absolute;
+            top: -12.5px;
+            width: 30px;
+            height: 26.08px;
+            
+            background: var(--bubble-bg);
+
+            @mixin from-me-background {
+                background: var(--bubble-from-me-bg);
+            }
+
+            &[data-acknowledgment-from-me=true] {
+                @include from-me-background();
+            }
+
+            display: flex;
+            align-items: center;
+
+            mask-border-source: var(--bubble-url);
+
+            &[data-acknowledgment-count='3'], &[data-acknowledgment-count='2'] {
+                &::before, &::after {
+                    content: '';
+
+                    position: absolute;
+                    background: var(--bubble-bg);
+                    width: 100%;
+                    height: 100%;
+                }
+
+                &[data-acknowledgment-from-me=true] {
+                    &::before {
+                        @include from-me-background();
+                    }
+                }
+
+                &::after {
+                    mask-border-source: var(--stack-url);
+                }
+
+                &::before {
+                    mask-border-source: var(--bubble-url);
+                }
+
+                background: none;
+                mask-border-source: none;
+            }
+
+            & > :first-child {
+                &[data-from-me=true] {
+                    --glyph-color: var(--glyph-from-me-color);
+                }
+
+                width: 20px;
+                height: 20px;
+                background: var(--glyph-color);
+                z-index: 1;
+
+                &[data-ack-type='2000'] {
+                    --glyph-url: var(--ack-heart-url);
+                    background: var(--heart-glyph-color);
+                }
+
+                &[data-ack-type='2001'] {
+                    // thumbsup
+                    --glyph-url: var(--ack-thumbs-up-url);
+                }
+
+                &[data-ack-type='2002'] {
+                    // thumbsdown
+                    --glyph-url: var(--ack-thumbs-down-url);
+                }
+
+                &[data-ack-type='2003'] {
+                    // ha
+                    --glyph-url: var(--ack-haha-en-url);
+                }
+
+                &[data-ack-type='2004'] {
+                    // exclamation
+                    --glyph-url: var(--ack-emphasize-url);
+                }
+
+                &[data-ack-type='2005'] {
+                    // question
+                    --glyph-url: var(--ack-question-url);
+                }
+
+                mask-border-source: var(--glyph-url);
+
+                margin-bottom: 2px;
+            }
+        }
+    }
+
+    .chat-item-jumbo {
+        .chat-item {
+            mask-border-source: none !important;
+            mask-border-slice: none !important;
+            mask-border-width: none !important;
+            background: none !important;
+            
+            &[data-item-type=text] {
+                --font-size: 48px !important;
+
+                .item-inner {
+                    padding-left: 8px !important;
+                    padding-right: 8px !important;
+                    font-family: emoji;
+                }
+            }
+        }
+    }
+
+    .chat-item {
+        max-width: 40vw;
+        width: max-content;
+        position: relative;
+
+        $padding-top: 6px;
+        $padding-bottom: $padding-top - 1px;
+        $padding-x-outer: 15px;
+        $padding-x-inner: 10px;
+        $padding-from-me: $padding-top $padding-x-outer $padding-bottom $padding-x-inner;
+        $padding-not-from-me: $padding-top $padding-x-inner $padding-bottom $padding-x-outer;
+
+        &[attr-from-me=true] {
+            --padding: #{$padding-from-me};
+            --border-url: var(--from-me-border);
+            --border-slice: var(--from-me-slice);
+            --border-width: var(--from-me-width);
+            margin-right: var(--override-margin-edge);
+        }
+
+        &[attr-from-me=false] {
+            --padding: #{$padding-not-from-me};
+            --border-url: var(--not-from-me-border);
+            --border-slice: var(--not-from-me-slice);
+            --border-width: var(--not-from-me-width);
+            margin-left: var(--override-margin-edge);
+        }
+
+        &[data-item-type=plugin] {
+            @import "./LPRichLink.scss";
+
+            .item-inner {
+                padding: 0;
+            }
+        }
+        
+        &[data-item-type=text] {
+            background: var(--bubble-background);
+            background-size: 100vh 100vw;
+            
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+
+            --font-size: 13px;
+
+            &[attr-from-me=true] {
+                --text-color: white;
+            }
+
+            &[attr-from-me=false] {
+                --text-color: black;
+            }
+
+            .text-part-bold {
+                font-weight: bold;
+            }
+        }
+
+        &[data-item-type=attachment] {
+            --padding: 0;
+
+            .item-inner {
+                display: flex;
+                flex-flow: column;
+
+                video, img {
+                    object-fit: fill;
+                    max-width: 40vw;
+                    height: auto;
+                }
+            }
+        }
+
+        &[data-acknowledgment-count='1'] {
+            &[attr-from-me=true] {
+                position: relative;
+
+                // .acknowledgment-overlay {
+                //     top: 0;
+                //     left: 0;
+                //     width: 15px;
+                //     height: 15px;
+                //     background: red;
+                // }
+            }
+        }
+        mask-border-source: var(--border-url);
+        mask-border-slice: var(--border-slice);
+        mask-border-width: var(--border-width);
+
+        .item-inner {
+            padding: var(--padding);
+            color: var(--text-color, black);
+            font-size: var(--font-size);
+        }
+    }
+}

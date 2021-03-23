@@ -1,0 +1,11 @@
+.transcript-item-container {
+    width: 100%;
+    
+    display: grid;
+    grid-auto-flow: row;
+
+    align-content: center;
+    justify-items: center;
+
+    row-gap: 3px;
+}

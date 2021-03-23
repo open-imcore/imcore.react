@@ -1,0 +1,103 @@
+/**
+ * http://applemusic.tumblr.com/
+ */
+
+/** Ultra Light */
+@font-face {
+    font-family: "San Francisco";
+    font-weight: 100;
+    src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-ultralight-webfont.woff");
+}
+
+/** Thin */
+@font-face {
+    font-family: "San Francisco";
+    font-weight: 200;
+    src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-thin-webfont.woff");
+}
+
+/** Regular */
+@font-face {
+    font-family: "San Francisco";
+    font-weight: 400;
+    src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff");
+}
+
+/** Medium */
+@font-face {
+    font-family: "San Francisco";
+    font-weight: 500;
+    src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff");
+}
+
+/** Semi Bold */
+@font-face {
+    font-family: "San Francisco";
+    font-weight: 600;
+    src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff");
+}
+
+/** Bold */
+@font-face {
+    font-family: "San Francisco";
+    font-weight: 700;
+    src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-bold-webfont.woff");
+}
+
+/** Heavy */
+@font-face {
+    font-family: "San Francisco";
+    font-weight: 800;
+    src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-heavy-webfont.woff");
+}
+
+/** Black */
+@font-face {
+    font-family: "San Francisco";
+    font-weight: 900;
+    src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-black-webfont.woff");
+}
+
+@font-face {
+    font-family: "SF Compact Rounded";
+    font-weight: 500;
+    src: url(/assets/fonts/SF-Compact-Rounded-Medium.otf);
+}
+
+:root {
+    font-family: "San Francisco"
+}
+
+// .chat-transcript {
+//     overflow-y: scroll;
+//     max-height: 100vh;
+//     display: flex;
+//     flex-flow: column-reverse;
+
+//     .infinite-scroll-component {
+//         overflow: none !important;
+//     }
+// }
+
+.transcript-react-window {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) max-content;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 100%;
+
+    .message-transcript-container {
+        flex: 1;
+        transform: scaleY(-1);
+        perspective: 1px;
+    }
+
+    .composition {
+        // grid-row: 2;
+    }
+
+    .message {
+        transform: translateZ(0) scaleY(-1);
+    }
+}
+
+@import "./transcript/Label";

@@ -1,0 +1,119 @@
+.composition {
+    min-height: 25px;
+    padding: 15px;
+
+    display: flex;
+    flex-flow: row;
+
+    & > .composition-editor {
+        flex: 1;
+
+        position: relative;
+
+        &::before {
+            content: '';
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            mask-border-source: var(--bubble-stroke-notail-url);
+            mask-border-slice: var(--from-me-slice);
+            mask-border-width: var(--from-me-width);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        
+        height: max-content;
+
+        & > .ProseMirror {
+            flex: 1;
+            display: inline-block;
+
+            padding: 5px 10px;
+            max-width: -webkit-fill-available;
+            word-wrap: break-word;
+
+            &:focus {
+                outline: none;
+            }
+
+            font-size: 13px;
+
+            p {
+                margin: 0;
+
+                &.empty-node[service]:only-child {
+                    br {
+                        display: none;
+                    }
+
+                    &::after {
+                        content: attr(service);
+                        color: rgba(0, 0, 0, 0.3);
+                    }
+                }
+            }
+
+            .im-attachment {
+                $max-height: 125px;
+
+                max-height: $max-height;
+                border-radius: 10px;
+                overflow: hidden;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                position: relative;
+
+                &[attachment-resolved=false] {
+                    background: black;
+                }
+
+                img {
+                    max-height: $max-height;
+                }
+                
+                &[attachment-type=image] {
+                    &[attachment-resolved=false] {
+                        height: $max-height;
+                        width: $max-height;
+                    }
+                }
+
+                &[attachment-type=video] {
+                    &[attachment-resolved=false] {
+                        height: $max-height;
+                        width: 200px;
+                    }
+
+                    &::after {
+                        content: '\25BA';
+                        position: absolute;
+                        font-size: 24px;
+                        color: rgba(255, 255, 255, 0.5);
+                    }
+                }
+
+                &:not([attachment-type=video]):not([attachment-type=image]) {
+                    height: $max-height;
+                    width: 170px;
+                    background: #E9E9EB;
+                    margin-right: 5px;
+
+                    &::after {
+                        content: attr(name);
+                        color: #7C7C7D;
+                        font-size: 10px;
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+}

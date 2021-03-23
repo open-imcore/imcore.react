@@ -1,0 +1,12 @@
+@import-normalize;
+@import './styles/global';
+
+.app-root {
+  display: grid;
+  grid-template-columns: 285px minmax(0, 1fr);
+
+  width: 100vw;
+  height: 100vh;
+
+  max-height: 100vh;
+}

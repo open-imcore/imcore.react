@@ -1,0 +1,94 @@
+.lp-balloon {
+    display: flex;
+    flex-flow: column;
+    background-color: rgb(229, 230, 233);
+
+    max-width: 300px;
+
+    text-decoration: none;
+    color: inherit;
+
+    .lp-media {
+        display: flex;
+        flex-flow: column;
+        position: relative;
+
+        background-color: rgba(0, 0, 0, 0.05);
+
+        & > video, & > img {
+            object-fit: fill;
+        }
+
+        .lp-caption-bar {
+            position: absolute;
+
+            &:first-child {
+                top: 0;
+            }
+
+            &:last-child {
+                bottom: 0;
+            }
+        }
+    }
+
+    .lp-caption-icon {
+        --icon-size: 35px;
+
+        background: var(--icon-url);
+        background-size: contain;
+        height: var(--icon-size);
+        width: var(--icon-size);
+        margin: 6px 0;
+        border-radius: 5px;
+
+        object-fit: contain;
+
+        &.lp-caption-icon-left {
+            margin-left: 16px;
+        }
+
+        &.lp-caption-icon-right {
+            margin-right: 16px;
+        }
+    }
+
+    .lp-quoted-text {
+        padding: 10px 16px 0 16px;
+        font-size: 14.66px;
+        font-weight: 200;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+
+    .lp-caption-bar {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        width: 100%;
+
+        .lp-text-stack {
+            display: grid;
+            grid-auto-flow: row;
+            padding: 7.39px 16px 8.68px 16px;
+            row-gap: 2.5px;
+            flex: 1;
+
+            .lp-caption-section {
+                display: flex;
+                flex-flow: row;
+                justify-content: space-between;
+
+                &.lp-caption-section-top, &.lp-caption-section-aboveTop {
+                    font-size: 12px;
+                    font-weight: 500;
+                }
+
+                &.lp-caption-section-bottom, &.lp-caption-section-belowBottom {
+                    font-size: 11px;
+                    color: rgb(142, 142, 145);
+                }
+            }
+        }
+    }
+}

@@ -1,14 +1,18 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { configureStore, ThunkAction, Action, getDefaultMiddleware } from '@reduxjs/toolkit';
 import chatReducer from './reducers/chats'
 import messagesReducer from './reducers/messages'
+import contactsReducer from './reducers/contacts'
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
     chats: chatReducer,
-    messages: messagesReducer
+    messages: messagesReducer,
+    contacts: contactsReducer
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      immutableCheck: false
+    })
 });
 
 export type RootState = ReturnType<typeof store.getState>;

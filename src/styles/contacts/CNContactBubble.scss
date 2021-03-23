@@ -1,0 +1,37 @@
+@import '../core';
+
+.cn-bubble {
+    background-image: linear-gradient($contact-silhouette-gradient-start, $contact-silhouette-gradient-end);
+    background-size: contain;
+    border-radius: 50%;
+    overflow: hidden;
+    
+    &:not(.cn-bubble-initials) {
+        font-size: 0px;
+    }
+
+    &.cn-bubble-initials {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        font-family: "SF Compact Rounded";
+        font-weight: 500;
+        font-size: var(--chat-bubble--image-initials-size);
+        color: white;
+        user-select: none;
+    }
+
+    &.cn-bubble-empty {
+        &::after {
+            content: '';
+            background-image: url(/assets/contact.silhouette.png);
+            background-size: 90%;
+            background-position: bottom center;
+            background-repeat: no-repeat;
+            height: 100%;
+            display: block;
+            width: 100%;
+        }
+    }
+}

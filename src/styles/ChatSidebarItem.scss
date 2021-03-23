@@ -1,0 +1,103 @@
+@import './core';
+
+@mixin line-clamp($lines) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: $lines; /* number of lines to show */
+    -webkit-box-orient: vertical;
+}
+
+.chat-sidebar-item {
+    display: grid;
+    grid-template-columns: 50px minmax(0, 1fr);
+    align-content: center;
+    column-gap: 9px;
+
+    padding: 5px 20px;
+    width: 245px !important;
+    height: 50px !important;
+    text-decoration: none;
+    cursor: default;
+
+    &::after {
+        position: absolute;
+        content: "";
+        width: 265px;
+        bottom: 0;
+        right: 0;
+        border-bottom: 1px solid $master-detail-border-color;
+    }
+
+    .chat-sidebar-item--image {
+        height: 50px;
+        width: 50px;
+        --chat-bubble--image-initials-size: 1.5em;
+
+        & .chat-bubble--image {
+            border: 2px solid var(--chat-bubble--image-background, $master-detail-background);
+        }
+
+        & > .chat-bubble--image {
+            margin: -2px;
+            height: 100%;
+        }
+
+        & > .chat-bubble--multi-container {
+            height: 100%;
+            width: 100%;
+            position: relative;
+            --chat-bubble--image-initials-size: 1em;
+
+            & > .chat-bubble--image {
+                height: 70%;
+                width: 70%;
+                position: absolute;
+
+                &:first-child {
+
+                }
+
+                &:nth-child(2) {
+                    bottom: 0;
+                    right: 0;
+                }
+            }
+        }
+    }
+
+    .chat-sidebar-item--details {
+        display: grid;
+        grid-template-rows: 1rem minmax(0, max-content);
+        align-self: center;
+        height: 45px !important;
+
+        font-size: 12px;
+
+        .chat-sidebar-item--title {
+            display: flex;
+            flex-flow: row;
+
+            .chat-sidebar-item--title-label {
+                @include bold;
+                @include line-clamp(1);
+                color: $chat-sidebar-title;
+                max-height: 1.1em;
+                flex: 1;
+            }
+
+            .chat-sidebar-item--title-timestamp {
+                text-transform: capitalize;
+
+                color: $chat-sidebar-description;
+            }
+        }
+
+        .chat-sidebar-item--summary {
+            @include line-clamp(2);
+            white-space: pre-line;
+
+            color: $chat-sidebar-description;
+        }
+    }
+}

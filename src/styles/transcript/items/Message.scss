@@ -1,0 +1,15 @@
+
+
+.message {
+    display: flex;
+    flex-flow: row;
+    min-height: 1px;
+
+    &[attr-from-me=true] {
+        flex-flow: row-reverse;
+    }
+
+    &[attr-prev-transcript-contiguous=true], &[attr-next-transcript-contiguous=true] {
+        margin: 7.5px 0;
+    }
+}

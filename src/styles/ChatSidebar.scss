@@ -1,0 +1,9 @@
+@import './core';
+
+.chat-sidebar {
+    background: $master-detail-background;
+
+    &:focus {
+        outline: none;
+    }
+}

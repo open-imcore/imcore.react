@@ -1,19 +1,52 @@
-import { AnyChatItemModel, ChatItemType, EventType, IMWebSocketClient, MessageRepresentation } from 'imcore-ajax-core'
-import { chatChanged, chatDeleted } from "./reducers/chats"
-import { messagesChanged, messagesDeleted } from "./reducers/messages"
+import { AnyChatItemModel, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, MessageRepresentation } from 'imcore-ajax-core'
+import { chatChanged, chatsChanged, chatDeleted, chatMessagesReceived, chatPropertiesChanged } from "./reducers/chats"
+import { messagesChanged, messagesDeleted, statusChanged } from "./reducers/messages"
+import { contactsChanged, contactChanged, contactDeleted, strangersReceived } from "./reducers/contacts"
+import { store } from "./store"
+import IMMakeLog from "../util/log"
+
+const Log = IMMakeLog("IMServerConnection")
 
 export const socketClient = new IMWebSocketClient("ws://127.0.0.1:8090/stream")
+export const apiClient = new IMHTTPClient({
+    baseURL: "http://127.0.0.1:8090"
+})
 
-socketClient.on(EventType.conversationCreated, chatChanged)
-socketClient.on(EventType.conversationChanged, chatChanged)
-socketClient.on(EventType.conversationRemoved, ({ chat }) => chatDeleted(chat))
+function receiveChangedChat(chat: ChatRepresentation) {
+    store.dispatch(chatChanged(chat))
+}
 
-function receiveItems(items: AnyChatItemModel[]) {
+socketClient.on(EventType.conversationCreated, receiveChangedChat)
+socketClient.on(EventType.conversationChanged, receiveChangedChat)
+socketClient.on(EventType.conversationRemoved, ({ chat }) => store.dispatch(chatDeleted(chat)))
+socketClient.on(EventType.conversationDisplayNameChanged, receiveChangedChat)
+socketClient.on(EventType.conversationJoinStateChanged, receiveChangedChat)
+socketClient.on(EventType.conversationPropertiesChanged, conf => store.dispatch(chatPropertiesChanged(conf)))
+
+export function receiveItems(items: AnyChatItemModel[]) {
     const messages: MessageRepresentation[] = items.filter(item => item.type === ChatItemType.message).map(item => item.payload) as MessageRepresentation[]
 
-    messagesChanged(messages)
+    store.dispatch(messagesChanged(messages))
+    store.dispatch(chatMessagesReceived(messages))
 }
 
 socketClient.on(EventType.itemsReceived, ({ items }) => receiveItems(items))
 socketClient.on(EventType.itemsUpdated, ({ items }) => receiveItems(items))
-socketClient.on(EventType.itemsRemoved, ({ messages }) => messagesDeleted(messages))
+socketClient.on(EventType.itemsRemoved, ({ messages }) => store.dispatch(messagesDeleted(messages)))
+
+socketClient.on(EventType.itemStatusChanged, payload => store.dispatch(statusChanged(payload)));
+
+function receiveContact(contact: ContactRepresentation) {
+    store.dispatch(contactChanged(contact))
+}
+
+socketClient.on(EventType.contactCreated, receiveContact)
+socketClient.on(EventType.contactUpdated, receiveContact)
+socketClient.on(EventType.contactRemoved, c => store.dispatch(contactDeleted(c.id)))
+
+socketClient.on(EventType.bootstrap, ({ chats, contacts, messages }) => {
+    Log.info("Got bootstrap from event stream")
+    store.dispatch(chatsChanged(chats))
+    store.dispatch(contactsChanged(contacts.contacts))
+    store.dispatch(strangersReceived(contacts.strangers))
+})

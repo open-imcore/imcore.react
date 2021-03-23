@@ -1,0 +1,9 @@
+.transcript-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #8B8B8B;
+
+    & .transcript-label-value {
+        font-weight: 500;
+    }
+}

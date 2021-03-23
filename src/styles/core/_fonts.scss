@@ -1,0 +1,31 @@
+@mixin ultra-light {
+    font-weight: 100;
+}
+
+@mixin thin {
+    font-weight: 200;
+}
+
+@mixin regular {
+    font-weight: 400;
+}
+
+@mixin medium {
+    font-weight: 500;
+}
+
+@mixin semi-bold {
+    font-weight: 600;
+}
+
+@mixin bold {
+    font-weight: 700;
+}
+
+@mixin heavy {
+    font-weight: 800;
+}
+
+@mixin black {
+    font-weight: 900;
+}
