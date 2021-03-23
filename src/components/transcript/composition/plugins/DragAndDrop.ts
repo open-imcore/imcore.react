@@ -9,6 +9,11 @@ export const IMFileCache: Map<string, File> = new Map();
 const IMImageBase64Cache: Map<string, string> = new Map();
 const IMFileUploadCache: Map<string, AttachmentRepresentation> = new Map();
 
+/**
+ * Uploads a file ID, returning an existing attachment if it was already uploaded
+ * @param id ID to process
+ * @returns promise of an AttachmentRepresentation
+ */
 export async function uploadFileWithID(id: string): Promise<AttachmentRepresentation> {
     if (IMFileUploadCache.has(id)) return IMFileUploadCache.get(id)!
     else {
@@ -23,9 +28,15 @@ export async function uploadFileWithID(id: string): Promise<AttachmentRepresenta
     }
 }
 
+/**
+ * Assembles a ProseMirror node for a File associated with the ID
+ * @param id UUID of the file transfer
+ * @returns ProseMirror node
+ */
 export function elementForFileWithID(id: string): DOMOutputSpec {
     const file = IMFileCache.get(id);
 
+    // No file. Abort!
     if (!file) return ["p"];
 
     const [ type ] = file.type.split("/");
@@ -46,16 +57,17 @@ export function elementForFileWithID(id: string): DOMOutputSpec {
         case "image":
         case "video":
             if (IMImageBase64Cache.has(id)) {
+                // Thumbnail! Yay!
                 const src = IMImageBase64Cache.get(id)!;
 
                 return ["picture", baseProps, ["img", { src }]]
-            } else console.log("FUCKING")
+            } // otherwise, still processing.
     }
 
     return ["div", baseProps];
 }
 
-export function makeDragAndDropPlugin(schema: Schema) {
+export function makeDragAndDropPlugin(schema: Schema): Plugin {
     return new Plugin({
         props: {
             handleDOMEvents: {
@@ -63,24 +75,29 @@ export function makeDragAndDropPlugin(schema: Schema) {
                     const files = event.dataTransfer?.files as unknown as File[] | null;
                     const selection = view.state.tr.selection;
 
-                    console.log("im alive")
-
+                    // no files >:( we've been swindled
                     if (!files || files.length === 0) return false;
 
                     event.preventDefault();
 
                     for (const file of files) {
                         const id = makeUUID();
+
+                        // store file so it can be uploaded if the message is sent
                         IMFileCache.set(id, file);
 
+                        // insert node into prosemirror
                         const node = view.state.tr.insert(selection.$from.pos, schema.nodes.attachment.create({
                             attachmentID: id
                         }));
                         
                         if (file.type.startsWith("image") || file.type.startsWith("video")) {
+                            // process thumbnail
+
                             getFileImage(file).then((result: string | null) => {
                                 IMImageBase64Cache.set(id, result as string);
 
+                                // replace the inserted prose node with the processed thumbnail
                                 replaceDOMIDPRNode(id, schema.nodes.attachment.create({
                                     attachmentID: id,
                                     resolved: true

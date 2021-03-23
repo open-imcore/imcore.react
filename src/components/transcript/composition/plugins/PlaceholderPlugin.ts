@@ -2,7 +2,12 @@ import { Plugin } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 import { Node as ProsemirrorNode } from "prosemirror-model";
 
-export function makePlaceholderPlugin(service: string) {
+/**
+ * Presents a placeholder in ProseMirror when it is empty
+ * @param service service string to display. currently unused
+ * @returns ProseMirror plugin
+ */
+export function makePlaceholderPlugin(service: string): Plugin {
     return new Plugin({
         props: {
             decorations: state => {
