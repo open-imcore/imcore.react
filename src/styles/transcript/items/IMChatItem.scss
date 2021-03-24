@@ -20,6 +20,13 @@ $from-me-color: blue;
     --from-me-width: 11.25px 15.75px 11.25px 11.25px;
 }
 
+.ChatKitRetina {
+    --not-from-me-slice: 50 50 50 70 fill;
+    --not-from-me-width: 11.25px 11.25px 11.25px 15.75px;
+    --from-me-slice: 50 70 50 50 fill;
+    --from-me-width: 11.25px 15.75px 11.25px 11.25px;
+}
+
 .message-container {
     display: flow-root;
 }
