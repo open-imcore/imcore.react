@@ -3,6 +3,7 @@ import { LPRenderingContext } from "../LPBalloon";
 import React, { useEffect, useMemo, useRef } from "react";
 import { apiClient } from "../../../../../../app/connection";
 import LPCaptionBar from "./LPCaptionBar";
+import LPAssetRenderer from "./LPAssetRenderer";
 
 interface LPMediaRenderingContext extends LPRenderingContext {
     video?: RichLinkVideo;
@@ -30,19 +31,13 @@ export default function LPMedia(ctx: LPMediaRenderingContext) {
         <div className="lp-media">
             {
                 ctx.topCaptionBar ? (
-                    <LPCaptionBar captionBar={ctx.topCaptionBar} attachments={ctx.attachments} />
+                    <LPCaptionBar id={ctx.id} captionBar={ctx.topCaptionBar} attachments={ctx.attachments} />
                 ) : null
             }
-            {
-                videoURL ? (
-                    <video className="lp-video" src={videoURL} poster={imageURL || undefined} controls={true} />
-                ) : (
-                    <img alt="Rich Link Banner" src={imageURL!} onLoad={ctx.changed} />
-                )
-            }
+            <LPAssetRenderer imageURL={imageURL} videoURL={videoURL} id={ctx.id} changed={ctx.changed} />
             {
                 ctx.bottomCaptionBar ? (
-                    <LPCaptionBar captionBar={ctx.bottomCaptionBar} attachments={ctx.attachments} />
+                    <LPCaptionBar id={ctx.id} captionBar={ctx.bottomCaptionBar} attachments={ctx.attachments} />
                 ) : null
             }
         </div>

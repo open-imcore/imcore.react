@@ -8,12 +8,12 @@ export interface LPCaptionBarRenderingContext extends LPRenderingContext {
     captionBar: RichLinkCaptionBar;
 }
 
-export default function LPCaptionBar({ captionBar: { aboveTop, top, bottom, belowBottom, leadingIcon, trailingIcon }, attachments }: LPCaptionBarRenderingContext) {
+export default function LPCaptionBar({ id, captionBar: { aboveTop, top, bottom, belowBottom, leadingIcon, trailingIcon }, attachments }: LPCaptionBarRenderingContext) {
     if (!aboveTop && !top && !bottom && !belowBottom && !leadingIcon && !trailingIcon) return null
 
     return (
         <div className="lp-caption-bar">
-            <LPCaptionIcon icon={leadingIcon} attachments={attachments} position="left" />
+            <LPCaptionIcon id={id} icon={leadingIcon} attachments={attachments} position="left" />
             {
                 (aboveTop || top || bottom || belowBottom) ? (
                     <div className="lp-text-stack">
@@ -24,7 +24,7 @@ export default function LPCaptionBar({ captionBar: { aboveTop, top, bottom, belo
                     </div>
                 ) : null
             }
-            <LPCaptionIcon icon={trailingIcon} attachments={attachments} position="right" />
+            <LPCaptionIcon id={id} icon={trailingIcon} attachments={attachments} position="right" />
         </div>
     )
 }

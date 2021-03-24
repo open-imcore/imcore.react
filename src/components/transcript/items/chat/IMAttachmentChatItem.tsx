@@ -2,6 +2,7 @@ import { AttachmentChatItemRepresentation, AttachmentRepresentation } from "imco
 import React, { PropsWithoutRef, useEffect } from "react";
 import { IMItemRenderingContext } from "../Message";
 import { apiClient } from "../../../../app/connection"
+import RecycledElementRenderer from "../../Recycler";
 
 interface IMAttachmentChatItemRenderContext extends IMItemRenderingContext<Omit<AttachmentChatItemRepresentation, "metadata"> & { metadata?: CanaryAttachmentRepresentation }> {}
 
@@ -31,60 +32,68 @@ function ERComputeRenderingFormat({ metadata }: AttachmentChatItemRepresentation
     }
 }
 
-const IMVideoRenderCache: Map<string, HTMLVideoElement> = new Map();
-const IMImageRenderCache: Map<string, HTMLImageElement> = new Map();
+interface AttachmentRenderingContext {
+    id: string;
+    url: string;
+    changed: () => any;
+    width?: number;
+    height?: number;
+    description?: string;
+}
 
-function IMAttachmentChatItem({ item, message, changed }: PropsWithoutRef<IMAttachmentChatItemRenderContext>) {
-    const renderingFormat = ERComputeRenderingFormat(item)
-    const url = apiClient.attachmentURL(item.transferID)
-    const { width, height } = item.metadata?.size || {}
-    
-    useEffect(() => () => {
-        IMVideoRenderCache.get(item.id)?.removeEventListener("loadeddata", changed);
-        IMImageRenderCache.get(item.id)?.removeEventListener("load", changed);
-    });
+const IMImageAttachmentRenderer = RecycledElementRenderer(({ width, height, url, description }: AttachmentRenderingContext) => {
+    const element = document.createElement("img");
+    element.setAttribute("width", width?.toString() || "100%");
+    element.height = height!;
+    element.draggable = true;
+    element.src = url;
+    element.alt = description!;
 
-    switch (renderingFormat) {
+    return element;
+}, ({ changed }, el) => {
+    el.addEventListener("load", changed);
+}, ({ changed }, el) => {
+    el.removeEventListener("load", changed);
+});
+
+const IMVideoAttachmentRenderer = RecycledElementRenderer(({ width, height, url }: AttachmentRenderingContext) => {
+    const element = document.createElement("video");
+    element.width = width!;
+    element.height = height!;
+    element.preload = "auto";
+    element.draggable = true;
+    element.src = url;
+    element.controls = true;
+
+    return element;
+}, ({ changed }, el) => {
+    el.addEventListener("loadedmetadata", changed);
+}, ({ changed }, el) => {
+    el.removeEventListener("loadedmetadata", changed);
+})
+
+function IMRenderingImplementation(item: IMAttachmentChatItemRenderContext["item"]) {
+    switch (ERComputeRenderingFormat(item)) {
         case IMAttachmentRenderingFormat.image:
-            if (!IMVideoRenderCache.has(item.id)) {
-                const element = document.createElement("img");
-                element.setAttribute("width", width?.toString() || "100%");
-                element.height = height!;
-                element.draggable = true;
-                element.src = url;
-                element.alt = message.description!;
-                element.addEventListener("load", changed);
-
-                IMImageRenderCache.set(item.id, element);
-            }
-
-            return (
-                <div ref={temp => {
-                    if (temp) temp.replaceWith(IMImageRenderCache.get(item.id)!)
-                }} />
-            )
+            return IMImageAttachmentRenderer
         case IMAttachmentRenderingFormat.video:
-            if (!IMVideoRenderCache.has(item.id)) {
-                const element = document.createElement("video");
-                element.width = width!;
-                element.height = height!;
-                element.preload = "auto";
-                element.draggable = true;
-                element.src = url;
-                element.controls = true;
-                element.addEventListener("loadeddata", changed);
-
-                IMVideoRenderCache.set(item.id, element);
-            }
-
-            return (
-                <div ref={temp => {
-                    if (temp) temp.replaceWith(IMVideoRenderCache.get(item.id)!)
-                }} />
-            )
+            return IMVideoAttachmentRenderer
         default:
             return null
     }
+}
+
+function IMAttachmentChatItem({ item, message, changed }: PropsWithoutRef<IMAttachmentChatItemRenderContext>) {
+    const url = apiClient.attachmentURL(item.transferID)
+    const { width, height } = item.metadata?.size || {}
+
+    const RenderingImplementation = IMRenderingImplementation(item);
+
+    if (!RenderingImplementation) return null;
+
+    return (
+        <RenderingImplementation id={item.id} width={width} height={height} url={url} changed={changed} description={message.description} />
+    );
 }
 
 export default React.memo(IMAttachmentChatItem, ({ item: prevItem }, { item: newItem }) => JSON.stringify(prevItem) === JSON.stringify(newItem))

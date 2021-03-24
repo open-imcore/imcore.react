@@ -5,6 +5,7 @@ import LPBalloon from "./LPBalloon";
 interface MSMessageExtensionRenderingContext extends PropsWithoutRef<{}> {
     extension?: MessagesExtension;
     attachments: AttachmentRepresentation[];
+    id: string;
     changed: () => void;
 }
 
@@ -66,8 +67,8 @@ function generateRichLink({ layoutInfo, appName, appIcon }: MessagesExtension, a
     }
 }
 
-export default function MSMessageExtensionBalloonPlugin({ extension, attachments, changed }: MSMessageExtensionRenderingContext) {
+export default function MSMessageExtensionBalloonPlugin({ extension, attachments, changed, id }: MSMessageExtensionRenderingContext) {
     if (!extension) return null
 
-    return <LPBalloon richLink={generateRichLink(extension, attachments)} attachments={attachments} changed={changed} />
+    return <LPBalloon id={id} richLink={generateRichLink(extension, attachments)} attachments={attachments} changed={changed} />
 }

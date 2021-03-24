@@ -1,5 +1,5 @@
 import { TextChatItemRepresentation, TextPart, TextPartAttributeType, TextPartType } from "imcore-ajax-core"
-import React, { PropsWithoutRef, useMemo } from "react"
+import React, { PropsWithoutRef } from "react"
 import IMMakeLog from "../../../../util/log"
 import { IMItemRenderingContext } from "../Message"
 
