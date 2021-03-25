@@ -13,17 +13,10 @@ $from-me-color: blue;
     --from-me-slice: 11 17 12 fill;
 }
 
-.ChatKit {
-    --not-from-me-slice: 15 15 15 21 fill;
+.ChatKit, .ChatKitRetina {
+    --not-from-me-slice: 42.8% 27.3% 42.8% 38.1% fill;
     --not-from-me-width: 11.25px 11.25px 11.25px 15.75px;
-    --from-me-slice: 15 21 15 15 fill;
-    --from-me-width: 11.25px 15.75px 11.25px 11.25px;
-}
-
-.ChatKitRetina {
-    --not-from-me-slice: 50 50 50 70 fill;
-    --not-from-me-width: 11.25px 11.25px 11.25px 15.75px;
-    --from-me-slice: 50 70 50 50 fill;
+    --from-me-slice: 42.8% 38.1% 42.8% 27.3% fill;
     --from-me-width: 11.25px 15.75px 11.25px 11.25px;
 }
 
