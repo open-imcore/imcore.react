@@ -22,10 +22,6 @@ export async function reload(chatID: string, before?: string) {
 
 export const ChatContext = createContext<{ chat: ChatRepresentation | null }>({ chat: null });
 
-function messageCanRender(message: MessageRepresentation): boolean {
-    return message.items.some(item => isChatItem(item) || isTranscriptItem(item))
-}
-
 function messagesAreCloseEnough(message1: MessageRepresentation, message2: MessageRepresentation): boolean {
     return Math.abs(message1.time - message2.time) < (1000 * 60 * 60);
 }
@@ -64,6 +60,38 @@ function createTimestampMessage({ service, time, chatID, id }: MessageRepresenta
     }
 }
 
+function prepareMessagesForPresentation(messages: Record<string, MessageRepresentation>, reverse: boolean): MessageRepresentation[] {
+    const preparedMessages: MessageRepresentation[] = [];
+
+    for (const messageID in messages) {
+        if (messageIsEmpty(messages[messageID])) continue;
+        preparedMessages.push(messages[messageID]);
+    }
+
+    preparedMessages.sort((m1, m2) => {
+        if (m1.isTypingMessage) return 1;
+        else if (m2.isTypingMessage) return -1;
+
+        return m1.time - m2.time;
+    });
+
+    for (let i = 0; i < preparedMessages.length; i++) {
+        const message = preparedMessages[i];
+
+        if (message.isTypingMessage || message[TIMESTAMP_ASSOCIATION]) continue;
+
+        const prevMessage = preparedMessages[i - 1];
+
+        if (prevMessage && messagesAreCloseEnough(prevMessage, message)) continue;
+
+        preparedMessages.splice(i, 0, createTimestampMessage(message));
+    }
+
+    if (reverse) preparedMessages.reverse();
+
+    return preparedMessages;
+}
+
 export function useMessages(chatID?: string, reverse = false): [MessageRepresentation[], () => Promise<void>] {
     const allMessages = useSelector(selectMessages)
     const reloading = useRef(false)
@@ -76,16 +104,7 @@ export function useMessages(chatID?: string, reverse = false): [MessageRepresent
         }
     }, [messages, chatID])
 
-    const processedMessages = useMemo(() => {
-        const arr = Object.values(messages || {}).filter(message => !messageIsEmpty(message)).sort((m1, m2) => m1.time - m2.time).flatMap((message, index, messages) => {
-            const prevMessage = messages[index - 1];
-
-            if (!prevMessage || !messagesAreCloseEnough(prevMessage, message)) return [createTimestampMessage(message), message];
-            else return message;
-        });
-        if (reverse) arr.reverse()
-        return arr
-    }, [JSON.stringify(messages)]);
+    const processedMessages = useMemo(() => prepareMessagesForPresentation(messages, reverse), [JSON.stringify(messages)]);
 
     return [
         processedMessages,
