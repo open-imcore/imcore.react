@@ -267,7 +267,7 @@ $from-me-color: blue;
 
             mask-border-source: var(--bubble-url);
 
-            &[data-acknowledgment-count='3'], &[data-acknowledgment-count='2'] {
+            &:not([data-acknowledgment-count='0']):not([data-acknowledgment-count='1']) {
                 &::before, &::after {
                     content: '';
 
