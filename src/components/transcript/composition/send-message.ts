@@ -1,8 +1,22 @@
 import { ChatRepresentation, MessagePartOptions } from "imcore-ajax-core";
 import { Node as ProsemirrorNode } from "prosemirror-model";
 import { apiClient } from "../../../app/connection";
-import { nodeOnlyContainsText } from "./MCUtils";
+import { flatDescendants, nodeOnlyContainsText } from "./MCUtils";
 import { uploadFileWithID } from "./plugins/DragAndDrop";
+
+export function documentIsEmpty(doc: ProsemirrorNode): boolean {
+    const descendants = flatDescendants(doc);
+
+    for (const node of descendants) {
+        if (node.isText && node.nodeSize > 0) return false;
+        else if (node.isTextblock) {
+            if (nodeOnlyContainsText(node) && node.textContent.length > 0) return false;
+        }
+        else if (node.type.name === "attachment") return false;
+    }
+
+    return true;
+}
 
 /**
  * Creates and sends a message using the contents of a ProsemirrorNode
@@ -10,6 +24,8 @@ import { uploadFileWithID } from "./plugins/DragAndDrop";
  * @param chat chat to send the message to
  */
 export default async function sendMessage(doc: ProsemirrorNode, chat: ChatRepresentation): Promise<void> {
+    if (documentIsEmpty(doc)) return;
+
     // Parts may resolve asynchronously, so they are stored with their pos so they can be sorted at the end
     const rawParts: Array<{
         pos: number;
