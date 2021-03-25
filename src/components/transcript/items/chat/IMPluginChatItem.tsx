@@ -13,6 +13,7 @@ const Log = IMMakeLog('IMPluginChatItem')
 function componentForItem(item: PluginChatItemRepresentation): null | ((ctx: Partial<PluginChatItemRepresentation> & { changed: () => any }) => JSX.Element) {
     switch (item.bundleID.split(":")[0]) {
         case "com.apple.messages.URLBalloonProvider":
+            if (!item.richLink) return null
             return LPBalloon as unknown as ReturnType<typeof componentForItem>
         case "com.apple.messages.MSMessageExtensionBalloonPlugin":
             return MSMessageExtensionBalloonPlugin as unknown as ReturnType<typeof componentForItem>
