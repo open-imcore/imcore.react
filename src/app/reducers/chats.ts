@@ -4,10 +4,12 @@ import { RootState } from "../store";
 
 interface ChatState {
     byID: Record<string, ChatRepresentation>;
+    typingStatus: Record<string, boolean>;
 }
 
 const initialState: ChatState = {
-    byID: {}
+    byID: {},
+    typingStatus: {}
 };
 
 const acceptedLastMessageTypes = [
@@ -33,16 +35,31 @@ export const chatSlice = createSlice({
             delete chats.byID[chatID];
         },
         chatMessagesReceived: (chats, { payload: messages }: PayloadAction<MessageRepresentation[]>) => {
-            messages.forEach(({ chatID, description, time, items }) => {
-                if (!chats.byID[chatID]) return;
-                if (!items.some(item => acceptedLastMessageTypes.includes(item.type))) return;
-                if (time < chats.byID[chatID].lastMessageTime) return;
+            for (const { chatID, description, time, items } of messages) {
+                if (!chats.byID[chatID]) continue;
+                if (time <= chats.byID[chatID].lastMessageTime) continue;
+
+                let isTyping = false, isIncluded = false;
+
+                console.log(items);
+
+                for (const item of items) {
+                    if (item.type === ChatItemType.typing) isTyping = true;
+                    if (acceptedLastMessageTypes.includes(item.type)) {
+                        isIncluded = true;
+                        break;
+                    }
+                }
+
+                chats.typingStatus[chatID] = isTyping;
+
+                if (!isIncluded) continue;
 
                 Object.assign(chats.byID[chatID], {
                     lastMessage: description,
                     lastMessageTime: time
                 } as Partial<ChatRepresentation>)
-            })
+            }
         },
         chatPropertiesChanged: (chats, { payload: { id, ...properties } }: PayloadAction<ChatConfigurationRepresentation>) => {
             if (!chats.byID[id]) return;
@@ -55,5 +72,6 @@ export const chatSlice = createSlice({
 export const { chatsChanged, chatChanged, chatDeleted, chatMessagesReceived, chatPropertiesChanged } = chatSlice.actions;
 
 export const selectChats = (state: RootState) => state.chats.byID;
+export const selectTypingStatus = (state: RootState, chatID: string) => state.chats.typingStatus[chatID] || false;
 
 export default chatSlice.reducer;

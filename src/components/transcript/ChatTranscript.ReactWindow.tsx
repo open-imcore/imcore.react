@@ -157,11 +157,23 @@ function MessageRenderer({ ref, index, data, memoState: { lastDeliveredFromMe, l
     )
 }
 
+function getLastReadAndDeliveredFromMe(messages: MessageRepresentation[]): [string | undefined, string | undefined] {
+    let lastDeliveredFromMe: string | undefined = undefined, lastReadFromMe: string | undefined = undefined;
+
+    for (const { id, fromMe, isDelivered, timeRead } of messages) {
+        if (!lastDeliveredFromMe && fromMe && isDelivered) lastDeliveredFromMe = id;
+        if (!lastReadFromMe && fromMe && timeRead) lastReadFromMe = id;
+        if (lastDeliveredFromMe && lastReadFromMe) break;
+    }
+
+    return [lastDeliveredFromMe, lastReadFromMe];
+}
+
 export default function ChatTranscript() {
     const chat = useCurrentChat()
     const [ messages, loadMore ] = useCurrentMessages(true)
 
-    const [lastDeliveredFromMe, lastReadFromMe] = useMemo(() => [messages.find(message => message.fromMe && message.isDelivered)?.id, messages.find(message => message.fromMe && message.timeRead)?.id], [JSON.stringify(messages)])
+    const [lastDeliveredFromMe, lastReadFromMe] = useMemo(() => getLastReadAndDeliveredFromMe(messages), [JSON.stringify(messages)])
 
     return (
         <div className="chat-transcript transcript-react-window">

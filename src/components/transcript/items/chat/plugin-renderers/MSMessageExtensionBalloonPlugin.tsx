@@ -70,5 +70,5 @@ function generateRichLink({ layoutInfo, appName, appIcon }: MessagesExtension, a
 export default function MSMessageExtensionBalloonPlugin({ extension, attachments, changed, id }: MSMessageExtensionRenderingContext) {
     if (!extension) return null
 
-    return <LPBalloon id={id} richLink={generateRichLink(extension, attachments)} attachments={attachments} changed={changed} />
+    return <LPBalloon className="lp-message-extension-compat" id={id} richLink={generateRichLink(extension, attachments)} attachments={attachments} changed={changed} />
 }

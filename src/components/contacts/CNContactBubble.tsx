@@ -1,5 +1,5 @@
 import { ContactRepresentation } from "imcore-ajax-core"
-import { PropsWithChildren, useEffect, useState } from "react"
+import { PropsWithChildren, useEffect, useLayoutEffect, useState } from "react"
 import { apiClient } from "../../app/connection"
 import "../../styles/contacts/CNContactBubble.scss";
 import React from "react";
@@ -9,7 +9,7 @@ export default function CNContactBubble(props: PropsWithChildren<{ contact: Cont
     const [backgroundPhotoURL, setBackgroundPhotoURL] = useState(null as string | null)
     const [contactInitials, setContactInitials] = useState(null as string | null)
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         setBackgroundPhotoURL(contact?.hasPicture ? apiClient.contactPhotoURL(contact.id) : null)
 
         if (contact) {

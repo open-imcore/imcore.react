@@ -6,9 +6,7 @@ import IMAttachmentChatItem from "./chat/IMAttachmentChatItem";
 import IMPluginChatItem from "./chat/IMPluginChatItem";
 import "../../../styles/transcript/items/IMChatItem.scss";
 import { extractAcknowledgments, IMItemIsJumbo } from "./IMChatItem.Foundation"
-import { ChatStyle } from "../../chat/ChatBubble";
-import { useFormattedReceipt } from "../../../util/receipt-formatting";
-import CSSTransition from "react-transition-group/CSSTransition";
+import IMTypingChatItem from "./chat/IMTypingChatItem";
 
 function componentForItem(item: AnyChatItemModel) {
     switch (item.type) {
@@ -19,6 +17,7 @@ function componentForItem(item: AnyChatItemModel) {
         case ChatItemType.plugin:
             return IMPluginChatItem
         case ChatItemType.typing:
+            return IMTypingChatItem
         case ChatItemType.sticker:
         default:
             return null

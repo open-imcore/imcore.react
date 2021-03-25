@@ -8,6 +8,12 @@
     text-decoration: none;
     color: inherit;
 
+    &.lp-message-extension-compat {
+        .lp-media > .lp-caption-bar:first-child > img {
+            border-radius: 50%;
+        }
+    }
+
     .lp-media {
         display: flex;
         flex-flow: column;

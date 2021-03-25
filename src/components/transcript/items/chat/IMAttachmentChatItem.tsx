@@ -22,7 +22,7 @@ enum IMAttachmentRenderingFormat {
 }
 
 function ERComputeRenderingFormat({ metadata }: AttachmentChatItemRepresentation) {
-    switch (metadata?.mime?.split("/")?.[0] || "") {
+    switch (metadata?.mime?.substring(0, 5) || "") {
         case "image":
             return IMAttachmentRenderingFormat.image
         case "video":

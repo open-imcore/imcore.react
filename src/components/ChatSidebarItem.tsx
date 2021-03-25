@@ -6,6 +6,10 @@ import { useFormattedHandles } from '../hooks/useFormattedHandles';
 import '../styles/ChatSidebarItem.scss';
 import ChatBubble from "./chat/ChatBubble";
 import { useFormattedReceipt } from "../util/receipt-formatting";
+import { useSelector } from 'react-redux';
+import { selectTypingStatus } from '../app/reducers/chats';
+import { RootState } from '../app/store';
+import IMTypingChatItem from './transcript/items/chat/IMTypingChatItem';
 
 function useLastMessageTime(chat: ChatRepresentation) {
     return useFormattedReceipt(chat.lastMessageTime)
@@ -22,13 +26,13 @@ function useChatName(chat: ChatRepresentation) {
     return chatName || formattedHandles.join(', ') || chat.id
 }
 
-function ChatSidebarItem(props: PropsWithChildren<{ chat: ChatRepresentation, style?: object }>) {
-    const chat = props.chat
+function ChatSidebarItem({ chat, style }: PropsWithChildren<{ chat: ChatRepresentation, style?: object }>) {
     const chatName = useChatName(chat)
     const lastMessageTime = useLastMessageTime(chat)
+    const isTyping = useSelector(state => selectTypingStatus(state as RootState, chat.id))
 
     return (
-        <Link to={`/chats/${chat.id}`} className="chat-sidebar-item" style={props.style}>
+        <Link to={`/chats/${chat.id}`} className="chat-sidebar-item" style={style}>
             <div className="chat-sidebar-item--image">
                 <ChatBubble chat={chat} />
             </div>
@@ -41,7 +45,17 @@ function ChatSidebarItem(props: PropsWithChildren<{ chat: ChatRepresentation, st
                         {lastMessageTime}
                     </span>
                 </span>
-                <span className="chat-sidebar-item--summary">{chat.lastMessage || ''}</span>
+                <span className="chat-sidebar-item--summary">
+                    {
+                        isTyping ? (
+                            <div data-item-type="typing">
+                                <div className="item-inner">
+                                    <IMTypingChatItem />
+                                </div>
+                            </div>
+                        ) : chat.lastMessage || ''
+                    }
+                </span>
             </div>
         </Link>
     )

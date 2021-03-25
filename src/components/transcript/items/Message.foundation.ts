@@ -10,12 +10,24 @@ export interface MessageAnalysis {
     showName: boolean;
 }
 
+function allItemsAreChatItems({ items }: MessageRepresentation) {
+    for (const item of items) {
+        if (!isChatItem(item)) return false;
+    }
+
+    return true;
+}
+
 export function messagesAreContiguous(message: MessageRepresentation, nextMessage: MessageRepresentation) {
     if (message.sender !== nextMessage.sender) return false
-    if (!message.items.concat(nextMessage.items).every(isChatItem)) return false
+    if (!allItemsAreChatItems(message) || !allItemsAreChatItems(nextMessage)) return false
     
     if (Math.abs(message.time - nextMessage.time) < (1000 * 60)) {
-        return !nextMessage.items.some(item => extractAcknowledgments(item).length > 0)
+        for (const item of nextMessage.items) {
+            if (extractAcknowledgments(item).length > 0) return false;
+        }
+
+        return true;
     } else return false
 }
 

@@ -1,0 +1,108 @@
+@keyframes blink {
+    0% {
+        background-color: darken($not-from-me-color, 15);
+    }
+    50% {
+        background-color: darken($not-from-me-color, 35);
+    }
+    100% {
+        background-color: darken($not-from-me-color, 15);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse-invert {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+[data-item-type=typing] .item-inner {
+    position: relative;
+
+    &::after, &::before {
+        position: absolute;
+
+        background-color: $not-from-me-color;
+        border-radius: 50%;
+
+        content: '';
+    }
+
+    &::before {
+        bottom: 1px;
+        left: 1px;
+
+        height: 10px;
+        width: 10px;
+
+        animation: pulse-invert 1s infinite ease-in-out;
+    }
+
+    &::after {
+        bottom: -2px;
+        left: -2px;
+
+        height: 5px;
+        width: 5px;
+
+        animation: pulse 0.75s infinite ease-in-out;
+    }
+}
+
+.typing-item {
+    $circle-dims: 7px;
+
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: center;
+    border-radius: 25px;
+    margin-left: 4px;
+
+    background-color: $not-from-me-color;
+
+    width: 45px;
+    height: 25px;
+
+    animation: pulse 2s infinite;
+
+    & > .typing-dot-1, & > .typing-dot-2, & > .typing-dot-3 {
+        background: darken($not-from-me-color, 15);
+        border-radius: 50%;
+
+        width: $circle-dims;
+        height: $circle-dims;
+
+        animation: blink 1s infinite;
+
+        &:not(:first-child) {
+            margin-left: 3px;
+        }
+    }
+
+    & > .typing-dot-2 {
+        animation-delay: 0.2s;
+    }
+
+    & > .typing-dot-3 {
+        animation-delay: 0.4s;
+    }
+}

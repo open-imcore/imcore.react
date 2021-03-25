@@ -11,6 +11,7 @@ export type LPRenderingContext = PropsWithoutRef<{
 interface LPBalloonRenderingContext extends LPRenderingContext {
     richLink: RichLink;
     changed: () => any;
+    className?: string;
 }
 
 function makeRGBA(color: Color | undefined) {
@@ -18,13 +19,13 @@ function makeRGBA(color: Color | undefined) {
     return `rgba(${color.red},${color.green},${color.blue},${color.alpha})`
 }
 
-export default function LPBalloon({ richLink, changed, attachments, id }: LPBalloonRenderingContext) {
+export default function LPBalloon({ className, richLink, changed, attachments, id }: LPBalloonRenderingContext) {
     const backgroundRGBA = makeRGBA(richLink.backgroundColor)
 
     const Element = richLink.url ? "a" : "div"
 
     return (
-        <Element href={richLink.url} target="_blank" className="lp-balloon" style={{
+        <Element href={richLink.url} target="_blank" className={className ? `lp-balloon ${className}` : "lp-balloon"} style={{
             background: backgroundRGBA
         }}>
             <LPMedia id={id} changed={changed} video={richLink.video} image={richLink.image} audio={richLink.audio} topCaptionBar={richLink.mediaTopCaptionBar} bottomCaptionBar={richLink.mediaBottomCpationBar} attachments={attachments} />

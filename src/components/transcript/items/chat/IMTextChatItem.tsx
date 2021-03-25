@@ -21,18 +21,20 @@ enum IMTextPartFormattingDirective {
 function ERExtractFormattingDirectivesForIMTextPart(part: TextPart): IMTextPartFormattingDirective[] {
     const directives: Set<IMTextPartFormattingDirective> = new Set()
 
-    part.attributes?.forEach(attr => {
-        switch (attr.key) {
-            case TextPartAttributeType.bold:
-            case TextPartAttributeType.mention:
-                directives.add(IMTextPartFormattingDirective.bold)
-                break
-            case TextPartAttributeType.writingDirection:
-                break
-            default:
-                Log.warn("No formatting implementation available for TextPartAttributeType", attr.key)
+    if (part.attributes) {
+        for (const attr of part.attributes) {
+            switch (attr.key) {
+                case TextPartAttributeType.bold:
+                case TextPartAttributeType.mention:
+                    directives.add(IMTextPartFormattingDirective.bold)
+                    break
+                case TextPartAttributeType.writingDirection:
+                    break
+                default:
+                    Log.warn("No formatting implementation available for TextPartAttributeType", attr.key)
+            }
         }
-    })
+    }
 
     if (part.type === TextPartType.calendar) directives.add(IMTextPartFormattingDirective.underline)
 
@@ -55,12 +57,6 @@ function IMTextPartAttributeFormatter({ part }: IMTextPartProps) {
     )
 }
 
-function IMTextTextPart(ctx: IMTextPartProps) {
-    return (
-        <IMTextPartAttributeFormatter {...ctx} />
-    )
-}
-
 function IMTextLinkPart(ctx: IMTextPartProps) {
     return (
         <a href={ctx.part.data}>
@@ -75,10 +71,10 @@ function componentForPart(part: TextPart) {
             return IMTextLinkPart
         case TextPartType.text:
         case TextPartType.calendar:
-            return IMTextTextPart
+            return IMTextPartAttributeFormatter
         default:
             Log.warn("No implementation available for text part with type", part.type)
-            return IMTextTextPart
+            return IMTextPartAttributeFormatter
     }
 }
 

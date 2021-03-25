@@ -6,7 +6,15 @@ export function extractAcknowledgments(item: AnyChatItemModel): AcknowledgmentCh
         case ChatItemType.text:
         case ChatItemType.attachment:
         case ChatItemType.plugin:
-            return (item.payload.acknowledgments || []).slice().filter(ack => ack.acknowledgmentType < 3000).sort(ack => ack.fromMe ? -1 : 0)
+            if (!item.payload.acknowledgments) return [];
+
+            const acknowledgments: AcknowledgmentChatItemRepresentation[] = [];
+
+            for (const acknowledgment of item.payload.acknowledgments) {
+                if (acknowledgment.acknowledgmentType < 3000) acknowledgments.push(acknowledgment);
+            }
+
+            return acknowledgments.sort(ack => ack.fromMe ? -1 : 0)
         default:
             return []
     }
@@ -31,6 +39,7 @@ const regex = createRegex()
 
 function IMTextChatItemIsJumbo(text: string): boolean {
     if (emojiCount(text) > 3) return false
+
     return text.replace(/s/g, "").replace(regex, "").length === 0
 }
 

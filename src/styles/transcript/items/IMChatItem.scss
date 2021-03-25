@@ -1,11 +1,11 @@
-$not-from-me-color: #E5E5EA;
+$not-from-me-color: rgb(229,229,234);
 $from-me-color: blue;
 
 :root {
     --imessage-gradient: linear-gradient(rgb(86,196,250), rgb(0,119,248));
     --sms-gradient: linear-gradient(rgb(0,202,69), rgb(0,185,64));
     --business-chat-gradient: linear-gradient(rgb(132,142,153), rgb(132,142,153));
-    --not-from-me-background: rgb(229,229,234);
+    --not-from-me-background: #{$not-from-me-color};
 }
 
 .SocialUI {
@@ -373,22 +373,6 @@ $from-me-color: blue;
         $padding-from-me: $padding-top $padding-x-outer $padding-bottom $padding-x-inner;
         $padding-not-from-me: $padding-top $padding-x-inner $padding-bottom $padding-x-outer;
 
-        &[attr-from-me=true] {
-            --padding: #{$padding-from-me};
-            --border-url: var(--from-me-border);
-            --border-slice: var(--from-me-slice);
-            --border-width: var(--from-me-width);
-            margin-right: var(--override-margin-edge);
-        }
-
-        &[attr-from-me=false] {
-            --padding: #{$padding-not-from-me};
-            --border-url: var(--not-from-me-border);
-            --border-slice: var(--not-from-me-slice);
-            --border-width: var(--not-from-me-width);
-            margin-left: var(--override-margin-edge);
-        }
-
         &[data-item-type=plugin] {
             @import "./LPRichLink.scss";
 
@@ -447,9 +431,28 @@ $from-me-color: blue;
                 // }
             }
         }
-        mask-border-source: var(--border-url);
-        mask-border-slice: var(--border-slice);
-        mask-border-width: var(--border-width);
+        
+        &:not([data-item-type=typing]) {
+            &[attr-from-me=true] {
+                --padding: #{$padding-from-me};
+                --border-url: var(--from-me-border);
+                --border-slice: var(--from-me-slice);
+                --border-width: var(--from-me-width);
+                margin-right: var(--override-margin-edge);
+            }
+    
+            &[attr-from-me=false] {
+                --padding: #{$padding-not-from-me};
+                --border-url: var(--not-from-me-border);
+                --border-slice: var(--not-from-me-slice);
+                --border-width: var(--not-from-me-width);
+                margin-left: var(--override-margin-edge);
+            }
+            
+            mask-border-source: var(--border-url);
+            mask-border-slice: var(--border-slice);
+            mask-border-width: var(--border-width);
+        }
 
         .item-inner {
             padding: var(--padding);
@@ -458,3 +461,5 @@ $from-me-color: blue;
         }
     }
 }
+
+@import "./IMTypingChatItem.scss";
