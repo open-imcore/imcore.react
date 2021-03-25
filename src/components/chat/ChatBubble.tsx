@@ -44,16 +44,19 @@ function GroupChatBubble(props: PropsWithChildren<{ chat: ChatRepresentation }>)
 
 function ChatBubble(props: PropsWithChildren<{ chat: ChatRepresentation }>) {
     const chat = props.chat
-    const [isGroup, setIsGroup] = useState(false)
 
-    useEffect(() => {
-        setIsGroup(chat.style === ChatStyle.group)
-    }, [chat])
-
-    if (isGroup) {
-        return (
-            <GroupChatBubble chat={chat} />
-        )
+    if (chat.style === ChatStyle.group) {
+        if (chat.groupPhotoID) {
+            return (
+                <div className="cn-bubble chat-bubble--image" style={{
+                    backgroundImage: `url(${apiClient.attachmentURL(chat.groupPhotoID)})`
+                }} />
+            )
+        } else {
+            return (
+                <GroupChatBubble chat={chat} />
+            )
+        }
     } else {
         return (
             <DMBubble chat={chat} />
