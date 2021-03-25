@@ -41,8 +41,8 @@ function ERExtractFormattingDirectivesForIMTextPart(part: TextPart): IMTextPartF
     return Array.from(directives)
 }
 
-function IMTextPartAttributeFormatter({ part }: IMTextPartProps) {
-    const directives = ERExtractFormattingDirectivesForIMTextPart(part)
+function IMTextPartAttributeFormatter({ part, directives: additionalDirectives = [] }: IMTextPartProps & { directives?: IMTextPartFormattingDirective[] }) {
+    const directives = ERExtractFormattingDirectivesForIMTextPart(part).concat(additionalDirectives)
 
     if (!directives.length) {
         return (
@@ -81,6 +81,15 @@ function componentForPart(part: TextPart) {
 function IMTextChatItem(ctx: PropsWithoutRef<IMTextChatItemRenderContext>) {
     return (
         <React.Fragment>
+            {ctx.index === 0 && ctx.message.messageSubject ? (
+                <React.Fragment>
+                    <IMTextPartAttributeFormatter {...ctx} part={{
+                        type: TextPartType.text,
+                        string: ctx.message.messageSubject
+                    }} directives={[IMTextPartFormattingDirective.bold]} />
+                    <br />
+                </React.Fragment>
+            ) : null}
             {ctx.item.parts.map((part, index) => {
                 const Component = componentForPart(part)
 

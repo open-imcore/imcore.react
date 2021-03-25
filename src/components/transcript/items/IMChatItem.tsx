@@ -28,12 +28,13 @@ export function isChatItem(item: AnyChatItemModel) {
     return !!componentForItem(item);
 }
 
-export default function IMChatItem({ item, message, chat, changed }: PropsWithChildren<IMItemRenderingContext>) {
+export default function IMChatItem({ item, message, chat, changed, index }: PropsWithChildren<IMItemRenderingContext>) {
     const Component = componentForItem(item) as ((opts: {
         item: AnyChatItemModel['payload'],
         message: MessageRepresentation,
         chat: ChatRepresentation,
-        changed: IMItemRenderingContext['changed']
+        changed: IMItemRenderingContext['changed'],
+        index: number
     }) => JSX.Element) | null
 
     const acknowledgments = extractAcknowledgments(item)
@@ -46,7 +47,7 @@ export default function IMChatItem({ item, message, chat, changed }: PropsWithCh
             <div className={`chat-item-container${isJumbo ? ' chat-item-jumbo' : ''}`} data-has-acknowledgments={(acknowledgments.length > 0).toString()}>
                 <div className="chat-item" data-item-type={item.type} attr-from-me={message.fromMe.toString()}>
                     <div className="item-inner">
-                        <Component item={item.payload} message={message} chat={chat} changed={changed} key={item.payload.id} />
+                        <Component index={index} item={item.payload} message={message} chat={chat} changed={changed} key={item.payload.id} />
                     </div>
                 </div>
 

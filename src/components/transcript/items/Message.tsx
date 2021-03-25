@@ -16,6 +16,7 @@ export interface IMItemRenderingContext<Item = AnyChatItemModel> {
     item: Item
     message: MessageRepresentation
     chat: ChatRepresentation
+    index: number
     changed: () => any
 }
 
@@ -70,7 +71,7 @@ function Message({ eRef, message, nextMessage, prevMessage, lastDeliveredFromMe,
 
         if (!Component) return null
         
-        return <Component key={item.payload.id} changed={changed!} item={item} message={message} chat={chat} />
+        return <Component key={item.payload.id} index={index} changed={changed!} item={item} message={message} chat={chat} />
     }).filter(item => item)
 
     const messageIsTranscriptMessage = message.items.every(isTranscriptItem);
