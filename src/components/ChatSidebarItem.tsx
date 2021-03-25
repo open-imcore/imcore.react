@@ -32,7 +32,7 @@ function ChatSidebarItem({ chat, style }: PropsWithChildren<{ chat: ChatRepresen
     const isTyping = useSelector(state => selectTypingStatus(state as RootState, chat.id))
 
     return (
-        <Link to={`/chats/${chat.id}`} className="chat-sidebar-item" style={style}>
+        <Link to={`/chats/${chat.id}`} className="chat-sidebar-item" attr-unread-count={chat.unreadMessageCount} style={style}>
             <div className="chat-sidebar-item--image">
                 <ChatBubble chat={chat} />
             </div>

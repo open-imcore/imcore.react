@@ -29,9 +29,22 @@
         border-bottom: 1px solid $master-detail-border-color;
     }
 
+    &:not([attr-unread-count='0']) .chat-sidebar-item--image::before {
+        content: '';
+        position: absolute;
+        left: -12.5px;
+        top: 23px;
+        background-color: #3478F6;
+        height: 7px;
+        width: 7px;
+        border-radius: 50%;
+    }
+
     .chat-sidebar-item--image {
         height: 50px;
         width: 50px;
+        position: relative;
+
         --chat-bubble--image-initials-size: 1.5em;
 
         & .chat-bubble--image {
