@@ -404,11 +404,10 @@ $from-me-color: blue;
         }
 
         &[data-item-type=attachment] {
-            --padding: 0;
-
             .item-inner {
                 display: flex;
                 flex-flow: column;
+                padding: 0;
 
                 video, img {
                     object-fit: fill;
