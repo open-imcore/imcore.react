@@ -5,6 +5,7 @@ import { useParams } from "react-router"
 import { apiClient } from "../../app/connection"
 import { chatMessagesReceived, selectChats } from "../../app/reducers/chats"
 import { messagesChanged, selectMessages } from "../../app/reducers/messages"
+import { selectVisibilityState } from "../../app/reducers/presence"
 import { store } from "../../app/store"
 import { isChatItem } from "./items/IMChatItem"
 import { DATE_SEPARATOR_TYPE, isTranscriptItem } from "./items/IMTranscriptItem"
@@ -21,10 +22,6 @@ export async function reload(chatID: string, before?: string) {
 }
 
 export const ChatContext = createContext<{ chat: ChatRepresentation | null }>({ chat: null });
-
-function messageCanRender(message: MessageRepresentation): boolean {
-    return message.items.some(item => isChatItem(item) || isTranscriptItem(item))
-}
 
 function messagesAreCloseEnough(message1: MessageRepresentation, message2: MessageRepresentation): boolean {
     return Math.abs(message1.time - message2.time) < (1000 * 60 * 60);
@@ -112,5 +109,15 @@ export function useCurrentChat(): ChatRepresentation | undefined {
         chatID: string
     }>();
 
-    return useSelector(selectChats)[chatID]
+    const chat = useSelector(selectChats)[chatID]
+
+    const isVisible = useSelector(selectVisibilityState);
+
+    useEffect(() => {
+        if (chat && chat.unreadMessageCount && isVisible) {
+            apiClient.chats.readAllMessages(chatID);
+        }
+    }, [chat]);
+
+    return chat
 }

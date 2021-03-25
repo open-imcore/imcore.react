@@ -2,12 +2,14 @@ import { configureStore, ThunkAction, Action, getDefaultMiddleware } from '@redu
 import chatReducer from './reducers/chats'
 import messagesReducer from './reducers/messages'
 import contactsReducer from './reducers/contacts'
+import presenceReducer from './reducers/presence'
 
 export const store = configureStore({
   reducer: {
     chats: chatReducer,
     messages: messagesReducer,
-    contacts: contactsReducer
+    contacts: contactsReducer,
+    presence: presenceReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
