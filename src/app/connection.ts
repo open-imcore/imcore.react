@@ -22,6 +22,7 @@ socketClient.on(EventType.conversationRemoved, ({ chat }) => store.dispatch(chat
 socketClient.on(EventType.conversationDisplayNameChanged, receiveChangedChat)
 socketClient.on(EventType.conversationJoinStateChanged, receiveChangedChat)
 socketClient.on(EventType.conversationPropertiesChanged, conf => store.dispatch(chatPropertiesChanged(conf)))
+socketClient.on(EventType.conversationUnreadCountChanged, receiveChangedChat)
 
 export function receiveItems(items: AnyChatItemModel[]) {
     const messages: MessageRepresentation[] = items.filter(item => item.type === ChatItemType.message).map(item => item.payload) as MessageRepresentation[]
