@@ -5,6 +5,7 @@ import { useParams } from "react-router"
 import { apiClient } from "../../app/connection"
 import { chatMessagesReceived, selectChats } from "../../app/reducers/chats"
 import { messagesChanged, selectMessages } from "../../app/reducers/messages"
+import { selectVisibilityState } from "../../app/reducers/presence"
 import { store } from "../../app/store"
 import { isChatItem } from "./items/IMChatItem"
 import { DATE_SEPARATOR_TYPE, isTranscriptItem } from "./items/IMTranscriptItem"
@@ -131,5 +132,15 @@ export function useCurrentChat(): ChatRepresentation | undefined {
         chatID: string
     }>();
 
-    return useSelector(selectChats)[chatID]
+    const chat = useSelector(selectChats)[chatID]
+
+    const isVisible = useSelector(selectVisibilityState);
+
+    useEffect(() => {
+        if (chat && chat.unreadMessageCount && isVisible) {
+            apiClient.chats.readAllMessages(chatID);
+        }
+    }, [chat]);
+
+    return chat
 }
