@@ -4,7 +4,7 @@ export const DynamicListContext = createContext<
     Partial<{ setSize: (id: string, size: number) => void }>
 >({});
 
-export const useInvertScrollDirection = (enabled: boolean = isMacOS()) => {
+export const useInvertScrollDirection = (enabled: boolean) => {
     const ref = useRef<HTMLDivElement>();
 
     const invertedWheelEvent = useCallback((e: WheelEvent) => {
@@ -23,16 +23,21 @@ export const useInvertScrollDirection = (enabled: boolean = isMacOS()) => {
         []
     );
 
+    const repair = useCallback(() => {
+        if (!ref.current) return;
+
+        ref.current.removeEventListener("wheel", invertedWheelEvent);
+        if (enabled) ref.current.addEventListener("wheel", invertedWheelEvent);
+    }, [ref, enabled, invertedWheelEvent]);
+
+    useEffect(() => repair(), [enabled, repair, ref]);
+
     return (incomingRef: HTMLDivElement | null) => {
-        if (!enabled || !incomingRef) {
+        if (!incomingRef) {
             return;
         }
 
         ref.current = incomingRef;
-
-        if (ref.current) {
-            ref.current.addEventListener("wheel", invertedWheelEvent);
-        }
     };
 };
 

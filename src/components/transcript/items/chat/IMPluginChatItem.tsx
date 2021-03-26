@@ -23,13 +23,13 @@ function componentForItem(item: PluginChatItemRepresentation): null | ((ctx: Par
     }
 }
 
-function IMPluginChatItem(ctx: PropsWithoutRef<IMPluginChatItemRenderContext>) {
-    const Component = componentForItem(ctx.item)
+function IMPluginChatItem({ item, ...ctx }: PropsWithoutRef<IMPluginChatItemRenderContext>) {
+    const Component = componentForItem(item)
 
     if (!Component) return null
 
     return (
-        <Component changed={ctx.changed} {...ctx.item} />
+        <Component changed={ctx.changed} {...item} />
     )
 }
 

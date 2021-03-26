@@ -7,6 +7,8 @@ import Message from "./items/Message";
 import { DynamicListContext, useInvertScrollDirection } from "./ChatTranscript.ReactWindow.Foundation";
 import IMMakeLog from "../../util/log";
 import Composition from "./composition/Composition";
+import { useSelector } from "react-redux";
+import { selectUseInvertedScrolling } from "../../app/reducers/debug";
 
 const Log = IMMakeLog("ChatTranscript.ReactWindow");
 
@@ -79,7 +81,7 @@ const sizeStorage: Map<string, Record<string, number>> = new Map();
 
 function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSizeListProps<T, MemoState>) {
     const listRef = useRef<VariableSizeList | null>(null);
-    const scrollWatcher = useInvertScrollDirection()
+    const scrollWatcher = useInvertScrollDirection(useSelector(selectUseInvertedScrolling));
 
     const sizeMap = React.useRef<{ [key: string]: number }>({});
 

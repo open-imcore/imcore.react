@@ -8,16 +8,24 @@ import "../../../styles/transcript/items/IMChatItem.scss";
 import { extractAcknowledgments, IMItemIsJumbo } from "./IMChatItem.Foundation"
 import IMTypingChatItem from "./chat/IMTypingChatItem";
 
-function componentForItem(item: AnyChatItemModel) {
+type ChatItemComponentRenderer = ((opts: {
+    item: AnyChatItemModel['payload'],
+    message: MessageRepresentation,
+    chat: ChatRepresentation,
+    changed: IMItemRenderingContext['changed'],
+    index: number
+}) => JSX.Element) | null;
+
+function chatItemComponentForItem(item: AnyChatItemModel): ChatItemComponentRenderer {
     switch (item.type) {
         case ChatItemType.text:
-            return IMTextChatItem;
+            return IMTextChatItem as ChatItemComponentRenderer;
         case ChatItemType.attachment:
-            return IMAttachmentChatItem
+            return IMAttachmentChatItem as ChatItemComponentRenderer;
         case ChatItemType.plugin:
-            return IMPluginChatItem
+            return IMPluginChatItem as ChatItemComponentRenderer;
         case ChatItemType.typing:
-            return IMTypingChatItem
+            return IMTypingChatItem as ChatItemComponentRenderer;
         case ChatItemType.sticker:
         default:
             return null
@@ -25,17 +33,12 @@ function componentForItem(item: AnyChatItemModel) {
 }
 
 export function isChatItem(item: AnyChatItemModel) {
-    return !!componentForItem(item);
+    return !!chatItemComponentForItem(item);
 }
 
 export default function IMChatItem({ item, message, chat, changed, index }: PropsWithChildren<IMItemRenderingContext>) {
-    const Component = componentForItem(item) as ((opts: {
-        item: AnyChatItemModel['payload'],
-        message: MessageRepresentation,
-        chat: ChatRepresentation,
-        changed: IMItemRenderingContext['changed'],
-        index: number
-    }) => JSX.Element) | null
+    if (item.type === ChatItemType.plugin && item.payload.fallback) item = item.payload.fallback;
+    const Component = chatItemComponentForItem(item) as ChatItemComponentRenderer
 
     const acknowledgments = extractAcknowledgments(item)
     const isJumbo = useMemo(() => IMItemIsJumbo(item), [item]);

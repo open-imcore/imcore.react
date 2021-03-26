@@ -119,8 +119,8 @@
     }
 
     &[attr-next-contiguous=true] {
-        --from-me-border: var(--bubble-notail-url);
-        --not-from-me-border: var(--bubble-notail-flip-url);
+        --from-me-border: url(../../../assets/masks/bubble-notail.svg);
+        --not-from-me-border: url(../../../assets/masks/bubble-notail-flip.svg);
     }
 
     &[attr-next-contiguous=true] {
@@ -128,8 +128,8 @@
     }
 
     &[attr-next-contiguous=false] {
-        --from-me-border: var(--bubble-tail-url);
-        --not-from-me-border: var(--bubble-tail-flip-url);
+        --from-me-border: url(../../../assets/masks/bubble-tail.svg);
+        --not-from-me-border: url(../../../assets/masks/bubble-tail-flip.svg);
         margin-top: 7px;
     }
 
@@ -395,6 +395,8 @@
                 --text-color: black;
             }
 
+            overflow: hidden;
+
             .text-part-bold {
                 font-weight: bold;
             }
@@ -448,6 +450,7 @@
             mask-border-source: var(--border-url);
             mask-border-slice: var(--border-slice);
             mask-border-width: var(--border-width);
+            // mask-clip: border-box;
         }
 
         .item-inner {

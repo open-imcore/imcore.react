@@ -8,7 +8,7 @@ import IMMakeLog from "../util/log"
 
 const Log = IMMakeLog("IMServerConnection")
 
-const endpoint = "192.168.86.200"
+const endpoint = localStorage.getItem("imcore-host") || "localhost";
 
 export const socketClient = new IMWebSocketClient(`ws://${endpoint}:8090/stream`)
 export const apiClient = new IMHTTPClient({

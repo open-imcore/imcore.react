@@ -6057,10 +6057,10 @@ ignore@^5.1.4:
   resolved "https://registry.npmjs.org/ignore/-/ignore-5.1.8.tgz#f150a8b50a34289b33e22f5889abd4d8016f0e57"
   integrity sha512-BMpfD7PpiETpBl/A6S498BaIJ6Y/ABT93ETbby2fP00v4EbvPBXWEoaR1UBPKs3iR53pJY7EtZk5KACI57i1Uw==
 
-imcore-ajax-core@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/imcore-ajax-core/-/imcore-ajax-core-1.0.6.tgz#67696d9a102f16bd4aa775f50be8e2478f83f2c1"
-  integrity sha512-QcPDk8iOqin+acwR78SXZZ3LcaZDOcPuufqE5qFppRP7fpPTEmWD1b34Qb+2ulkX88Rurj8gQCY19exQozHupg==
+imcore-ajax-core@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.npmjs.org/imcore-ajax-core/-/imcore-ajax-core-1.0.7.tgz#762802877daa645db5ae51ca213ccfea2b180b82"
+  integrity sha512-34y2WhjapUOPHDHa1732Uengqkrhz1TT9tdhS96fFSWTyZ1zcJk0vhchBdVmEHAKWgLn7B/Iz4ScRDb3z6llUg==
   dependencies:
     axios "^0.20.0"
     pako "^1.0.11"

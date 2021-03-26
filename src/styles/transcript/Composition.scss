@@ -72,7 +72,7 @@
         }
 
         &[attr-can-send=true]::before {
-            background-color: rgb(0,119,248);
+            background-color: $from-me-color;
         }
 
         &::after {

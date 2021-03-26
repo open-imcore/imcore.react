@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { selectIsPrivacyMode, setPrivacyMode } from "../../../app/reducers/debug";
 import { store } from "../../../app/store";
+import DebugBoolean from "../presentation/DebugBoolean";
 
 export default function DebugSettings() {
     const isPrivacy = useSelector(selectIsPrivacyMode);
@@ -11,10 +12,7 @@ export default function DebugSettings() {
             <details>
                 <summary>Debug Settings</summary>
 
-                <label className="detail-row detail-checkbox">
-                    <span className="detail-label">Privacy Mode</span>
-                    <input type="checkbox" className="detail-info" checked={isPrivacy} onInput={e => store.dispatch(setPrivacyMode(!isPrivacy))} />
-                </label>
+                <DebugBoolean name="Privacy Mode" value={isPrivacy} onInput={newIsPrivacy => store.dispatch(setPrivacyMode(newIsPrivacy))} />
             </details>
         </React.Fragment>
     )
