@@ -40,9 +40,9 @@ const regex = createRegex()
 function IMTextChatItemIsJumbo(text: string): boolean {
     if (emojiCount(text) > 3) return false
 
-    return text.replace(/s/g, "").replace(regex, "").length === 0
+    return text.replace(/\s/g, "").replace(regex, "").length === 0
 }
 
 export function IMItemIsJumbo(item: AnyChatItemModel): boolean {
-    return item.type === ChatItemType.text && IMTextChatItemIsJumbo(item.payload.text)
+    return item.type === ChatItemType.text && !item.payload.subject && IMTextChatItemIsJumbo(item.payload.text)
 }
