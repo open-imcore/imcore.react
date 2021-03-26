@@ -1,5 +1,4 @@
-$not-from-me-color: rgb(229,229,234);
-$from-me-color: blue;
+@import "../../variables";
 
 :root {
     --imessage-gradient: linear-gradient(rgb(86,196,250), rgb(0,119,248));

@@ -1,10 +1,10 @@
 import "../../../styles/transcript/Composition.scss";
 import "prosemirror-view/style/prosemirror.css";
 
-import React, { useContext, useLayoutEffect, useRef } from "react";
+import React, { useCallback, useContext, useLayoutEffect, useRef, useState } from "react";
 
 import { useProseMirror, ProseMirror, Handle } from "use-prosemirror";
-import { EditorState, Plugin } from "prosemirror-state";
+import { EditorState, Plugin, Transaction } from "prosemirror-state";
 import { keymap } from "prosemirror-keymap";
 import { splitBlock, baseKeymap } from "prosemirror-commands";
 import { apiClient } from "../../../app/connection";
@@ -28,6 +28,23 @@ let currentChat: ChatRepresentation | null = null;
 
 const IMTypingLedger: Map<string, boolean> = new Map();
 
+async function fireSendMessage(state: EditorState, dispatch?: ((tr: Transaction<any>) => void) | undefined): Promise<EditorState> {
+    if (!currentChat) return state;
+
+    const chat = currentChat;
+    
+    await sendMessage(state.doc, chat);
+
+    IMTypingLedger.set(chat.id, false);
+
+    const transaction = state.tr.delete(0, state.doc.content.size);
+
+    if (dispatch) dispatch(transaction);
+    else state = state.apply(transaction);
+
+    return state;
+}
+
 /**
  * Main composition view for chat views
  */
@@ -46,6 +63,8 @@ export default function Composition() {
         setEditorView(editorView.current);
     }, [editorView]);
 
+    const [canSend, setCanSend] = useState(false);
+
     const [state, setState] = useProseMirror({
         schema: IMProseSchema,
         plugins: [
@@ -54,12 +73,16 @@ export default function Composition() {
             new Plugin({
                 state: {
                     apply(_, __, ___, newState) {
+                        const isEmpty = documentIsEmpty(newState.doc)
+
+                        setCanSend(!isEmpty)
+
                         if (!isVisible) return
                         if (!currentChat) return
 
                         const chatID = currentChat.id;
 
-                        if (documentIsEmpty(newState.doc)) {
+                        if (isEmpty) {
                             if (IMTypingLedger.get(chatID)) {
                                 apiClient.chats.setTyping(chatID, false).catch(() => {
                                     IMTypingLedger.set(chatID, true);
@@ -88,19 +111,7 @@ export default function Composition() {
                 "Shift-Enter": splitBlock,
                 "Backspace": baseKeymap["Backspace"],
                 "Enter": (state: EditorState, dispatch) => {
-                    (async () => {
-                        if (!currentChat) return;
-
-                        const chat = currentChat;
-                        
-                        await sendMessage(state.doc, chat);
-
-                        IMTypingLedger.set(chat.id, false);
-
-                        if (dispatch) {
-                            dispatch(state.tr.delete(0, state.doc.content.size));
-                        }
-                    })();
+                    fireSendMessage(state, dispatch);
             
                     return false;
                 }
@@ -110,8 +121,9 @@ export default function Composition() {
 
     return (
         <div className="composition">
-            <ProseMirror className="composition-editor" state={state} onChange={setState} ref={editorView} />
             <div className="devtools-trigger" onClick={() => store.dispatch(setShowDevtools(!showingDevtools))} />
+            <ProseMirror className="composition-editor" state={state} onChange={setState} ref={editorView} />
+            <div attr-can-send={canSend.toString()} className="send-composition" onClick={() => fireSendMessage(state).then(state => setState(state))} />
         </div>
     )
 }
