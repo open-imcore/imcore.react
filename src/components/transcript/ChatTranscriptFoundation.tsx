@@ -61,7 +61,7 @@ function createTimestampMessage({ service, time, chatID, id }: MessageRepresenta
     }
 }
 
-function prepareMessagesForPresentation(messages: Record<string, MessageRepresentation>, reverse: boolean): MessageRepresentation[] {
+function prepareMessagesForPresentation(messages: Record<string, MessageRepresentation>, reverse: boolean, injectTimestamps: boolean): MessageRepresentation[] {
     const preparedMessages: MessageRepresentation[] = [];
 
     for (const messageID in messages) {
@@ -76,16 +76,18 @@ function prepareMessagesForPresentation(messages: Record<string, MessageRepresen
         return m1.time - m2.time;
     });
 
-    for (let i = 0; i < preparedMessages.length; i++) {
-        const message = preparedMessages[i];
-
-        if (message.isTypingMessage || message[TIMESTAMP_ASSOCIATION]) continue;
-
-        const prevMessage = preparedMessages[i - 1];
-
-        if (prevMessage && messagesAreCloseEnough(prevMessage, message)) continue;
-
-        preparedMessages.splice(i, 0, createTimestampMessage(message));
+    if (injectTimestamps) {
+        for (let i = 0; i < preparedMessages.length; i++) {
+            const message = preparedMessages[i];
+    
+            if (message.isTypingMessage || message[TIMESTAMP_ASSOCIATION]) continue;
+    
+            const prevMessage = preparedMessages[i - 1];
+    
+            if (prevMessage && messagesAreCloseEnough(prevMessage, message)) continue;
+    
+            preparedMessages.splice(i, 0, createTimestampMessage(message));
+        }
     }
 
     if (reverse) preparedMessages.reverse();
@@ -93,7 +95,7 @@ function prepareMessagesForPresentation(messages: Record<string, MessageRepresen
     return preparedMessages;
 }
 
-export function useMessages(chatID?: string, reverse = false): [MessageRepresentation[], () => Promise<void>] {
+export function useMessages(chatID?: string, reverse = false, injectTimestamps = true): [MessageRepresentation[], () => Promise<void>] {
     const allMessages = useSelector(selectMessages)
     const reloading = useRef(false)
 
@@ -105,7 +107,7 @@ export function useMessages(chatID?: string, reverse = false): [MessageRepresent
         }
     }, [messages, chatID])
 
-    const processedMessages = useMemo(() => prepareMessagesForPresentation(messages, reverse), [JSON.stringify(messages)]);
+    const processedMessages = useMemo(() => prepareMessagesForPresentation(messages, reverse, injectTimestamps), [JSON.stringify(messages)]);
 
     return [
         processedMessages,
@@ -121,10 +123,10 @@ export function useMessages(chatID?: string, reverse = false): [MessageRepresent
     ] as [MessageRepresentation[], () => Promise<void>]
 }
 
-export function useCurrentMessages(reverse = false) {
+export function useCurrentMessages(reverse = false, injectTimestamps = true) {
     const chat = useCurrentChat()
 
-    return useMessages(chat?.id, reverse)
+    return useMessages(chat?.id, reverse, injectTimestamps)
 }
 
 export function useCurrentChat(): ChatRepresentation | undefined {

@@ -7,9 +7,11 @@ import IMMakeLog from "../util/log"
 
 const Log = IMMakeLog("IMServerConnection")
 
-export const socketClient = new IMWebSocketClient("ws://127.0.0.1:8090/stream")
+const endpoint = "192.168.86.200"
+
+export const socketClient = new IMWebSocketClient(`ws://${endpoint}:8090/stream`)
 export const apiClient = new IMHTTPClient({
-    baseURL: "http://127.0.0.1:8090"
+    baseURL: `http://${endpoint}:8090`
 })
 
 function receiveChangedChat(chat: ChatRepresentation) {

@@ -9,4 +9,8 @@
   height: 100vh;
 
   max-height: 100vh;
+
+  &[attr-showing-devtools=true] {
+    grid-template-columns: 285px minmax(0, 1fr) 285px;
+  }
 }

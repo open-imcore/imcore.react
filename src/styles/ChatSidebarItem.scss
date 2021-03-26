@@ -3,7 +3,7 @@
 @mixin line-clamp($lines) {
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
+    display: -webkit-inline-box;
     -webkit-line-clamp: $lines; /* number of lines to show */
     -webkit-box-orient: vertical;
 }
@@ -88,8 +88,8 @@
         font-size: 12px;
 
         .chat-sidebar-item--title {
-            display: flex;
-            flex-flow: row;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) max-content;
 
             .chat-sidebar-item--title-label {
                 @include bold;
@@ -111,6 +111,36 @@
             white-space: pre-line;
 
             color: $chat-sidebar-description;
+        }
+    }
+}
+
+[attr-privacy-mode=true] .chat-sidebar-item {
+    font-family: "Segoe UI Symbol";
+
+    .chat-sidebar-item--title-label {
+        background: currentColor;
+        width: fit-content;
+    }
+
+    .chat-sidebar-item--summary {
+        background: currentColor;
+        width: fit-content;
+    }
+
+    .chat-sidebar-item--title-timestamp {
+        display: flex;
+        align-content: center;
+        justify-items: center;
+
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            height: 90%;
+            width: 100%;
+            background: currentColor;
         }
     }
 }

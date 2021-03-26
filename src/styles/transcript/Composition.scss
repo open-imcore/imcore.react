@@ -5,6 +5,37 @@
     display: flex;
     flex-flow: row;
 
+    & > .devtools-trigger {
+        width: 25px;
+        height: 25px;
+        background: var(--not-from-me-background);
+        border-radius: 50%;
+
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: center;
+
+        cursor: pointer;
+
+        &::after {
+            content: '';
+            width: 50%;
+            height: 50%;
+            background: white;
+            border-radius: 50%;
+
+            transition: transform 0.25s cubic-bezier(.27,-0.16,.42,1.22);
+            transform: scale(1);
+        }
+
+        &:hover {
+            &::after {
+                transform: scale(1.25);
+            }
+        }
+    }
+
     & > .composition-editor {
         flex: 1;
 

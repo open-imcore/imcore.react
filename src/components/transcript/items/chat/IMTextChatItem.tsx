@@ -81,11 +81,11 @@ function componentForPart(part: TextPart) {
 function IMTextChatItem(ctx: PropsWithoutRef<IMTextChatItemRenderContext>) {
     return (
         <React.Fragment>
-            {ctx.index === 0 && ctx.message.messageSubject ? (
+            {ctx.item.subject ? (
                 <React.Fragment>
                     <IMTextPartAttributeFormatter {...ctx} part={{
                         type: TextPartType.text,
-                        string: ctx.message.messageSubject
+                        string: ctx.item.subject
                     }} directives={[IMTextPartFormattingDirective.bold]} />
                     <br />
                 </React.Fragment>

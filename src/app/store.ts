@@ -3,13 +3,15 @@ import chatReducer from './reducers/chats'
 import messagesReducer from './reducers/messages'
 import contactsReducer from './reducers/contacts'
 import presenceReducer from './reducers/presence'
+import debugReducer from './reducers/debug'
 
 export const store = configureStore({
   reducer: {
     chats: chatReducer,
     messages: messagesReducer,
     contacts: contactsReducer,
-    presence: presenceReducer
+    presence: presenceReducer,
+    debug: debugReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

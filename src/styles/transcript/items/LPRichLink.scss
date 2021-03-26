@@ -98,3 +98,25 @@
         }
     }
 }
+
+[attr-privacy-mode=true] .lp-balloon {
+    .lp-caption-section > * {
+        background: currentColor;
+    }
+
+    .lp-caption-icon {
+        object-position: 100000px;
+        background: white;   
+    }
+
+    .lp-media {
+        & > video, & > img {
+            opacity: 0;
+        }
+    }
+
+    .lp-quoted-text {
+        text-shadow: 0 0 10px black;
+        color: rgba(0, 0, 0, 0);
+    }
+}

@@ -1,0 +1,75 @@
+.detail-row {
+    font-size: 14px;
+
+    & > .detail-label {
+        display: block;
+        font-weight: 500;
+    }
+
+    &.detail-checkbox {
+        display: flex;
+        flex-flow: row-reverse;
+        justify-content: flex-end;
+        align-items: center;
+
+        cursor: pointer;
+
+        & > input[type=checkbox] {
+            margin-right: 5px;
+        }
+    }
+
+    &.detail-checkbox > .detail-label {
+        display: inline-block;
+    }
+
+    & > .detail-info {
+        font-size: 1.1em;
+    }
+}
+
+.debug-details {
+    display: grid;
+    grid-auto-flow: row;
+    row-gap: 5px;
+}
+
+details {
+    padding: 5px 10px 5px 10px;
+
+    & > summary {
+        list-style: none;
+        min-height: 1.2em;
+        cursor: pointer;
+
+        margin: 0 -10px;
+        padding: 5px 10px;
+
+        color: rgba(0, 0, 0, 0.6);
+
+        &:hover {
+            color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+    }
+
+    &[open] > summary {
+        margin: 0 -10px 5px -10px;
+        
+        color: black;
+        background-color: rgba(0, 0, 0, 0.1);
+
+        &:hover {
+            color: black;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    }
+}

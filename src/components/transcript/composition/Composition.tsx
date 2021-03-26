@@ -21,6 +21,8 @@ import { IMProseSchema } from "./schema";
 import sendMessage, { documentIsEmpty } from "./send-message";
 import { useSelector } from "react-redux";
 import { selectVisibilityState } from "../../../app/reducers/presence";
+import { selectShowingDevtools, setShowDevtools } from "../../../app/reducers/debug";
+import { store } from "../../../app/store";
 
 let currentChat: ChatRepresentation | null = null;
 
@@ -36,6 +38,8 @@ export default function Composition() {
     const dragAndDropPlugin = makeDragAndDropPlugin(IMProseSchema);
     const editorView = useRef(null as Handle | null);
     const isVisible = useSelector(selectVisibilityState);
+
+    const showingDevtools = useSelector(selectShowingDevtools);
 
     useLayoutEffect(() => {
         // synchronize with MCUtils
@@ -107,6 +111,7 @@ export default function Composition() {
     return (
         <div className="composition">
             <ProseMirror className="composition-editor" state={state} onChange={setState} ref={editorView} />
+            <div className="devtools-trigger" onClick={() => store.dispatch(setShowDevtools(!showingDevtools))} />
         </div>
     )
 }

@@ -35,3 +35,21 @@
         }
     }
 }
+
+.cn-bubble.cn-bubble-empty, [attr-privacy-mode=true] .cn-bubble {
+    &::after {
+        content: '';
+        background-image: url(/assets/contact.silhouette.png);
+        background-size: 90%;
+        background-position: bottom center;
+        background-repeat: no-repeat;
+        height: 100%;
+        display: block;
+        width: 100%;
+    }
+}
+
+[attr-privacy-mode=true] .cn-bubble {
+    background-image: linear-gradient($contact-silhouette-gradient-start, $contact-silhouette-gradient-end) !important;
+    font-size: 0;
+}

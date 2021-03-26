@@ -1,9 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.scss';
 import { apiClient } from "./app/connection";
+import { selectIsPrivacyMode, selectShowingDevtools } from './app/reducers/debug';
 import ChatSidebar from './components/ChatSidebar';
 import ChatTranscript from './components/transcript/ChatTranscript';
+import DevtoolsRoot from "./components/devtools/DevtoolsRoot";
 
 function insertStyles() {
   const elm = document.getElementById('generated-styles') || document.head.appendChild(document.createElement('style'));
@@ -20,12 +23,20 @@ insertStyles()
 apiClient.getResourceMode().then(mode => document.body.classList.add(mode))
 
 function App() {
+  const showingDevtools = useSelector(selectShowingDevtools);
+  const isPrivacyMode = useSelector(selectIsPrivacyMode);
+
   return (
     <Router>
-      <div className="app-root">
+      <div className="app-root" attr-showing-devtools={showingDevtools.toString()} attr-privacy-mode={isPrivacyMode.toString()}>
         <ChatSidebar />
         <Route path={`/chats/:chatID`}>
           <ChatTranscript />
+          {
+            showingDevtools ? (
+              <DevtoolsRoot />
+            ) : null
+          }
         </Route>
       </div>
     </Router>
