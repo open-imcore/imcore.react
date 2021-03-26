@@ -2,6 +2,7 @@ import { AnyChatItemModel, ChatItemType, ChatRepresentation, ContactRepresentati
 import { chatChanged, chatsChanged, chatDeleted, chatMessagesReceived, chatPropertiesChanged } from "./reducers/chats"
 import { messagesChanged, messagesDeleted, statusChanged } from "./reducers/messages"
 import { contactsChanged, contactChanged, contactDeleted, strangersReceived } from "./reducers/contacts"
+import TypingAggregator from "./typing-aggregator";
 import { store } from "./store"
 import IMMakeLog from "../util/log"
 
@@ -31,6 +32,7 @@ export function receiveItems(items: AnyChatItemModel[]) {
 
     store.dispatch(messagesChanged(messages))
     store.dispatch(chatMessagesReceived(messages))
+    TypingAggregator.sharedInstance.messagesReceived(messages);
 }
 
 socketClient.on(EventType.itemsReceived, ({ items }) => receiveItems(items))

@@ -22,6 +22,10 @@ export const messagesSlice = createSlice({
 
                 messageStorage[message.id] = message;
 
+                state.messageToChatID[message.id] = message.chatID;
+
+                if (!message.associatedMessageID) continue;
+                
                 for (const item of message.items) {
                     switch (item.type) {
                         case ChatItemType.acknowledgment:
@@ -41,10 +45,6 @@ export const messagesSlice = createSlice({
                     }
                 }
             }
-
-            Object.assign(state.messageToChatID, messages.reduce((acc, { id, chatID }) => Object.assign(acc, {
-                [id]: chatID
-            }), {}));
         },
         messagesDeleted: (state, { payload: messageIDs }: PayloadAction<string[]>) => {
             for (const messageID of messageIDs) {
@@ -52,6 +52,13 @@ export const messagesSlice = createSlice({
                 if (!chatID || !state.messages[chatID]) return;
                 delete state.messages[chatID][messageID];
             }
+        },
+        stopTyping: (state, { payload: messageID }: PayloadAction<string>) => {
+            const chatID = state.messageToChatID[messageID];
+            if (!chatID || !state.messages[chatID]?.[messageID]) return;
+            const message = state.messages[chatID][messageID];
+
+            if (message.items.some(item => item.type === ChatItemType.typing)) delete state.messages[chatID][messageID];
         },
         statusChanged(state, { payload: { chatID, id, timeDelivered, timePlayed, timeRead, time } }: PayloadAction<ItemStatusChangedEvent>) {
             console.log({
