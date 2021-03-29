@@ -1,8 +1,8 @@
-import { DateTime } from "luxon"
-import { useEffect, useLayoutEffect, useState } from "react"
+import { DateTime } from "luxon";
+import { useLayoutEffect, useState } from "react";
 
 export function useFormattedReceipt(millis: number | null) {
-    const [formattedReceipt, setFormattedReceipt] = useState(null as string | null)
+    const [formattedReceipt, setFormattedReceipt] = useState(null as string | null);
 
     useLayoutEffect(() => {
         if (millis === null) {
@@ -10,17 +10,17 @@ export function useFormattedReceipt(millis: number | null) {
             return;
         }
 
-        const parsed = DateTime.fromMillis(millis)
+        const parsed = DateTime.fromMillis(millis);
         if (parsed.hasSame(DateTime.local(), "day")) {
-            setFormattedReceipt(parsed.toLocaleString(DateTime.TIME_SIMPLE))
+            setFormattedReceipt(parsed.toLocaleString(DateTime.TIME_SIMPLE));
         } else if (parsed.hasSame(DateTime.local().minus({ day: 1 }), "day")) {
-            setFormattedReceipt(parsed.toRelativeCalendar())
+            setFormattedReceipt(parsed.toRelativeCalendar());
         } else {
-            setFormattedReceipt(parsed.toLocaleString(DateTime.DATE_SHORT))
+            setFormattedReceipt(parsed.toLocaleString(DateTime.DATE_SHORT));
         }
     }, [millis]);
 
-    return formattedReceipt
+    return formattedReceipt;
 }
 
 export function useFormattedTimestamp(millis: number | null) {
@@ -36,11 +36,13 @@ export function useFormattedTimestamp(millis: number | null) {
 
         const now = DateTime.local();
 
+        let date: string;
+
         if (parsed.hasSame(now, "day") || parsed.hasSame(now.minus({ day: 1 }), "day")) {
-            var date = parsed.toRelativeCalendar() || parsed.toLocaleString(DateTime.DATE_SHORT);
-            date = date.replace(date[0], date[0].toUpperCase())
+            date = parsed.toRelativeCalendar() || parsed.toLocaleString(DateTime.DATE_SHORT);
+            date = date.replace(date[0], date[0].toUpperCase());
         } else {
-            var date = parsed.toLocaleString(DateTime.DATE_SHORT);
+            date = parsed.toLocaleString(DateTime.DATE_SHORT);
         }
 
         setFormattedTimestamp({

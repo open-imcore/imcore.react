@@ -12,5 +12,5 @@ export default function DebugDetails({ details }: { details: [Stringable, String
                 </div>
             ))}
         </div>
-    )
+    );
 }

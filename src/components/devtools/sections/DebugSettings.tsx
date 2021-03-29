@@ -15,5 +15,5 @@ export default function DebugSettings() {
                 <DebugBoolean name="Privacy Mode" value={isPrivacy} onInput={newIsPrivacy => store.dispatch(setPrivacyMode(newIsPrivacy))} />
             </details>
         </React.Fragment>
-    )
+    );
 }

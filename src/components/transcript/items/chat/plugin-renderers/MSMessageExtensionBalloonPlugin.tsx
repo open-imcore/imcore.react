@@ -13,7 +13,7 @@ function makeText(text: string): RichLinkCpationText {
     return {
         text,
         textScale: 1
-    }
+    };
 }
 
 function generateCaptionBar({ caption, subcaption, secondarySubcaption, tertiarySubcaption }: MessagesExtensionLayoutInfo): RichLinkCaptionBar | undefined {
@@ -28,11 +28,11 @@ function generateCaptionBar({ caption, subcaption, secondarySubcaption, tertiary
             leading: subcaption ? makeText(subcaption) : undefined,
             trailing: tertiarySubcaption ? makeText(tertiarySubcaption) : undefined
         } : undefined
-    }
+    };
 }
 
 function generateMediaBottomCaptionBar({ imageTitle, imageSubtitle }: MessagesExtensionLayoutInfo): RichLinkCaptionBar | undefined {
-    if (!imageTitle && !imageSubtitle) return
+    if (!imageTitle && !imageSubtitle) return;
 
     return {
         top: imageTitle ? {
@@ -41,18 +41,18 @@ function generateMediaBottomCaptionBar({ imageTitle, imageSubtitle }: MessagesEx
         bottom: imageSubtitle ? {
             leading: makeText(imageSubtitle)
         } : undefined
-    }
+    };
 }
 
 function generateMediaTopCaptionBar(appIcon: string | undefined): (RichLinkCaptionBar & { leadingIcon: { src: string } }) | undefined {
-    if (!appIcon) return
+    if (!appIcon) return;
 
     return {
         leadingIcon: {
             type: 99,
             src: appIcon
         }
-    }
+    };
 }
 
 function generateRichLink({ layoutInfo, appName, appIcon }: MessagesExtension, attachments: AttachmentRepresentation[]): RichLink {
@@ -64,11 +64,11 @@ function generateRichLink({ layoutInfo, appName, appIcon }: MessagesExtension, a
             attachmentIndex: 0,
             type: 0
         } : undefined
-    }
+    };
 }
 
 export default function MSMessageExtensionBalloonPlugin({ extension, attachments, changed, id }: MSMessageExtensionRenderingContext) {
-    if (!extension) return null
+    if (!extension) return null;
 
-    return <LPBalloon className="lp-message-extension-compat" id={id} richLink={generateRichLink(extension, attachments)} attachments={attachments} changed={changed} />
+    return <LPBalloon className="lp-message-extension-compat" id={id} richLink={generateRichLink(extension, attachments)} attachments={attachments} changed={changed} />;
 }

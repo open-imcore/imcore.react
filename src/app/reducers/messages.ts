@@ -10,10 +10,10 @@ interface MessagesState {
 const initialState: MessagesState = {
     messages: {},
     messageToChatID: {}
-}
+};
 
 export const messagesSlice = createSlice({
-    name: 'messages',
+    name: "messages",
     initialState,
     reducers: {
         messagesChanged: (state, { payload: messages }: PayloadAction<MessageRepresentation[]>) => {
@@ -63,13 +63,13 @@ export const messagesSlice = createSlice({
         statusChanged(state, { payload: { chatID, id, timeDelivered, timePlayed, timeRead, time } }: PayloadAction<ItemStatusChangedEvent>) {
             console.log({
                 chatID, id, time, timeDelivered, timeRead, timePlayed
-            })
+            });
         }
     }
 });
 
 export const { messagesChanged, messagesDeleted, statusChanged } = messagesSlice.actions;
 
-export const selectMessages = (state: RootState) => state.messages.messages
+export const selectMessages = (state: RootState) => state.messages.messages;
 
 export default messagesSlice.reducer;

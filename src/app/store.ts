@@ -1,9 +1,9 @@
-import { configureStore, ThunkAction, Action, getDefaultMiddleware } from '@reduxjs/toolkit';
-import chatReducer from './reducers/chats'
-import messagesReducer from './reducers/messages'
-import contactsReducer from './reducers/contacts'
-import presenceReducer from './reducers/presence'
-import debugReducer from './reducers/debug'
+import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
+import chatReducer from "./reducers/chats";
+import contactsReducer from "./reducers/contacts";
+import debugReducer from "./reducers/debug";
+import messagesReducer from "./reducers/messages";
+import presenceReducer from "./reducers/presence";
 
 export const store = configureStore({
   reducer: {

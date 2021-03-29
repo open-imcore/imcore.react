@@ -12,5 +12,5 @@ export default function DebugBoolean({ name, value, onInput }: DebugBooleanConte
             <span className="detail-label">{name}</span>
             <input type="checkbox" className="detail-info" checked={value} onInput={e => onInput(!value)} />
         </label>
-    )
+    );
 }

@@ -1,35 +1,34 @@
-import { ChatRepresentation } from 'imcore-ajax-core';
-import { DateTime } from 'luxon';
-import React, { PropsWithChildren, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useFormattedHandles } from '../hooks/useFormattedHandles';
-import '../styles/ChatSidebarItem.scss';
-import ChatBubble from "./chat/ChatBubble";
+import { ChatRepresentation } from "imcore-ajax-core";
+import React, { PropsWithChildren, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { selectTypingStatus } from "../app/reducers/chats";
+import { RootState } from "../app/store";
+import { useFormattedHandles } from "../hooks/useFormattedHandles";
+import "../styles/ChatSidebarItem.scss";
 import { useFormattedReceipt } from "../util/receipt-formatting";
-import { useSelector } from 'react-redux';
-import { selectTypingStatus } from '../app/reducers/chats';
-import { RootState } from '../app/store';
-import IMTypingChatItem from './transcript/items/chat/IMTypingChatItem';
+import ChatBubble from "./chat/ChatBubble";
+import IMTypingChatItem from "./transcript/items/chat/IMTypingChatItem";
 
 function useLastMessageTime(chat: ChatRepresentation) {
-    return useFormattedReceipt(chat.lastMessageTime)
+    return useFormattedReceipt(chat.lastMessageTime);
 }
 
 function useChatName(chat: ChatRepresentation) {
-    const [chatName, setChatName] = useState(null as string | null)
-    const formattedHandles = useFormattedHandles(chat.participants)
+    const [chatName, setChatName] = useState(null as string | null);
+    const formattedHandles = useFormattedHandles(chat.participants);
 
     useEffect(() => {
-        setChatName(chat.displayName || null)
-    }, [chat])
+        setChatName(chat.displayName || null);
+    }, [chat]);
 
-    return chatName || formattedHandles.join(', ') || chat.id
+    return chatName || formattedHandles.join(", ") || chat.id;
 }
 
 function ChatSidebarItem({ chat, style }: PropsWithChildren<{ chat: ChatRepresentation, style?: object }>) {
-    const chatName = useChatName(chat)
-    const lastMessageTime = useLastMessageTime(chat)
-    const isTyping = useSelector(state => selectTypingStatus(state as RootState, chat.id))
+    const chatName = useChatName(chat);
+    const lastMessageTime = useLastMessageTime(chat);
+    const isTyping = useSelector(state => selectTypingStatus(state as RootState, chat.id));
 
     return (
         <Link to={`/chats/${chat.id}`} className="chat-sidebar-item" attr-unread-count={chat.unreadMessageCount} style={style}>
@@ -53,12 +52,12 @@ function ChatSidebarItem({ chat, style }: PropsWithChildren<{ chat: ChatRepresen
                                     <IMTypingChatItem />
                                 </div>
                             </div>
-                        ) : chat.lastMessage || ''
+                        ) : chat.lastMessage || ""
                     }
                 </span>
             </div>
         </Link>
-    )
+    );
 }
 
 export default ChatSidebarItem;

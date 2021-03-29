@@ -1,28 +1,22 @@
-import "../../../styles/transcript/Composition.scss";
-import "prosemirror-view/style/prosemirror.css";
-
-import React, { useCallback, useContext, useLayoutEffect, useRef, useState } from "react";
-
-import { useProseMirror, ProseMirror, Handle } from "use-prosemirror";
-import { EditorState, Plugin, Transaction } from "prosemirror-state";
+import { ChatRepresentation } from "imcore-ajax-core";
+import { baseKeymap, splitBlock } from "prosemirror-commands";
 import { keymap } from "prosemirror-keymap";
-import { splitBlock, baseKeymap } from "prosemirror-commands";
-import { apiClient } from "../../../app/connection";
-import { ChatContext } from "../ChatTranscriptFoundation";
-import { ChatRepresentation, MessagePartOptions } from "imcore-ajax-core";
-
-import { makePlaceholderPlugin } from "./plugins/PlaceholderPlugin";
-import { makeDragAndDropPlugin, uploadFileWithID } from "./plugins/DragAndDrop";
-
-import { nodeOnlyContainsText, setEditorView } from "./MCUtils";
-
-import { IMProseSchema } from "./schema";
-
-import sendMessage, { documentIsEmpty } from "./send-message";
+import { EditorState, Plugin, Transaction } from "prosemirror-state";
+import "prosemirror-view/style/prosemirror.css";
+import React, { useContext, useLayoutEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectVisibilityState } from "../../../app/reducers/presence";
+import { Handle, ProseMirror, useProseMirror } from "use-prosemirror";
+import { apiClient } from "../../../app/connection";
 import { selectShowingDevtools, setShowDevtools } from "../../../app/reducers/debug";
+import { selectVisibilityState } from "../../../app/reducers/presence";
 import { store } from "../../../app/store";
+import "../../../styles/transcript/Composition.scss";
+import { ChatContext } from "../ChatTranscriptFoundation";
+import { setEditorView } from "./MCUtils";
+import { makeDragAndDropPlugin } from "./plugins/DragAndDrop";
+import { makePlaceholderPlugin } from "./plugins/PlaceholderPlugin";
+import { IMProseSchema } from "./schema";
+import sendMessage, { documentIsEmpty } from "./send-message";
 
 let currentChat: ChatRepresentation | null = null;
 
@@ -73,12 +67,12 @@ export default function Composition() {
             new Plugin({
                 state: {
                     apply(_, __, ___, newState) {
-                        const isEmpty = documentIsEmpty(newState.doc)
+                        const isEmpty = documentIsEmpty(newState.doc);
 
-                        setCanSend(!isEmpty)
+                        setCanSend(!isEmpty);
 
-                        if (!isVisible) return
-                        if (!currentChat) return
+                        if (!isVisible) return;
+                        if (!currentChat) return;
 
                         const chatID = currentChat.id;
 
@@ -102,7 +96,7 @@ export default function Composition() {
                         
                         IMTypingLedger.set(chatID, true);
 
-                        return undefined
+                        return undefined;
                     },
                     init: () => undefined
                 }
@@ -125,5 +119,5 @@ export default function Composition() {
             <ProseMirror className="composition-editor" state={state} onChange={setState} ref={editorView} />
             <div attr-can-send={canSend.toString()} className="send-composition" onClick={() => fireSendMessage(state).then(state => setState(state))} />
         </div>
-    )
+    );
 }

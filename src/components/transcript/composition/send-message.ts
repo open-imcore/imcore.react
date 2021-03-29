@@ -49,8 +49,8 @@ export default async function sendMessage(doc: ProsemirrorNode, chat: ChatRepres
                     type: "text",
                     details: node.textContent
                 }
-            })
-            return false
+            });
+            return false;
         }
         else if (node.isTextblock) {
             if (nodeOnlyContainsText(node)) {
@@ -79,9 +79,9 @@ export default async function sendMessage(doc: ProsemirrorNode, chat: ChatRepres
                         type: "text",
                         details: node.textContent
                     }
-                })
+                });
 
-                return false
+                return false;
             }
         }
         else if (node.type.name === "attachment") {
@@ -97,10 +97,10 @@ export default async function sendMessage(doc: ProsemirrorNode, chat: ChatRepres
                         type: "attachment",
                         details: id
                     }
-                })
+                });
             })());
 
-            return false
+            return false;
         }
     });
 

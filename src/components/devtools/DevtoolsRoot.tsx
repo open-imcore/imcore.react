@@ -1,7 +1,7 @@
 import React from "react";
-import Statistics from "./sections/Statistics";
 import DebugSettings from "./sections/DebugSettings";
 import Settings from "./sections/Settings";
+import Statistics from "./sections/Statistics";
 
 export default function DevtoolsRoot() {
     return (
@@ -10,5 +10,5 @@ export default function DevtoolsRoot() {
             <DebugSettings />
             <Settings />
         </div>
-    )
+    );
 }

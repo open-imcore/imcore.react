@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ChatConfigurationRepresentation, ChatItemRepresentation, ChatItemType, ChatRepresentation, MessageRepresentation } from 'imcore-ajax-core'
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ChatConfigurationRepresentation, ChatItemType, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
 import { RootState } from "../store";
 
 interface ChatState {
@@ -22,7 +22,7 @@ const acceptedLastMessageTypes = [
 ];
 
 export const chatSlice = createSlice({
-    name: 'chats',
+    name: "chats",
     initialState,
     reducers: {
         chatsChanged: (chats, { payload: newChats }: PayloadAction<ChatRepresentation[]>) => {
@@ -48,7 +48,7 @@ export const chatSlice = createSlice({
                 Object.assign(chats.byID[chatID], {
                     lastMessage: description,
                     lastMessageTime: time
-                } as Partial<ChatRepresentation>)
+                } as Partial<ChatRepresentation>);
             }
         },
         setTypingStatus: (chats, { payload: { chatID, typing } }: PayloadAction<{ chatID: string; typing: boolean; }>) => {
@@ -57,7 +57,7 @@ export const chatSlice = createSlice({
         chatPropertiesChanged: (chats, { payload: { id, ...properties } }: PayloadAction<ChatConfigurationRepresentation>) => {
             if (!chats.byID[id]) return;
 
-            Object.assign(chats.byID[id], properties)
+            Object.assign(chats.byID[id], properties);
         }
     }
 });

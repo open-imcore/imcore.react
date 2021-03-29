@@ -1,24 +1,23 @@
-import { AnyChatItemModel, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core"
-import { createContext, useEffect, useMemo, useRef } from "react"
-import { useSelector } from "react-redux"
-import { useParams } from "react-router"
-import { apiClient } from "../../app/connection"
-import { chatMessagesReceived, selectChats } from "../../app/reducers/chats"
-import { messagesChanged, selectMessages } from "../../app/reducers/messages"
-import { selectVisibilityState } from "../../app/reducers/presence"
-import { store } from "../../app/store"
-import { isChatItem } from "./items/IMChatItem"
-import { DATE_SEPARATOR_TYPE, isTranscriptItem } from "./items/IMTranscriptItem"
-import { messageIsEmpty } from "./items/Message"
+import { AnyChatItemModel, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
+import { createContext, useEffect, useMemo, useRef } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router";
+import { apiClient } from "../../app/connection";
+import { chatMessagesReceived, selectChats } from "../../app/reducers/chats";
+import { messagesChanged, selectMessages } from "../../app/reducers/messages";
+import { selectVisibilityState } from "../../app/reducers/presence";
+import { store } from "../../app/store";
+import { DATE_SEPARATOR_TYPE } from "./items/IMTranscriptItem";
+import { messageIsEmpty } from "./items/Message";
 
 export async function reload(chatID: string, before?: string) {
     const recentMessages = await apiClient.chats.fetchRecentMessages(chatID, {
         limit: 100,
         before
-    })
+    });
     
-    store.dispatch(messagesChanged(recentMessages))
-    store.dispatch(chatMessagesReceived(recentMessages))
+    store.dispatch(messagesChanged(recentMessages));
+    store.dispatch(chatMessagesReceived(recentMessages));
 }
 
 export const ChatContext = createContext<{ chat: ChatRepresentation | null }>({ chat: null });
@@ -58,7 +57,7 @@ function createTimestampMessage({ service, time, chatID, id }: MessageRepresenta
         flags: 0,
         fromMe: false,
         [TIMESTAMP_ASSOCIATION]: id
-    }
+    };
 }
 
 function prepareMessagesForPresentation(messages: Record<string, MessageRepresentation>, reverse: boolean, injectTimestamps: boolean): MessageRepresentation[] {
@@ -96,16 +95,16 @@ function prepareMessagesForPresentation(messages: Record<string, MessageRepresen
 }
 
 export function useMessages(chatID?: string, reverse = false, injectTimestamps = true): [MessageRepresentation[], () => Promise<void>] {
-    const allMessages = useSelector(selectMessages)
-    const reloading = useRef(false)
+    const allMessages = useSelector(selectMessages);
+    const reloading = useRef(false);
 
-    const messages = allMessages[chatID || '']
+    const messages = allMessages[chatID || ""];
 
     useEffect(() => {
         if (!messages && chatID) {
-            reload(chatID)
+            reload(chatID);
         }
-    }, [messages, chatID])
+    }, [messages, chatID]);
 
     const processedMessages = useMemo(() => prepareMessagesForPresentation(messages, reverse, injectTimestamps), [JSON.stringify(messages)]);
 
@@ -120,13 +119,13 @@ export function useMessages(chatID?: string, reverse = false, injectTimestamps =
             await reload(chatID, lastMessageID);
             reloading.current = false;
         }
-    ] as [MessageRepresentation[], () => Promise<void>]
+    ] as [MessageRepresentation[], () => Promise<void>];
 }
 
 export function useCurrentMessages(reverse = false, injectTimestamps = true) {
-    const chat = useCurrentChat()
+    const chat = useCurrentChat();
 
-    return useMessages(chat?.id, reverse, injectTimestamps)
+    return useMessages(chat?.id, reverse, injectTimestamps);
 }
 
 export function useCurrentChat(): ChatRepresentation | undefined {
@@ -134,7 +133,7 @@ export function useCurrentChat(): ChatRepresentation | undefined {
         chatID: string
     }>();
 
-    const chat = useSelector(selectChats)[chatID]
+    const chat = useSelector(selectChats)[chatID];
 
     const isVisible = useSelector(selectVisibilityState);
 
@@ -144,5 +143,5 @@ export function useCurrentChat(): ChatRepresentation | undefined {
         }
     }, [chat]);
 
-    return chat
+    return chat;
 }

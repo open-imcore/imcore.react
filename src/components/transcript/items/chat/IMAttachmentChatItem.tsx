@@ -1,8 +1,8 @@
 import { AttachmentChatItemRepresentation, AttachmentRepresentation } from "imcore-ajax-core";
-import React, { PropsWithoutRef, useEffect } from "react";
-import { IMItemRenderingContext } from "../Message";
-import { apiClient } from "../../../../app/connection"
+import React, { PropsWithoutRef } from "react";
+import { apiClient } from "../../../../app/connection";
 import RecycledElementRenderer from "../../Recycler";
+import { IMItemRenderingContext } from "../Message";
 
 interface IMAttachmentChatItemRenderContext extends IMItemRenderingContext<Omit<AttachmentChatItemRepresentation, "metadata"> & { metadata?: CanaryAttachmentRepresentation }> {}
 
@@ -24,11 +24,11 @@ enum IMAttachmentRenderingFormat {
 function ERComputeRenderingFormat({ metadata }: AttachmentChatItemRepresentation) {
     switch (metadata?.mime?.substring(0, 5) || "") {
         case "image":
-            return IMAttachmentRenderingFormat.image
+            return IMAttachmentRenderingFormat.image;
         case "video":
-            return IMAttachmentRenderingFormat.video
+            return IMAttachmentRenderingFormat.video;
         default:
-            return IMAttachmentRenderingFormat.file
+            return IMAttachmentRenderingFormat.file;
     }
 }
 
@@ -70,22 +70,22 @@ const IMVideoAttachmentRenderer = RecycledElementRenderer(({ width, height, url 
     el.addEventListener("loadedmetadata", changed);
 }, ({ changed }, el) => {
     el.removeEventListener("loadedmetadata", changed);
-})
+});
 
 function IMRenderingImplementation(item: IMAttachmentChatItemRenderContext["item"]) {
     switch (ERComputeRenderingFormat(item)) {
         case IMAttachmentRenderingFormat.image:
-            return IMImageAttachmentRenderer
+            return IMImageAttachmentRenderer;
         case IMAttachmentRenderingFormat.video:
-            return IMVideoAttachmentRenderer
+            return IMVideoAttachmentRenderer;
         default:
-            return null
+            return null;
     }
 }
 
 function IMAttachmentChatItem({ item, message, changed }: PropsWithoutRef<IMAttachmentChatItemRenderContext>) {
-    const url = apiClient.attachmentURL(item.transferID)
-    const { width, height } = item.metadata?.size || {}
+    const url = apiClient.attachmentURL(item.transferID);
+    const { width, height } = item.metadata?.size || {};
 
     const RenderingImplementation = IMRenderingImplementation(item);
 
@@ -96,4 +96,4 @@ function IMAttachmentChatItem({ item, message, changed }: PropsWithoutRef<IMAtta
     );
 }
 
-export default React.memo(IMAttachmentChatItem, ({ item: prevItem }, { item: newItem }) => JSON.stringify(prevItem) === JSON.stringify(newItem))
+export default React.memo(IMAttachmentChatItem, ({ item: prevItem }, { item: newItem }) => JSON.stringify(prevItem) === JSON.stringify(newItem));

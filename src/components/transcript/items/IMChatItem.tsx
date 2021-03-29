@@ -1,18 +1,18 @@
-import React, { PropsWithChildren, useMemo } from "react";
 import { AnyChatItemModel, ChatItemType, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
-import { IMItemRenderingContext } from "./Message";
-import IMTextChatItem from "./chat/IMTextChatItem";
+import React, { PropsWithChildren, useMemo } from "react";
+import "../../../styles/transcript/items/IMChatItem.scss";
 import IMAttachmentChatItem from "./chat/IMAttachmentChatItem";
 import IMPluginChatItem from "./chat/IMPluginChatItem";
-import "../../../styles/transcript/items/IMChatItem.scss";
-import { extractAcknowledgments, IMItemIsJumbo } from "./IMChatItem.Foundation"
+import IMTextChatItem from "./chat/IMTextChatItem";
 import IMTypingChatItem from "./chat/IMTypingChatItem";
+import { extractAcknowledgments, IMItemIsJumbo } from "./IMChatItem.Foundation";
+import { IMItemRenderingContext } from "./Message";
 
 type ChatItemComponentRenderer = ((opts: {
-    item: AnyChatItemModel['payload'],
+    item: AnyChatItemModel["payload"],
     message: MessageRepresentation,
     chat: ChatRepresentation,
-    changed: IMItemRenderingContext['changed'],
+    changed: IMItemRenderingContext["changed"],
     index: number
 }) => JSX.Element) | null;
 
@@ -28,7 +28,7 @@ function chatItemComponentForItem(item: AnyChatItemModel): ChatItemComponentRend
             return IMTypingChatItem as ChatItemComponentRenderer;
         case ChatItemType.sticker:
         default:
-            return null
+            return null;
     }
 }
 
@@ -38,16 +38,16 @@ export function isChatItem(item: AnyChatItemModel) {
 
 export default function IMChatItem({ item, message, chat, changed, index }: PropsWithChildren<IMItemRenderingContext>) {
     if (item.type === ChatItemType.plugin && item.payload.fallback) item = item.payload.fallback;
-    const Component = chatItemComponentForItem(item) as ChatItemComponentRenderer
+    const Component = chatItemComponentForItem(item) as ChatItemComponentRenderer;
 
-    const acknowledgments = extractAcknowledgments(item)
+    const acknowledgments = extractAcknowledgments(item);
     const isJumbo = useMemo(() => IMItemIsJumbo(item), [item]);
 
-    if (!Component) return null
+    if (!Component) return null;
 
     return (
         <>
-            <div className={`chat-item-container${isJumbo ? ' chat-item-jumbo' : ''}`} data-has-acknowledgments={(acknowledgments.length > 0).toString()}>
+            <div className={`chat-item-container${isJumbo ? " chat-item-jumbo" : ""}`} data-has-acknowledgments={(acknowledgments.length > 0).toString()}>
                 <div className="chat-item" data-item-type={item.type} attr-from-me={message.fromMe.toString()}>
                     <div className="item-inner">
                         <Component index={index} item={item.payload} message={message} chat={chat} changed={changed} key={item.payload.id} />
@@ -65,5 +65,5 @@ export default function IMChatItem({ item, message, chat, changed, index }: Prop
                 }
             </div>
         </>
-    )
+    );
 }

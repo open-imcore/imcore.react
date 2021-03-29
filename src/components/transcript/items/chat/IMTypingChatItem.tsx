@@ -7,5 +7,5 @@ export default React.memo(function IMTypingChatItem() {
             <div className="typing-dot-2" />
             <div className="typing-dot-3" />
         </div>
-    )
+    );
 });

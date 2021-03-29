@@ -1,5 +1,5 @@
 import { AttachmentRepresentation } from "imcore-ajax-core";
-import { Schema, DOMOutputSpec } from "prosemirror-model";
+import { DOMOutputSpec, Schema } from "prosemirror-model";
 import { Plugin } from "prosemirror-state";
 import { v4 as makeUUID } from "uuid";
 import { apiClient } from "../../../../app/connection";
@@ -15,7 +15,7 @@ const IMFileUploadCache: Map<string, AttachmentRepresentation> = new Map();
  * @returns promise of an AttachmentRepresentation
  */
 export async function uploadFileWithID(id: string): Promise<AttachmentRepresentation> {
-    if (IMFileUploadCache.has(id)) return IMFileUploadCache.get(id)!
+    if (IMFileUploadCache.has(id)) return IMFileUploadCache.get(id)!;
     else {
         const file = IMFileCache.get(id);
         if (!file) throw new Error("Attempt to upload an unregistered transfer");
@@ -51,7 +51,7 @@ export function elementForFileWithID(id: string): DOMOutputSpec {
         "attachment-type": type,
         "attachment-resolved": ((isImage || isVideo) ? IMImageBase64Cache.has(id) : true).toString(),
         name: file.name
-    }
+    };
 
     switch (type) {
         case "image":
@@ -60,7 +60,7 @@ export function elementForFileWithID(id: string): DOMOutputSpec {
                 // Thumbnail! Yay!
                 const src = IMImageBase64Cache.get(id)!;
 
-                return ["picture", baseProps, ["img", { src }]]
+                return ["picture", baseProps, ["img", { src }]];
             } // otherwise, still processing.
     }
 
@@ -105,12 +105,12 @@ export function makeDragAndDropPlugin(schema: Schema): Plugin {
                             });
                         }
 
-                        view.dispatch(node.scrollIntoView())
+                        view.dispatch(node.scrollIntoView());
                     }
 
                     return false;
                 }
             }
         }
-    })
+    });
 }

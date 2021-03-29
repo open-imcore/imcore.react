@@ -42,5 +42,5 @@ export const useInvertScrollDirection = (enabled: boolean) => {
 };
 
 export function isMacOS() {
-    return navigator.userAgent.toLowerCase().includes('mac os x')
+    return navigator.userAgent.toLowerCase().includes("mac os x");
 }

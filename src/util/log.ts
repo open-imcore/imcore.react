@@ -1,4 +1,4 @@
-import { createLogger, ConsoleFormattedStream } from "browser-bunyan";
+import { ConsoleFormattedStream, createLogger } from "browser-bunyan";
 
 const sharedStream = new ConsoleFormattedStream();
 
@@ -10,4 +10,4 @@ export default function IMMakeLog(namespace: string) {
     });
 }
 
-export const IMLog = IMMakeLog('IMCore')
+export const IMLog = IMMakeLog("IMCore");

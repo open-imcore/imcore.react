@@ -7,7 +7,7 @@ export interface LPCaptionSectionRenderingContext {
 }
 
 export default function LPCaptionSection({ section, position }: PropsWithoutRef<LPCaptionSectionRenderingContext>) {
-    if (!section?.leading && !section?.trailing) return null
+    if (!section?.leading && !section?.trailing) return null;
 
     return (
         <div className={`lp-caption-section lp-caption-section-${position}`}>
@@ -18,5 +18,5 @@ export default function LPCaptionSection({ section, position }: PropsWithoutRef<
                 section.trailing ? <div className="lp-trailing-text">{ section.trailing.text }</div> : null
             }
         </div>
-    )
+    );
 }

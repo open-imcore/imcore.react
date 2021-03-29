@@ -1,7 +1,7 @@
-import { EditorView } from "prosemirror-view";
 import { Node as ProsemirrorNode } from "prosemirror-model";
-import { Handle } from "use-prosemirror";
 import { NodeSelection } from "prosemirror-state";
+import { EditorView } from "prosemirror-view";
+import { Handle } from "use-prosemirror";
 
 let editorViewHandle: Handle | null = null;
 
@@ -33,7 +33,7 @@ export function everyDescendant(node: ProsemirrorNode, check: (node: Prosemirror
 }
 
 export function nodeOnlyContainsText(node: ProsemirrorNode) {
-    return everyDescendant(node, node => node.isText || node.isTextblock)
+    return everyDescendant(node, node => node.isText || node.isTextblock);
 }
 
 export function replaceDOMPRNode(domNode: Node, prNode: ProsemirrorNode, view: EditorView) {

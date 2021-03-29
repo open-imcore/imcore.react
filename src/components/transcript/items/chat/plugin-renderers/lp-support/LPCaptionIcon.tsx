@@ -1,7 +1,7 @@
 import { AttachmentRepresentation, RichLinkImage } from "imcore-ajax-core";
+import React from "react";
 import { apiClient } from "../../../../../../app/connection";
 import { LPRenderingContext } from "../LPBalloon";
-import React from "react";
 
 export interface LPCaptionIconRenderingContext extends LPRenderingContext {
     icon?: RichLinkImage;
@@ -9,7 +9,7 @@ export interface LPCaptionIconRenderingContext extends LPRenderingContext {
 }
 
 function isSyntheticImage(icon: RichLinkImage): icon is RichLinkImage & { src: string } {
-    return icon.type === 99 && typeof (icon as Record<string, string>).src === "string"
+    return icon.type === 99 && typeof (icon as Record<string, string>).src === "string";
 }
 
 function computeIconSrc(icon: RichLinkImage | undefined, attachments: AttachmentRepresentation[]) {
@@ -20,10 +20,10 @@ function computeIconSrc(icon: RichLinkImage | undefined, attachments: Attachment
 }
 
 export default function LPCaptionIcon({ icon, attachments, position }: LPCaptionIconRenderingContext) {
-    const src = computeIconSrc(icon, attachments)
-    if (!src) return null
+    const src = computeIconSrc(icon, attachments);
+    if (!src) return null;
 
     return (
         <img alt="Site Icon" className={`lp-caption-icon lp-caption-icon-${position}`} src={src} />
-    )
+    );
 }

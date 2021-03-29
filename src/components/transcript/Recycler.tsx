@@ -12,12 +12,12 @@ export default function RecycledElementRenderer<T extends Element, Context exten
 
         if (initializer) initializer(context, el);
 
-        useEffect(() => () => destructor ? destructor(context, el) : undefined)
+        useEffect(() => () => destructor ? destructor(context, el) : undefined);
 
         return (
             <div ref={temp => {
-                if (temp) temp.replaceWith(el)
+                if (temp) temp.replaceWith(el);
             }} />
-        )
-    }
+        );
+    };
 }

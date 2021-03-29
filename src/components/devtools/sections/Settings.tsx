@@ -26,5 +26,5 @@ export default function DebugSettings() {
                 </label>
             </details>
         </React.Fragment>
-    )
+    );
 }

@@ -1,9 +1,9 @@
-import { TextChatItemRepresentation, TextPart, TextPartAttributeType, TextPartType } from "imcore-ajax-core"
-import React, { PropsWithoutRef } from "react"
-import IMMakeLog from "../../../../util/log"
-import { IMItemRenderingContext } from "../Message"
+import { TextChatItemRepresentation, TextPart, TextPartAttributeType, TextPartType } from "imcore-ajax-core";
+import React, { PropsWithoutRef } from "react";
+import IMMakeLog from "../../../../util/log";
+import { IMItemRenderingContext } from "../Message";
 
-const Log = IMMakeLog("IMTextChatItem")
+const Log = IMMakeLog("IMTextChatItem");
 
 interface IMTextChatItemRenderContext extends IMItemRenderingContext<TextChatItemRepresentation> {}
 
@@ -19,42 +19,42 @@ enum IMTextPartFormattingDirective {
 }
 
 function ERExtractFormattingDirectivesForIMTextPart(part: TextPart): IMTextPartFormattingDirective[] {
-    const directives: Set<IMTextPartFormattingDirective> = new Set()
+    const directives: Set<IMTextPartFormattingDirective> = new Set();
 
     if (part.attributes) {
         for (const attr of part.attributes) {
             switch (attr.key) {
                 case TextPartAttributeType.bold:
                 case TextPartAttributeType.mention:
-                    directives.add(IMTextPartFormattingDirective.bold)
-                    break
+                    directives.add(IMTextPartFormattingDirective.bold);
+                    break;
                 case TextPartAttributeType.writingDirection:
-                    break
+                    break;
                 default:
-                    Log.warn("No formatting implementation available for TextPartAttributeType", attr.key)
+                    Log.warn("No formatting implementation available for TextPartAttributeType", attr.key);
             }
         }
     }
 
-    if (part.type === TextPartType.calendar) directives.add(IMTextPartFormattingDirective.underline)
+    if (part.type === TextPartType.calendar) directives.add(IMTextPartFormattingDirective.underline);
 
-    return Array.from(directives)
+    return Array.from(directives);
 }
 
 function IMTextPartAttributeFormatter({ part, directives: additionalDirectives = [] }: IMTextPartProps & { directives?: IMTextPartFormattingDirective[] }) {
-    const directives = ERExtractFormattingDirectivesForIMTextPart(part).concat(additionalDirectives)
+    const directives = ERExtractFormattingDirectivesForIMTextPart(part).concat(additionalDirectives);
 
     if (!directives.length) {
         return (
             <React.Fragment>
                 {part.string}
             </React.Fragment>
-        )
+        );
     }
 
     return (
-        <span className={directives.join(' ')}>{part.string}</span>
-    )
+        <span className={directives.join(" ")}>{part.string}</span>
+    );
 }
 
 function IMTextLinkPart(ctx: IMTextPartProps) {
@@ -62,19 +62,19 @@ function IMTextLinkPart(ctx: IMTextPartProps) {
         <a href={ctx.part.data}>
             <IMTextPartAttributeFormatter {...ctx} />
         </a>
-    )
+    );
 }
 
 function componentForPart(part: TextPart) {
     switch (part.type) {
         case TextPartType.link:
-            return IMTextLinkPart
+            return IMTextLinkPart;
         case TextPartType.text:
         case TextPartType.calendar:
-            return IMTextPartAttributeFormatter
+            return IMTextPartAttributeFormatter;
         default:
-            Log.warn("No implementation available for text part with type", part.type)
-            return IMTextPartAttributeFormatter
+            Log.warn("No implementation available for text part with type", part.type);
+            return IMTextPartAttributeFormatter;
     }
 }
 
@@ -91,14 +91,14 @@ function IMTextChatItem(ctx: PropsWithoutRef<IMTextChatItemRenderContext>) {
                 </React.Fragment>
             ) : null}
             {ctx.item.parts.map((part, index) => {
-                const Component = componentForPart(part)
+                const Component = componentForPart(part);
 
-                if (!Component) return null
+                if (!Component) return null;
                 
-                return <Component key={`${ctx.item.id}-${index}`} part={part} {...ctx} />
+                return <Component key={`${ctx.item.id}-${index}`} part={part} {...ctx} />;
             })}
         </React.Fragment>
-    )
+    );
 }
 
-export default React.memo(IMTextChatItem, ({ item: prevItem }, { item: newItem }) => JSON.stringify(prevItem) === JSON.stringify(newItem))
+export default React.memo(IMTextChatItem, ({ item: prevItem }, { item: newItem }) => JSON.stringify(prevItem) === JSON.stringify(newItem));

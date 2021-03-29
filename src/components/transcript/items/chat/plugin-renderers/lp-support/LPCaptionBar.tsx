@@ -1,15 +1,15 @@
 import { RichLinkCaptionBar } from "imcore-ajax-core";
-import { LPRenderingContext } from "../LPBalloon";
-import LPCaptionSection from "./LPCaptionSection";
 import React from "react";
+import { LPRenderingContext } from "../LPBalloon";
 import LPCaptionIcon from "./LPCaptionIcon";
+import LPCaptionSection from "./LPCaptionSection";
 
 export interface LPCaptionBarRenderingContext extends LPRenderingContext {
     captionBar: RichLinkCaptionBar;
 }
 
 export default function LPCaptionBar({ id, captionBar: { aboveTop, top, bottom, belowBottom, leadingIcon, trailingIcon }, attachments }: LPCaptionBarRenderingContext) {
-    if (!aboveTop && !top && !bottom && !belowBottom && !leadingIcon && !trailingIcon) return null
+    if (!aboveTop && !top && !bottom && !belowBottom && !leadingIcon && !trailingIcon) return null;
 
     return (
         <div className="lp-caption-bar">
@@ -26,5 +26,5 @@ export default function LPCaptionBar({ id, captionBar: { aboveTop, top, bottom, 
             }
             <LPCaptionIcon id={id} icon={trailingIcon} attachments={attachments} position="right" />
         </div>
-    )
+    );
 }

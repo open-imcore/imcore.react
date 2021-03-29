@@ -1,5 +1,5 @@
-import React, { PropsWithoutRef } from "react";
 import { AttachmentRepresentation, Color, RichLink } from "imcore-ajax-core";
+import React, { PropsWithoutRef } from "react";
 import LPCaptionBar from "./lp-support/LPCaptionBar";
 import LPMedia from "./lp-support/LPMedia";
 
@@ -15,14 +15,14 @@ interface LPBalloonRenderingContext extends LPRenderingContext {
 }
 
 function makeRGBA(color: Color | undefined) {
-    if (!color) return undefined
-    return `rgba(${color.red},${color.green},${color.blue},${color.alpha})`
+    if (!color) return undefined;
+    return `rgba(${color.red},${color.green},${color.blue},${color.alpha})`;
 }
 
 export default function LPBalloon({ className, richLink, changed, attachments, id }: LPBalloonRenderingContext) {
-    const backgroundRGBA = makeRGBA(richLink.backgroundColor)
+    const backgroundRGBA = makeRGBA(richLink.backgroundColor);
 
-    const Element = richLink.url ? "a" : "div"
+    const Element = richLink.url ? "a" : "div";
 
     return (
         <Element href={richLink.url} target="_blank" className={className ? `lp-balloon ${className}` : "lp-balloon"} style={{
@@ -40,5 +40,5 @@ export default function LPBalloon({ className, richLink, changed, attachments, i
                 ) : null
             }
         </Element>
-    )
+    );
 }

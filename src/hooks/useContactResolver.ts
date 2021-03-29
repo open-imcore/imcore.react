@@ -4,12 +4,12 @@ import { useSelector } from "react-redux";
 import { selectHandleIDToContact } from "../app/reducers/contacts";
 
 export function useContactResolver(handleIDs: string[]): Array<ContactRepresentation | null> {
-    const [resolved, setResolved] = useState([] as Array<ContactRepresentation | null>)
-    const handleIDToContact = useSelector(selectHandleIDToContact)
+    const [resolved, setResolved] = useState([] as Array<ContactRepresentation | null>);
+    const handleIDToContact = useSelector(selectHandleIDToContact);
 
     useEffect(() => {
-        setResolved(handleIDs.map(handleID => handleIDToContact[handleID] || null))
-    }, [handleIDs, handleIDToContact])
+        setResolved(handleIDs.map(handleID => handleIDToContact[handleID] || null));
+    }, [handleIDs, handleIDToContact]);
 
-    return resolved
+    return resolved;
 }

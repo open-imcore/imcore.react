@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { selectChats } from "../../../app/reducers/chats";
-import { selectContacts } from "../../../app/reducers/contacts";
 import { selectMessages } from "../../../app/reducers/messages";
 import { ChatStyle } from "../../chat/ChatBubble";
 import { useCurrentChat, useCurrentMessages } from "../../transcript/ChatTranscriptFoundation";
@@ -9,7 +8,6 @@ import DebugDetails from "../presentation/DebugDetails";
 
 export default function Statistics() {
     const loadedChats = Object.values(useSelector(selectChats)).length;
-    const loadedContacts = Object.values(useSelector(selectContacts)).length;
     const loadedMessages = Object.values(useSelector(selectMessages)).flatMap(record => Object.values(record)).length;
 
     const currentChat = useCurrentChat();
@@ -38,5 +36,5 @@ export default function Statistics() {
                 ]} />
             </details>
         </React.Fragment>
-    )
+    );
 }

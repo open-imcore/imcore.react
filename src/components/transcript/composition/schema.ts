@@ -1,4 +1,4 @@
-import { Schema, NodeSpec } from "prosemirror-model";
+import { NodeSpec, Schema } from "prosemirror-model";
 import { schema } from "prosemirror-schema-basic";
 import { elementForFileWithID } from "./plugins/DragAndDrop";
 
@@ -19,15 +19,15 @@ export const IMProseSchema = new Schema({
             draggable: true,
             parseDOM: [
                 {
-                    tag: 'div[attachment-id]',
+                    tag: "div[attachment-id]",
                     getAttrs: ((node: Element) => {
                         return {
                             attachmentID: node.getAttribute("attachment-id")
-                        }
+                        };
                     }) as unknown as (node: Node | string) => false | {}
                 }
             ],
             toDOM: (({ attrs: { attachmentID } }) => elementForFileWithID(attachmentID))
         }
     }
-})
+});

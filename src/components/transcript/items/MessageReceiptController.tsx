@@ -24,7 +24,7 @@ export default function MessageReceiptController({ showReceipt, timeRead, id }: 
     const [isAppearing, setIsAppearing] = useState(false);
     const [isDisappearing, setIsDisappearing] = useState(false);
 
-    if (!readReceiptTransitionManager.has(id)) readReceiptTransitionManager.set(id, showReceipt)
+    if (!readReceiptTransitionManager.has(id)) readReceiptTransitionManager.set(id, showReceipt);
     else if (!isTransitioning && readReceiptTransitionManager.get(id) !== showReceipt) {
         setIsAppearing(showReceipt);
         setIsDisappearing(!showReceipt);
@@ -55,5 +55,5 @@ export default function MessageReceiptController({ showReceipt, timeRead, id }: 
                 ) : "Delivered"}
             </span>
         ) : null
-    )
+    );
 }

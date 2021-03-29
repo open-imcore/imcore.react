@@ -1,36 +1,36 @@
 import { PluginChatItemRepresentation } from "imcore-ajax-core";
 import React, { PropsWithoutRef } from "react";
-import { IMItemRenderingContext } from "../Message"
+import IMMakeLog from "../../../../util/log";
+import { IMItemRenderingContext } from "../Message";
 import LPBalloon from "./plugin-renderers/LPBalloon";
 import MSMessageExtensionBalloonPlugin from "./plugin-renderers/MSMessageExtensionBalloonPlugin";
-import IMMakeLog from "../../../../util/log";
 
 interface IMPluginChatItemRenderContext extends IMItemRenderingContext<PluginChatItemRepresentation> {
 }
 
-const Log = IMMakeLog('IMPluginChatItem')
+const Log = IMMakeLog("IMPluginChatItem");
 
 function componentForItem(item: PluginChatItemRepresentation): null | ((ctx: Partial<PluginChatItemRepresentation> & { changed: () => any }) => JSX.Element) {
     switch (item.bundleID.split(":")[0]) {
         case "com.apple.messages.URLBalloonProvider":
-            if (!item.richLink) return null
-            return LPBalloon as unknown as ReturnType<typeof componentForItem>
+            if (!item.richLink) return null;
+            return LPBalloon as unknown as ReturnType<typeof componentForItem>;
         case "com.apple.messages.MSMessageExtensionBalloonPlugin":
-            return MSMessageExtensionBalloonPlugin as unknown as ReturnType<typeof componentForItem>
+            return MSMessageExtensionBalloonPlugin as unknown as ReturnType<typeof componentForItem>;
         default:
-            Log.warn('No implementation available for item with bundleID', item.bundleID)
-            return null
+            Log.warn("No implementation available for item with bundleID", item.bundleID);
+            return null;
     }
 }
 
 function IMPluginChatItem({ item, ...ctx }: PropsWithoutRef<IMPluginChatItemRenderContext>) {
-    const Component = componentForItem(item)
+    const Component = componentForItem(item);
 
-    if (!Component) return null
+    if (!Component) return null;
 
     return (
         <Component changed={ctx.changed} {...item} />
-    )
+    );
 }
 
-export default React.memo(IMPluginChatItem, ({ item: prevItem }, { item: newItem }) => JSON.stringify(prevItem) === JSON.stringify(newItem))
+export default React.memo(IMPluginChatItem, ({ item: prevItem }, { item: newItem }) => JSON.stringify(prevItem) === JSON.stringify(newItem));

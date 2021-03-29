@@ -1,14 +1,14 @@
-import { AutoSizer } from "react-virtualized";
-import { areEqual, ListChildComponentProps, VariableSizeList } from "@erics-world/react-window";
-import { ChatContext, useCurrentChat, useCurrentMessages } from "./ChatTranscriptFoundation";
-import React, { CSSProperties, MutableRefObject, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { VariableSizeList } from "@erics-world/react-window";
 import { MessageRepresentation } from "imcore-ajax-core";
-import Message from "./items/Message";
-import { DynamicListContext, useInvertScrollDirection } from "./ChatTranscript.ReactWindow.Foundation";
-import IMMakeLog from "../../util/log";
-import Composition from "./composition/Composition";
+import React, { CSSProperties, MutableRefObject, ReactNode, useContext, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
+import { AutoSizer } from "react-virtualized";
 import { selectUseInvertedScrolling } from "../../app/reducers/debug";
+import IMMakeLog from "../../util/log";
+import { DynamicListContext, useInvertScrollDirection } from "./ChatTranscript.ReactWindow.Foundation";
+import { ChatContext, useCurrentChat, useCurrentMessages } from "./ChatTranscriptFoundation";
+import Composition from "./composition/Composition";
+import Message from "./items/Message";
 
 const Log = IMMakeLog("ChatTranscript.ReactWindow");
 
@@ -31,21 +31,21 @@ interface RowMeasurerProps<T extends { id: string }, MemoState> {
 }
 
 function RowMeasurer<T extends { id: string }, MemoState>({ index, id, width, data, style, children, memoState }: RowMeasurerProps<T, MemoState>) {
-    const { setSize } = useContext(DynamicListContext)
-    const rowRoot = useRef<null | HTMLDivElement>(null)
+    const { setSize } = useContext(DynamicListContext);
+    const rowRoot = useRef<null | HTMLDivElement>(null);
 
     const observer = useRef(new ResizeObserver((([ entry ]: ResizeObserverEntry[]) => {
         if (setSize && entry.contentRect.height) {
-            setSize(id, entry.contentRect.height)
+            setSize(id, entry.contentRect.height);
         }
-    })))
+    })));
     
     useEffect(() => {
         if (rowRoot.current) {
-            observer.current.disconnect()
-            observer.current.observe(rowRoot.current)
+            observer.current.disconnect();
+            observer.current.observe(rowRoot.current);
         }
-    }, [id, setSize, width])
+    }, [id, setSize, width]);
 
     return (
         <div style={style}>
@@ -59,7 +59,7 @@ function RowMeasurer<T extends { id: string }, MemoState>({ index, id, width, da
                 memoState
             })}
         </div>
-    )
+    );
 }
 
 interface DynamicSizeListProps<T extends { id: string }, MemoState> {
@@ -88,22 +88,22 @@ function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSize
     const setSize = React.useCallback((id: string, size: number) => {
         // Performance: Only update the sizeMap and reset cache if an actual value changed
         if (sizeMap.current[id] !== size) {
-            Log.debug("DynamicSizeList caught resize", { id, from: sizeMap.current[id], to: size })
+            Log.debug("DynamicSizeList caught resize", { id, from: sizeMap.current[id], to: size });
             sizeMap.current = { ...sizeMap.current, [id]: size };
             
             if (listRef.current) {
                 // Clear cached data and rerender
-                Log.debug("DynamicSizeList rerendering VariableSizeList")
+                Log.debug("DynamicSizeList rerendering VariableSizeList");
                 listRef.current.resetAfterIndex(0);
             }
         }
     }, []);
 
     useEffect(() => {
-        sizeStorage.set(props.nonce || "", sizeMap.current = sizeStorage.get(props.nonce || "") || {})
-        listRef.current?.resetAfterIndex(0)
-        Log.debug("Cleared caches")
-    }, [props.nonce])
+        sizeStorage.set(props.nonce || "", sizeMap.current = sizeStorage.get(props.nonce || "") || {});
+        listRef.current?.resetAfterIndex(0);
+        Log.debug("Cleared caches");
+    }, [props.nonce]);
 
     const getSize = React.useCallback((index: number) => {
         return sizeMap.current[props.getID(index)] || 25;
@@ -138,12 +138,9 @@ function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSize
                 )}
             </VariableSizeList>
         </DynamicListContext.Provider>
-    )
+    );
 }
 
-function cmp<T>(...entries: [T, T][]) {
-    return entries.every(([ e1, e2 ]) => JSON.stringify(e1) === JSON.stringify(e2))
-}
 interface MemoState { lastDeliveredFromMe?: string; lastReadFromMe?: string; }
 
 function MessageRenderer({ ref, index, data, memoState: { lastDeliveredFromMe, lastReadFromMe } }: RowRenderingContext<MessageRepresentation, MemoState>) {
@@ -156,7 +153,7 @@ function MessageRenderer({ ref, index, data, memoState: { lastDeliveredFromMe, l
             lastDeliveredFromMe={lastDeliveredFromMe}
             lastReadFromMe={lastReadFromMe}
         />
-    )
+    );
 }
 
 function getLastReadAndDeliveredFromMe(messages: MessageRepresentation[]): [string | undefined, string | undefined] {
@@ -172,10 +169,10 @@ function getLastReadAndDeliveredFromMe(messages: MessageRepresentation[]): [stri
 }
 
 export default function ChatTranscript() {
-    const chat = useCurrentChat()
-    const [ messages, loadMore ] = useCurrentMessages(true)
+    const chat = useCurrentChat();
+    const [ messages, loadMore ] = useCurrentMessages(true);
 
-    const [lastDeliveredFromMe, lastReadFromMe] = useMemo(() => getLastReadAndDeliveredFromMe(messages), [JSON.stringify(messages)])
+    const [lastDeliveredFromMe, lastReadFromMe] = useMemo(() => getLastReadAndDeliveredFromMe(messages), [JSON.stringify(messages)]);
 
     return (
         <div className="chat-transcript transcript-react-window">
@@ -188,7 +185,7 @@ export default function ChatTranscript() {
                                 width={width}
                                 nonce={chat?.id}
                                 itemData={messages}
-                                getID={index => messages[index]?.id || '-1'}
+                                getID={index => messages[index]?.id || "-1"}
                                 itemCount={messages.length}
                                 nearEnd={loadMore}
                                 memoState={{ lastDeliveredFromMe, lastReadFromMe }}
@@ -201,5 +198,5 @@ export default function ChatTranscript() {
                 <Composition />
             </ChatContext.Provider>
         </div>
-    )
+    );
 }

@@ -1,5 +1,5 @@
-import React from "react";
 import { ParticipantChangeTranscriptChatItemRepresentation } from "imcore-ajax-core";
+import React from "react";
 import { useFormattedHandle } from "../../../../hooks/useFormattedHandles";
 import { IMItemRenderingContext } from "../Message";
 
@@ -13,5 +13,5 @@ export default function IMParticipantChangeItem({ item }: IMParticipantChangeIte
         <div className="transcript-label">
             {formattedInitiator} <span className="transcript-label-value">{item.changeType ? "removed" : "added"} {formattedTarget} from the conversation.</span>
         </div>
-    )
+    );
 }
