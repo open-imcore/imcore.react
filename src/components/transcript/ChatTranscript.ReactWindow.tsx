@@ -103,6 +103,7 @@ function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSize
     useEffect(() => {
         sizeMap.current = sizeStorage.get(props.nonce!) || {};
         listRef.current?.resetAfterIndex(0);
+        listRef.current?.scrollToItem(0);
         Log.debug("Cleared caches");
     }, [props.nonce]);
 
