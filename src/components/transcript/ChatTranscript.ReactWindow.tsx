@@ -90,6 +90,7 @@ function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSize
         if (sizeMap.current[id] !== size) {
             Log.debug("DynamicSizeList caught resize", { id, from: sizeMap.current[id], to: size });
             sizeMap.current = { ...sizeMap.current, [id]: size };
+            sizeStorage.set(props.nonce!, sizeMap.current);
             
             if (listRef.current) {
                 // Clear cached data and rerender
@@ -97,10 +98,10 @@ function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSize
                 listRef.current.resetAfterIndex(0);
             }
         }
-    }, []);
+    }, [props.nonce]);
 
     useEffect(() => {
-        sizeStorage.set(props.nonce || "", sizeMap.current = sizeStorage.get(props.nonce || "") || {});
+        sizeMap.current = sizeStorage.get(props.nonce!) || {};
         listRef.current?.resetAfterIndex(0);
         Log.debug("Cleared caches");
     }, [props.nonce]);
