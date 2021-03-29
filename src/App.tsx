@@ -29,8 +29,8 @@ function App() {
   return (
     <Router>
       <div className="app-root" attr-showing-devtools={showingDevtools.toString()} attr-privacy-mode={isPrivacyMode.toString()}>
-        <ChatSidebar />
         <Route path={"/chats/:chatID"}>
+          <ChatSidebar />
           <ChatTranscript />
           {
             showingDevtools ? (

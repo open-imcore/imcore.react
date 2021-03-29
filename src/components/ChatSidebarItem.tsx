@@ -8,6 +8,7 @@ import { useFormattedHandles } from "../hooks/useFormattedHandles";
 import "../styles/ChatSidebarItem.scss";
 import { useFormattedReceipt } from "../util/receipt-formatting";
 import ChatBubble from "./chat/ChatBubble";
+import { useCurrentChat } from "./transcript/ChatTranscriptFoundation";
 import IMTypingChatItem from "./transcript/items/chat/IMTypingChatItem";
 
 function useLastMessageTime(chat: ChatRepresentation) {
@@ -27,11 +28,14 @@ function useChatName(chat: ChatRepresentation) {
 
 function ChatSidebarItem({ chat, style }: PropsWithChildren<{ chat: ChatRepresentation, style?: object }>) {
     const chatName = useChatName(chat);
+    const currentChat = useCurrentChat();
     const lastMessageTime = useLastMessageTime(chat);
     const isTyping = useSelector(state => selectTypingStatus(state as RootState, chat.id));
 
+    const isActive = currentChat?.id === chat.id;
+
     return (
-        <Link to={`/chats/${chat.id}`} className="chat-sidebar-item" attr-unread-count={chat.unreadMessageCount} style={style}>
+        <Link to={`/chats/${chat.id}`} className="chat-sidebar-item" attr-chat-active={isActive.toString()} attr-unread-count={chat.unreadMessageCount} style={style}>
             <div className="chat-sidebar-item--image">
                 <ChatBubble chat={chat} />
             </div>

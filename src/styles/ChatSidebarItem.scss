@@ -67,10 +67,6 @@
                 width: 70%;
                 position: absolute;
 
-                &:first-child {
-
-                }
-
                 &:nth-child(2) {
                     bottom: 0;
                     right: 0;
@@ -111,6 +107,21 @@
             white-space: pre-line;
 
             color: $chat-sidebar-description;
+        }
+    }
+
+    &[attr-chat-active=true] {
+        background-color: #007AFF;
+        color: white;
+
+        --chat-bubble--image-background: #007AFF;
+        
+        &::after {
+            border-bottom: none;
+        }
+
+        .chat-sidebar-item--title-label, .chat-sidebar-item--title-timestamp, .chat-sidebar-item--summary {
+            color: white !important;
         }
     }
 }
