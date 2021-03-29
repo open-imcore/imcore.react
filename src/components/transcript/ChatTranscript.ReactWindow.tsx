@@ -10,7 +10,7 @@ import { ChatContext, useCurrentChat, useCurrentMessages } from "./ChatTranscrip
 import Composition from "./composition/Composition";
 import Message from "./items/Message";
 
-const Log = IMMakeLog("ChatTranscript.ReactWindow");
+const Log = IMMakeLog("ChatTranscript.ReactWindow", "info");
 
 type RowRenderingContext<T extends { id: string }, MemoState> = Omit<RowMeasurerProps<T, MemoState>, "children"> & {
     ref: MutableRefObject<Element | null>;
