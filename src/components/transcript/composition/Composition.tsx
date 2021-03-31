@@ -3,7 +3,7 @@ import { baseKeymap, splitBlock } from "prosemirror-commands";
 import { keymap } from "prosemirror-keymap";
 import { EditorState, Plugin, Transaction } from "prosemirror-state";
 import "prosemirror-view/style/prosemirror.css";
-import React, { useContext, useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Handle, ProseMirror, useProseMirror } from "use-prosemirror";
 import { apiClient } from "../../../app/connection";
@@ -11,7 +11,7 @@ import { selectShowingDevtools, setShowDevtools } from "../../../app/reducers/de
 import { selectVisibilityState } from "../../../app/reducers/presence";
 import { store } from "../../../app/store";
 import "../../../styles/transcript/Composition.scss";
-import { ChatContext } from "../ChatTranscriptFoundation";
+import { useCurrentChat } from "../ChatTranscriptFoundation";
 import { setEditorView } from "./MCUtils";
 import { makeDragAndDropPlugin } from "./plugins/DragAndDrop";
 import { makePlaceholderPlugin } from "./plugins/PlaceholderPlugin";
@@ -43,7 +43,7 @@ async function fireSendMessage(state: EditorState, dispatch?: ((tr: Transaction<
  * Main composition view for chat views
  */
 export default function Composition() {
-    currentChat = useContext(ChatContext).chat;
+    currentChat = useCurrentChat();
 
     const placeholderPlugin = makePlaceholderPlugin("iMessage");
     const dragAndDropPlugin = makeDragAndDropPlugin(IMProseSchema);

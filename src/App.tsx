@@ -7,6 +7,7 @@ import { selectIsPrivacyMode, selectShowingDevtools } from "./app/reducers/debug
 import ChatSidebar from "./components/ChatSidebar";
 import DevtoolsRoot from "./components/devtools/DevtoolsRoot";
 import ChatTranscript from "./components/transcript/ChatTranscript";
+import { CurrentChatProvider } from "./components/transcript/ChatTranscriptFoundation";
 
 function insertStyles() {
   const elm = document.getElementById("generated-styles") || document.head.appendChild(document.createElement("style"));
@@ -29,15 +30,17 @@ function App() {
   return (
     <Router>
       <div className="app-root" attr-showing-devtools={showingDevtools.toString()} attr-privacy-mode={isPrivacyMode.toString()}>
-        <Route path={"/chats/:chatID"}>
+        <CurrentChatProvider>
           <ChatSidebar />
-          <ChatTranscript />
-          {
-            showingDevtools ? (
-              <DevtoolsRoot />
-            ) : null
-          }
-        </Route>
+          <Route path={"/chats/:chatID"}>
+            <ChatTranscript />
+            {
+              showingDevtools ? (
+                <DevtoolsRoot />
+              ) : null
+            }
+          </Route>
+        </CurrentChatProvider>
       </div>
     </Router>
   );

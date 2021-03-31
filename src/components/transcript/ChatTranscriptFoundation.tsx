@@ -1,11 +1,10 @@
 import { AnyChatItemModel, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
-import { createContext, useEffect, useMemo, useRef } from "react";
+import React, { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { matchPath, useLocation } from "react-router";
 import { apiClient } from "../../app/connection";
 import { chatMessagesReceived, selectChats } from "../../app/reducers/chats";
 import { messagesChanged, selectMessages } from "../../app/reducers/messages";
-import { selectVisibilityState } from "../../app/reducers/presence";
 import { store } from "../../app/store";
 import { DATE_SEPARATOR_TYPE } from "./items/IMTranscriptItem";
 import { messageIsEmpty } from "./items/Message";
@@ -15,12 +14,10 @@ export async function reload(chatID: string, before?: string) {
         limit: 100,
         before
     });
-    
+
     store.dispatch(messagesChanged(recentMessages));
     store.dispatch(chatMessagesReceived(recentMessages));
 }
-
-export const ChatContext = createContext<{ chat: ChatRepresentation | null }>({ chat: null });
 
 function messagesAreCloseEnough(message1: MessageRepresentation, message2: MessageRepresentation): boolean {
     return Math.abs(message1.time - message2.time) < (1000 * 60 * 60);
@@ -78,13 +75,13 @@ function prepareMessagesForPresentation(messages: Record<string, MessageRepresen
     if (injectTimestamps) {
         for (let i = 0; i < preparedMessages.length; i++) {
             const message = preparedMessages[i];
-    
+
             if (message.isTypingMessage || message[TIMESTAMP_ASSOCIATION]) continue;
-    
+
             const prevMessage = preparedMessages[i - 1];
-    
+
             if (prevMessage && messagesAreCloseEnough(prevMessage, message)) continue;
-    
+
             preparedMessages.splice(i, 0, createTimestampMessage(message));
         }
     }
@@ -128,20 +125,25 @@ export function useCurrentMessages(reverse = false, injectTimestamps = true) {
     return useMessages(chat?.id, reverse, injectTimestamps);
 }
 
-export function useCurrentChat(): ChatRepresentation | undefined {
-    const { chatID } = useParams<{
-        chatID: string
-    }>();
+export const ChatContext = createContext<ChatRepresentation | null>(null);
 
-    const chat = useSelector(selectChats)[chatID];
+export function useCurrentChat(): ChatRepresentation | null {
+    return useContext(ChatContext);
+}
 
-    const isVisible = useSelector(selectVisibilityState);
+export function CurrentChatProvider({ children }: PropsWithChildren<{}>) {
+    const { pathname } = useLocation();
+    const chatID = useMemo(() => matchPath<{ chatID: string; }>(pathname, {
+        path: "/chats/:chatID"
+    })?.params.chatID || null, [pathname]);
 
-    useEffect(() => {
-        if (chat && chat.unreadMessageCount && isVisible) {
-            apiClient.chats.readAllMessages(chatID);
-        }
-    }, [chat]);
+    const chats = useSelector(selectChats);
 
-    return chat;
+    const chat = chatID ? chats[chatID] : null;
+
+    return (
+        <ChatContext.Provider value={chat}>
+            {children}
+        </ChatContext.Provider>
+    );
 }

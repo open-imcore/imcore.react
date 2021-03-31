@@ -6,7 +6,7 @@ import { AutoSizer } from "react-virtualized";
 import { selectUseInvertedScrolling } from "../../app/reducers/debug";
 import IMMakeLog from "../../util/log";
 import { DynamicListContext, useInvertScrollDirection } from "./ChatTranscript.ReactWindow.Foundation";
-import { ChatContext, useCurrentChat, useCurrentMessages } from "./ChatTranscriptFoundation";
+import { useCurrentChat, useCurrentMessages } from "./ChatTranscriptFoundation";
 import Composition from "./composition/Composition";
 import Message from "./items/Message";
 
@@ -178,27 +178,25 @@ export default function ChatTranscript() {
 
     return (
         <div className="chat-transcript transcript-react-window">
-            <ChatContext.Provider value={{ chat: chat || null }}>
-                <div className="message-transcript-container">
-                    <AutoSizer>
-                        {({ height, width }) => (
-                            <DynamicSizeList
-                                height={height}
-                                width={width}
-                                nonce={chat?.id}
-                                itemData={messages}
-                                getID={index => messages[index]?.id || "-1"}
-                                itemCount={messages.length}
-                                nearEnd={loadMore}
-                                memoState={{ lastDeliveredFromMe, lastReadFromMe }}
-                                >
-                                {MessageRenderer}
-                            </DynamicSizeList>
-                        )}
-                    </AutoSizer>
-                </div>
-                <Composition />
-            </ChatContext.Provider>
+            <div className="message-transcript-container">
+                <AutoSizer>
+                    {({ height, width }) => (
+                        <DynamicSizeList
+                            height={height}
+                            width={width}
+                            nonce={chat?.id}
+                            itemData={messages}
+                            getID={index => messages[index]?.id || "-1"}
+                            itemCount={messages.length}
+                            nearEnd={loadMore}
+                            memoState={{ lastDeliveredFromMe, lastReadFromMe }}
+                            >
+                            {MessageRenderer}
+                        </DynamicSizeList>
+                    )}
+                </AutoSizer>
+            </div>
+            <Composition />
         </div>
     );
 }

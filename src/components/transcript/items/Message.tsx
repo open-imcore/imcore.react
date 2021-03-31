@@ -1,12 +1,12 @@
 import { AnyChatItemModel, ChatItemType, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
-import React, { PropsWithRef, useContext, useMemo } from "react";
+import React, { PropsWithRef, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { selectHandleIDToContact } from "../../../app/reducers/contacts";
 import { formatPhoneNumber } from "../../../hooks/useFormattedHandles";
 import "../../../styles/transcript/items/Message.scss";
 import { ChatStyle } from "../../chat/ChatBubble";
 import CNContactBubble from "../../contacts/CNContactBubble";
-import { ChatContext } from "../ChatTranscriptFoundation";
+import { useCurrentChat } from "../ChatTranscriptFoundation";
 import IMChatItem, { isChatItem } from "./IMChatItem";
 import IMTranscriptItem, { isTranscriptItem } from "./IMTranscriptItem";
 import { analyzeMessage } from "./Message.foundation";
@@ -55,7 +55,7 @@ function Message({ eRef, message, nextMessage, prevMessage, lastDeliveredFromMe,
     changed?: () => any,
     eRef?: (elm: Element) => any
 }>) {
-    const chat = useContext(ChatContext).chat!;
+    const chat = useCurrentChat()!;
     const messageSenderContact = useContact(message);
     
     const { beginningContiguous, endingContiguous, showImage, showName } = useMemo(() => analyzeMessage({
