@@ -5,7 +5,7 @@ import Statistics from "./sections/Statistics";
 
 export default function DevtoolsRoot() {
     return (
-        <div>
+        <div className="devtools-root">
             <Statistics />
             <DebugSettings />
             <Settings />

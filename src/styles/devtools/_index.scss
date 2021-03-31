@@ -1,1 +1,7 @@
+@import "../core";
 @import "./details";
+
+.devtools-root {
+    border-left: 1px solid $master-detail-border-color;
+    min-width: 285px;
+}
