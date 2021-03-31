@@ -1,5 +1,6 @@
-import { AnyChatItemModel, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, MessageRepresentation } from "imcore-ajax-core";
+import { AnyChatItemModel, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, IMWebSocketConnectionOptions, MessageRepresentation } from "imcore-ajax-core";
 import IMMakeLog from "../util/log";
+import { getPersistentValue, observePersistent } from "../util/use-persistent";
 import { chatChanged, chatDeleted, chatMessagesReceived, chatPropertiesChanged, chatsChanged } from "./reducers/chats";
 import { contactChanged, contactDeleted, contactsChanged, strangersReceived } from "./reducers/contacts";
 import { messagesChanged, messagesDeleted, statusChanged } from "./reducers/messages";
@@ -8,11 +9,30 @@ import TypingAggregator from "./typing-aggregator";
 
 const Log = IMMakeLog("IMServerConnection");
 
-const endpoint = localStorage.getItem("imcore-host") || "localhost";
+const getEndpoint = () => getPersistentValue("imcore-host", "localhost:8090").value;
+let endpoint = getEndpoint();
 
-export const socketClient = new IMWebSocketClient(`ws://${endpoint}:8090/stream`);
+const formatURL = (protocol: string, path?: string) => `${protocol}://${endpoint}${path ? `/${path}` : ""}`;
+
+export const socketClient = new IMWebSocketClient(formatURL("ws", "stream"));
 export const apiClient = new IMHTTPClient({
-    baseURL: `http://${endpoint}:8090`
+    baseURL: formatURL("http")
+});
+
+function rebuildEndpoints() {
+    socketClient.url = formatURL("ws", "stream");
+    apiClient.baseURL = formatURL("http");
+}
+
+export async function reconnect(options?: IMWebSocketConnectionOptions): Promise<void> {
+    await socketClient.close();
+    rebuildEndpoints();
+    socketClient.connect(options);
+}
+
+observePersistent<string>("imcore-host", newEndpoint => {
+    console.log({ newEndpoint });
+    endpoint = newEndpoint;
 });
 
 function receiveChangedChat(chat: ChatRepresentation) {
