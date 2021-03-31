@@ -34,12 +34,12 @@ function App() {
           <ChatSidebar />
           <Route path={"/chats/:chatID"}>
             <ChatTranscript />
-            {
-              showingDevtools ? (
-                <DevtoolsRoot />
-              ) : null
-            }
           </Route>
+          {
+            showingDevtools ? (
+              <DevtoolsRoot />
+            ) : null
+          }
         </CurrentChatProvider>
       </div>
     </Router>
