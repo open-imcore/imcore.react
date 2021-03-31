@@ -63,6 +63,7 @@
         display: flex;
         flex-flow: column;
         position: relative;
+        width: 100%;
     }
 
     .message-receipt {
@@ -201,7 +202,8 @@
     }
 
     .chat-item-container {
-        width: max-content;
+        width: fit-content;
+        max-width: 70%;
 
         position: relative;
 
@@ -353,8 +355,7 @@
     }
 
     .chat-item {
-        max-width: 40vw;
-        width: max-content;
+        width: fit-content;
         position: relative;
 
         $padding-top: 6px;

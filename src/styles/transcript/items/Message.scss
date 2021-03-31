@@ -6,7 +6,6 @@
     min-height: 1px;
 
     &[attr-from-me=true] {
-        flex-flow: row-reverse;
     }
 
     &[attr-prev-transcript-contiguous=true], &[attr-next-transcript-contiguous=true] {
