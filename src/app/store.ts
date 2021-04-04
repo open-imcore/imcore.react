@@ -1,5 +1,6 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import chatReducer from "./reducers/chats";
+import connectionReducer from "./reducers/connection";
 import contactsReducer from "./reducers/contacts";
 import debugReducer from "./reducers/debug";
 import messagesReducer from "./reducers/messages";
@@ -11,7 +12,8 @@ export const store = configureStore({
     messages: messagesReducer,
     contacts: contactsReducer,
     presence: presenceReducer,
-    debug: debugReducer
+    debug: debugReducer,
+    connection: connectionReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

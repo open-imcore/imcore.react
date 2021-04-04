@@ -1,18 +1,21 @@
-import { VariableSizeList } from "@erics-world/react-window";
 import { MessageRepresentation } from "imcore-ajax-core";
-import React, { CSSProperties, MutableRefObject, ReactNode, useContext, useEffect, useMemo, useRef } from "react";
+import React, { CSSProperties, MutableRefObject, ReactNode, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
-import { AutoSizer } from "react-virtualized";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { areEqual, ListChildComponentProps, VariableSizeList } from "react-window";
 import { selectUseInvertedScrolling } from "../../app/reducers/debug";
+import { chatItemChanged } from "../../app/reducers/presence";
+import { store } from "../../app/store";
 import IMMakeLog from "../../util/log";
 import { DynamicListContext, useInvertScrollDirection } from "./ChatTranscript.ReactWindow.Foundation";
 import { useCurrentChat, useCurrentMessages } from "./ChatTranscriptFoundation";
 import Composition from "./composition/Composition";
 import Message from "./items/Message";
+import { itemsAreShallowEqual } from "./items/Message.foundation";
 
 const Log = IMMakeLog("ChatTranscript.ReactWindow", "info");
 
-type RowRenderingContext<T extends { id: string }, MemoState> = Omit<RowMeasurerProps<T, MemoState>, "children"> & {
+type RowRenderingContext<T extends { id: string }, MemoState> = RowMeasurerPropsWithoutChildren<T, MemoState> & {
     ref: MutableRefObject<Element | null>;
 };
 
@@ -29,6 +32,8 @@ interface RowMeasurerProps<T extends { id: string }, MemoState> {
     children: RowRenderer<T, MemoState>;
     memoState: MemoState;
 }
+
+type RowMeasurerPropsWithoutChildren<T extends { id: string }, MemoState> = Omit<RowMeasurerProps<T, MemoState>, "children">;
 
 function RowMeasurer<T extends { id: string }, MemoState>({ index, id, width, data, style, children, memoState }: RowMeasurerProps<T, MemoState>) {
     const { setSize } = useContext(DynamicListContext);
@@ -62,6 +67,10 @@ function RowMeasurer<T extends { id: string }, MemoState>({ index, id, width, da
     );
 }
 
+export type TypedListChildComponentProps<T = any> = Omit<ListChildComponentProps, "data"> & {
+    data: T;
+}
+
 interface DynamicSizeListProps<T extends { id: string }, MemoState> {
     height: number;
     width: number;
@@ -74,7 +83,9 @@ interface DynamicSizeListProps<T extends { id: string }, MemoState> {
     outerRef?: any;
     innerRef?: any;
     nearEnd?: () => void;
+    isSame?: (oldProps: RowMeasurerPropsWithoutChildren<T, MemoState>, newProps: RowMeasurerPropsWithoutChildren<T, MemoState>) => boolean;
     memoState: MemoState;
+    itemKey?: (index: number, data: T[]) => string;
 }
 
 const sizeStorage: Map<string, Record<string, number>> = new Map();
@@ -119,6 +130,29 @@ function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSize
         return estimatedHeight / keys.length;
     }, []);
 
+    const MemoizedRowMeasurer = useMemo(() => {
+        MemoLog.debug("Regenerating memo component");
+
+        const createRendererProps = (rowProps: TypedListChildComponentProps<T[]>, listProps: DynamicSizeListProps<T, MemoState> = props, memoState: MemoState = props.memoState): Omit<RowMeasurerProps<T, MemoState>, "children"> => ({
+            ...rowProps,
+            id: rowProps.data[rowProps.index].id,
+            width: listProps.width,
+            memoState
+        });
+
+        function Renderer(rowProps: ListChildComponentProps) {
+            return (
+                <RowMeasurer {...createRendererProps(rowProps)} key={rowProps.data[rowProps.index].id}>
+                    {props.children as any}
+                </RowMeasurer>
+            );
+        }
+
+        return props.isSame ? React.memo<ListChildComponentProps>(Renderer, (prevProps, nextProps) => {
+            return areEqual(prevProps, nextProps) && props.isSame!(createRendererProps(prevProps), createRendererProps(nextProps));
+        }) : Renderer;
+    }, [props.isSame, props.memoState]);
+
     return (
         <DynamicListContext.Provider value={{ setSize }}>
             <VariableSizeList
@@ -132,29 +166,52 @@ function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSize
                 outerRef={scrollWatcher}
                 overscanCount={props.overscanCount}
                 onItemsRendered={props.nearEnd ? ({ overscanStartIndex, overscanStopIndex }) => overscanStopIndex >= (props.itemData.length - 10) ? props.nearEnd!() : undefined : undefined}
+                itemKey={props.itemKey}
                 >
-                {rowProps => (
-                    <RowMeasurer {...rowProps} id={rowProps.data[rowProps.index].id} key={rowProps.data[rowProps.index].id} width={props.width} memoState={props.memoState}>
-                        {props.children as any}
-                    </RowMeasurer>
-                )}
+                {MemoizedRowMeasurer}
             </VariableSizeList>
         </DynamicListContext.Provider>
     );
 }
 
-interface MemoState { lastDeliveredFromMe?: string; lastReadFromMe?: string; }
+const MemoLog = IMMakeLog("MessageMemo", "error");
 
-function MessageRenderer({ ref, index, data, memoState: { lastDeliveredFromMe, lastReadFromMe } }: RowRenderingContext<MessageRepresentation, MemoState>) {
+function messagesAreRenderSame(prevMessage: MessageRepresentation | undefined, nextMessage: MessageRepresentation | undefined) {
+    if ((!prevMessage && !nextMessage) || !(prevMessage && nextMessage)) return false;
+
+    if (prevMessage.id !== nextMessage.id) {
+        MemoLog.info("MessageID not equal (%s !== %s)", prevMessage.id, nextMessage.id);
+        return false;
+    }
+    else if (!itemsAreShallowEqual(prevMessage, nextMessage)) {
+        MemoLog.info("Items are not shallow equal (%o !== %o)", prevMessage, nextMessage);
+        return false;
+    }
+    else {
+        MemoLog.debug("Items are same");
+        return true;
+    }
+}
+
+interface MessagesMemoState {
+    lastDeliveredFromMe?: string;
+    lastReadFromMe?: string;
+}
+
+function compareMessageRenderProps(prevProps: RowMeasurerPropsWithoutChildren<MessageRepresentation, MessagesMemoState>, nextProps: RowMeasurerPropsWithoutChildren<MessageRepresentation, MessagesMemoState>): boolean {
+    const prevBeforeMessage = prevProps.data[prevProps.index - 1];
+    const nextBeforeMessage = nextProps.data[nextProps.index - 1];
+
+    const prevMessage = prevProps.data[prevProps.index];
+    const nextMessage = nextProps.data[nextProps.index];
+
+    const prevAfterMessage = prevProps.data[prevProps.index + 1];
+    const nextAfterMessage = nextProps.data[nextProps.index + 1];
+
     return (
-        <Message
-            eRef={ref as any}
-            message={data[index]}
-            nextMessage={data[index - 1]}
-            prevMessage={data[index + 1]}
-            lastDeliveredFromMe={lastDeliveredFromMe}
-            lastReadFromMe={lastReadFromMe}
-        />
+        messagesAreRenderSame(prevBeforeMessage, nextBeforeMessage)
+     && messagesAreRenderSame(prevMessage, nextMessage)
+     && messagesAreRenderSame(prevAfterMessage, nextAfterMessage)
     );
 }
 
@@ -170,14 +227,46 @@ function getLastReadAndDeliveredFromMe(messages: MessageRepresentation[]): [stri
     return [lastDeliveredFromMe, lastReadFromMe];
 }
 
+function searchNodeForMessageRelations(node: Node): {
+    chatItemID: string | null;
+    messageID: string | null;
+} {
+    let chatItemID: string | null = null, messageID: string | null = null;
+
+    let next: Node | null = node;
+    while (next !== null) {
+        if (next instanceof HTMLElement) {
+            if (!chatItemID) chatItemID = next.getAttribute("attr-chat-item-id");
+            if (!messageID) messageID = next.getAttribute("attr-message-id");
+        }
+
+        if ((chatItemID && messageID) || (messageID && !chatItemID)) break;
+
+        next = next.parentNode;
+    }
+
+    return {
+        chatItemID,
+        messageID
+    };
+}
+
 export default function ChatTranscript() {
     const chat = useCurrentChat();
-    const [ messages, loadMore ] = useCurrentMessages(true);
+    const [ messages, loadMore ] = useCurrentMessages();
 
     const [lastDeliveredFromMe, lastReadFromMe] = useMemo(() => getLastReadAndDeliveredFromMe(messages), [JSON.stringify(messages)]);
 
+    const itemKey = useCallback((index: number, data: MessageRepresentation[]) => data[index].id, []);
+
     return (
-        <div className="chat-transcript transcript-react-window">
+        <div className="chat-transcript transcript-react-window" onMouseOver={event => {
+            if (!(event.target instanceof Node)) return;
+            const { messageID, chatItemID } = searchNodeForMessageRelations(event.target);
+
+            if (!messageID) return;
+            store.dispatch(chatItemChanged({ messageID, chatItemID }));
+        }}>
             <div className="message-transcript-container">
                 <AutoSizer>
                     {({ height, width }) => (
@@ -190,8 +279,19 @@ export default function ChatTranscript() {
                             itemCount={messages.length}
                             nearEnd={loadMore}
                             memoState={{ lastDeliveredFromMe, lastReadFromMe }}
+                            isSame={compareMessageRenderProps}
+                            itemKey={itemKey}
                             >
-                            {MessageRenderer}
+                            {({ ref, index, data }) => (
+                                <Message
+                                    eRef={ref as any}
+                                    message={data[index]}
+                                    nextMessage={data[index - 1]}
+                                    prevMessage={data[index + 1]}
+                                    lastDeliveredFromMe={lastDeliveredFromMe}
+                                    lastReadFromMe={lastReadFromMe}
+                                />
+                            )}
                         </DynamicSizeList>
                     )}
                 </AutoSizer>

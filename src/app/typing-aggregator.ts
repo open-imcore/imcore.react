@@ -1,9 +1,12 @@
 import { ChatItemType, MessageRepresentation } from "imcore-ajax-core";
+import IMMakeLog from "../util/log";
 import { setTypingStatus } from "./reducers/chats";
 import { messagesDeleted } from "./reducers/messages";
 import { store } from "./store";
 
 const isTypingMessage = (message: MessageRepresentation) => message.isTypingMessage || message.items.some(item => item.type === ChatItemType.typing);
+
+const Log = IMMakeLog("TypingAggregator", "debug");
 
 /**
  * Manages the state of typing messages, expiring them and invalidating old ones as new ones arrive
@@ -21,6 +24,7 @@ export default class TypingAggregator {
 
         if (oldMessage) {
             if (oldMessage.time > message.time) return;
+            Log.info("Expiring dead typing message with ID %s in chta %s", oldMessage.id, oldMessage.chatID);
             store.dispatch(messagesDeleted([oldMessage.id]));
         }
 

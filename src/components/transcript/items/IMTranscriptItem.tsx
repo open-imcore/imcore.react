@@ -7,8 +7,6 @@ import IMDateSeparatorItem from "./transcript/IMDateSeparatorItem";
 import IMGroupTitleChangeItem from "./transcript/IMGroupTitleChangeItem";
 import IMParticipantChangeItem from "./transcript/IMParticipantChangeItem";
 
-
-
 export const DATE_SEPARATOR_TYPE: ChatItemType = Symbol("DATE_SEPARATOR") as unknown as ChatItemType;
 
 const transcriptTypes = [

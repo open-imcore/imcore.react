@@ -111,19 +111,19 @@
         }
     }
 
-    &[attr-next-contiguous=true] {
+    &[attr-next-contiguous=false] {
+        --from-me-border: url(../../../assets/masks/bubble-tail.svg);
+        --not-from-me-border: url(../../../assets/masks/bubble-tail-flip.svg);
+        margin-top: 7px;
+    }
+
+    &[attr-next-contiguous=true], .chat-item-container:not(:last-child) {
         --from-me-border: url(../../../assets/masks/bubble-notail.svg);
         --not-from-me-border: url(../../../assets/masks/bubble-notail-flip.svg);
     }
 
     &[attr-next-contiguous=true] {
         margin-top: 2px;
-    }
-
-    &[attr-next-contiguous=false] {
-        --from-me-border: url(../../../assets/masks/bubble-tail.svg);
-        --not-from-me-border: url(../../../assets/masks/bubble-tail-flip.svg);
-        margin-top: 7px;
     }
 
     &[attr-from-me=false] {
@@ -403,7 +403,7 @@
 
                 video, img {
                     object-fit: fill;
-                    max-width: 40vw;
+                    max-width: 100%;
                     height: auto;
                 }
             }

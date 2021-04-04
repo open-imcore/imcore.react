@@ -29,6 +29,8 @@
 
         background: none;
 
+        text-align: start;
+
         &:focus {
             outline: none;
         }
@@ -103,7 +105,7 @@ details {
             outline: none;
         }
 
-        &::-webkit-details-marker {
+        &::marker {
             display: none;
         }
     }
