@@ -2808,10 +2808,10 @@ axe-core@^4.0.2:
   resolved "https://registry.npmjs.org/axe-core/-/axe-core-4.1.3.tgz#64a4c85509e0991f5168340edc4bedd1ceea6966"
   integrity sha512-vwPpH4Aj4122EW38mxO/fxhGKtwWTMLDIJfZ1He0Edbtjcfna/R3YB67yVhezUMzqc3Jr3+Ii50KRntlENL4xQ==
 
-axios@^0.20.0:
-  version "0.20.0"
-  resolved "https://registry.npmjs.org/axios/-/axios-0.20.0.tgz#057ba30f04884694993a8cd07fa394cff11c50bd"
-  integrity sha512-ANA4rr2BDcmmAQLOKft2fufrtuvlqR+cXNNinUmvfeSNCOF98PZL+7M/v1zIdGo7OLjEA9J2gXJL+j4zGsl0bA==
+axios@^0.21.1:
+  version "0.21.1"
+  resolved "https://registry.npmjs.org/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
     follow-redirects "^1.10.0"
 
@@ -6060,12 +6060,12 @@ ignore@^5.1.4:
   resolved "https://registry.npmjs.org/ignore/-/ignore-5.1.8.tgz#f150a8b50a34289b33e22f5889abd4d8016f0e57"
   integrity sha512-BMpfD7PpiETpBl/A6S498BaIJ6Y/ABT93ETbby2fP00v4EbvPBXWEoaR1UBPKs3iR53pJY7EtZk5KACI57i1Uw==
 
-imcore-ajax-core@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.npmjs.org/imcore-ajax-core/-/imcore-ajax-core-1.0.7.tgz#762802877daa645db5ae51ca213ccfea2b180b82"
-  integrity sha512-34y2WhjapUOPHDHa1732Uengqkrhz1TT9tdhS96fFSWTyZ1zcJk0vhchBdVmEHAKWgLn7B/Iz4ScRDb3z6llUg==
+imcore-ajax-core@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.npmjs.org/imcore-ajax-core/-/imcore-ajax-core-1.0.8.tgz#74ea73df266f58e217b48c28f8d7539f3427df80"
+  integrity sha512-jS36IdC1+3ybv/kVC/XXlFfuTpv+epgTvVvaxMhm82EU+qPUW3GOrRw1YsfAad/df6GPe7LLmFC6FYslFg+Dsw==
   dependencies:
-    axios "^0.20.0"
+    axios "^0.21.1"
     pako "^1.0.11"
 
 immer@8.0.1:
