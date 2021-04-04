@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Route } from "react-router-dom";
 import "./App.scss";
 import { apiClient, socketClient } from "./app/connection";
 import { selectBootstrapState } from "./app/reducers/connection";
@@ -37,19 +36,20 @@ function App() {
 
   return (
       <div className="app-root" attr-showing-devtools={showingDevtools.toString()} attr-privacy-mode={isPrivacyMode.toString()}>
-        
+          <div className="app-bar">
+            <div className="chat-controls"></div>
+            <div className="main-toolbar"></div>
+          </div>
           <ChatSidebar />
-          <Route path={"/chats/:chatID"}>
-            {
-              didBootstrap ? (
-                <CurrentMessagesProvider>
-                  <ChatTranscript />
-                </CurrentMessagesProvider>
-              ) : (
+          {
+            didBootstrap ? (
+              <CurrentMessagesProvider>
                 <ChatTranscript />
-              )
-            }
-          </Route>
+              </CurrentMessagesProvider>
+            ) : (
+              <ChatTranscript />
+            )
+          }
           {
             showingDevtools ? (
               <DevtoolsRoot />
