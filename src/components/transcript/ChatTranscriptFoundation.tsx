@@ -19,10 +19,13 @@ export async function reload(chatID: string, before?: string) {
 
     Log.info("Received messages for chat %s from REST", chatID);
 
+    isDoneLedger[chatID] = recentMessages.length <= 1;
+
     receiveMessages(recentMessages);
 }
 
 const loadingLedger: Record<string, boolean | undefined> = {};
+const isDoneLedger: Record<string, boolean | undefined> = {};
 
 export function useMessages(chatID?: string, reverse = false, injectTimestamps = true): [MessageRepresentation[], () => Promise<void>] {
     const allMessages = useSelector(selectMessages);
@@ -42,7 +45,7 @@ export function useMessages(chatID?: string, reverse = false, injectTimestamps =
         processedMessages,
         async () => {
             if (!chatID) return;
-            if (loadingLedger[chatID]) return;
+            if (loadingLedger[chatID] || isDoneLedger[chatID]) return;
             loadingLedger[chatID] = true;
             const lastMessage = processedMessages[reverse ? (processedMessages.length - 1) : 0];
             const lastMessageID = lastMessage[TIMESTAMP_ASSOCIATION] as string || lastMessage.id;
