@@ -1,13 +1,15 @@
 import { AnyChatItemModel, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
-import React, { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef } from "react";
+import React, { createContext, PropsWithChildren, useContext, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { matchPath, useLocation } from "react-router";
-import { apiClient } from "../../app/connection";
-import { chatMessagesReceived, selectChats } from "../../app/reducers/chats";
-import { messagesChanged, selectMessages } from "../../app/reducers/messages";
-import { store } from "../../app/store";
-import { DATE_SEPARATOR_TYPE } from "./items/IMTranscriptItem";
-import { messageIsEmpty } from "./items/Message";
+import { apiClient, receiveMessages } from "../../app/connection";
+import { selectChats } from "../../app/reducers/chats";
+import { selectMessages } from "../../app/reducers/messages";
+import { selectHoveringOverChatID, selectHoveringOverChatItemID, selectHoveringOverMessageID } from "../../app/reducers/presence";
+import IMMakeLog from "../../util/log";
+import { prepareMessagesForPresentation, TIMESTAMP_ASSOCIATION } from "../../util/message-presentation";
+
+const Log = IMMakeLog("ChatTranscriptFoundation", "info");
 
 export async function reload(chatID: string, before?: string) {
     const recentMessages = await apiClient.chats.fetchRecentMessages(chatID, {
@@ -15,90 +17,21 @@ export async function reload(chatID: string, before?: string) {
         before
     });
 
-    store.dispatch(messagesChanged(recentMessages));
-    store.dispatch(chatMessagesReceived(recentMessages));
+    Log.info("Received messages for chat %s from REST", chatID);
+
+    receiveMessages(recentMessages);
 }
 
-function messagesAreCloseEnough(message1: MessageRepresentation, message2: MessageRepresentation): boolean {
-    return Math.abs(message1.time - message2.time) < (1000 * 60 * 60);
-}
-
-const TIMESTAMP_ASSOCIATION: keyof MessageRepresentation = Symbol("TIMESTAMP_ASSOCIATION") as unknown as keyof MessageRepresentation;
-
-function createTimestampMessage({ service, time, chatID, id }: MessageRepresentation): MessageRepresentation {
-    return {
-        service,
-        time,
-        timeDelivered: 0,
-        timePlayed: 0,
-        timeRead: 0,
-        isSOS: false,
-        isAudioMessage: false,
-        isCancelTypingMessage: false,
-        isDelivered: false,
-        isTypingMessage: false,
-        items: [
-            {
-                type: DATE_SEPARATOR_TYPE,
-                payload: {
-                    id: "",
-                    chatID,
-                    fromMe: false,
-                    time
-                }
-            } as unknown as AnyChatItemModel
-        ],
-        fileTransferIDs: [],
-        chatID,
-        id: "",
-        flags: 0,
-        fromMe: false,
-        [TIMESTAMP_ASSOCIATION]: id
-    };
-}
-
-function prepareMessagesForPresentation(messages: Record<string, MessageRepresentation>, reverse: boolean, injectTimestamps: boolean): MessageRepresentation[] {
-    const preparedMessages: MessageRepresentation[] = [];
-
-    for (const messageID in messages) {
-        if (messageIsEmpty(messages[messageID])) continue;
-        preparedMessages.push(messages[messageID]);
-    }
-
-    preparedMessages.sort((m1, m2) => {
-        if (m1.isTypingMessage) return 1;
-        else if (m2.isTypingMessage) return -1;
-
-        return m1.time - m2.time;
-    });
-
-    if (injectTimestamps) {
-        for (let i = 0; i < preparedMessages.length; i++) {
-            const message = preparedMessages[i];
-
-            if (message.isTypingMessage || message[TIMESTAMP_ASSOCIATION]) continue;
-
-            const prevMessage = preparedMessages[i - 1];
-
-            if (prevMessage && messagesAreCloseEnough(prevMessage, message)) continue;
-
-            preparedMessages.splice(i, 0, createTimestampMessage(message));
-        }
-    }
-
-    if (reverse) preparedMessages.reverse();
-
-    return preparedMessages;
-}
+const loadingLedger: Record<string, boolean | undefined> = {};
 
 export function useMessages(chatID?: string, reverse = false, injectTimestamps = true): [MessageRepresentation[], () => Promise<void>] {
     const allMessages = useSelector(selectMessages);
-    const reloading = useRef(false);
 
     const messages = allMessages[chatID || ""];
 
     useEffect(() => {
         if (!messages && chatID) {
+            Log.info("Loading initial messages for chat %s", chatID);
             reload(chatID);
         }
     }, [messages, chatID]);
@@ -109,26 +42,78 @@ export function useMessages(chatID?: string, reverse = false, injectTimestamps =
         processedMessages,
         async () => {
             if (!chatID) return;
-            if (reloading.current) return;
-            reloading.current = true;
+            if (loadingLedger[chatID]) return;
+            loadingLedger[chatID] = true;
             const lastMessage = processedMessages[reverse ? (processedMessages.length - 1) : 0];
-            const lastMessageID = lastMessage.id || lastMessage[TIMESTAMP_ASSOCIATION] as string;
+            const lastMessageID = lastMessage[TIMESTAMP_ASSOCIATION] as string || lastMessage.id;
             await reload(chatID, lastMessageID);
-            reloading.current = false;
+            loadingLedger[chatID] = false;
         }
     ] as [MessageRepresentation[], () => Promise<void>];
 }
 
-export function useCurrentMessages(reverse = false, injectTimestamps = true) {
-    const chat = useCurrentChat();
-
-    return useMessages(chat?.id, reverse, injectTimestamps);
+export function useCurrentMessages(): [ MessageRepresentation[], () => Promise<void> ] {
+    const { messages, loadMore } = useContext(MessagesContext);
+    
+    return [ messages, loadMore ];
 }
 
-export const ChatContext = createContext<ChatRepresentation | null>(null);
+export const ChatContext = createContext<{
+    chat: ChatRepresentation | null;
+    chatID: string | null;
+}>({
+    chat: null,
+    chatID: null
+});
+
+export const MessagesContext = createContext<{
+    messages: MessageRepresentation[];
+    loadMore: () => Promise<void>;
+}>({
+    messages: [],
+    loadMore: async () => undefined
+});
 
 export function useCurrentChat(): ChatRepresentation | null {
-    return useContext(ChatContext);
+    return useContext(ChatContext).chat;
+}
+
+export function useCurrentChatID(): string | null {
+    return useContext(ChatContext).chatID;
+}
+
+function useResolvedMessage(messageID: string | null, chatID?: string): MessageRepresentation | null {
+    const messages = useSelector(selectMessages);
+    const currentChat = useCurrentChat();
+
+    if (!messageID) return null;
+    if (!chatID) chatID = currentChat?.id;
+    if (!chatID) return null;
+
+    return messages[chatID]?.[messageID] || null;
+}
+
+export function useHoveredMessage(): MessageRepresentation | null {
+    const hoveredMessage = useSelector(selectHoveringOverMessageID);
+
+    return useResolvedMessage(hoveredMessage);
+}
+
+export function useHoveredChatItem(): [AnyChatItemModel | null, MessageRepresentation | null] {
+    const hoveredMessage = useHoveredMessage();
+    const hoveredChatItemID = useSelector(selectHoveringOverChatItemID);
+
+    if (!hoveredChatItemID || !hoveredMessage) return [null, hoveredMessage];
+
+    return [hoveredMessage.items.find(item => item.payload.id === hoveredChatItemID) || null, hoveredMessage];
+}
+
+export function useHoveredChat(): ChatRepresentation | null {
+    const hoveredChat = useSelector(selectHoveringOverChatID);
+    const chats = useSelector(selectChats);
+
+    if (!hoveredChat) return null;
+    return chats[hoveredChat] || null;
 }
 
 export function CurrentChatProvider({ children }: PropsWithChildren<{}>) {
@@ -141,9 +126,25 @@ export function CurrentChatProvider({ children }: PropsWithChildren<{}>) {
 
     const chat = chatID ? chats[chatID] : null;
 
+    useEffect(() => {
+        Log.info("Chat changed to %s (has chat object: %d)", chatID, !!chat);
+    }, [chatID]);
+
     return (
-        <ChatContext.Provider value={chat}>
+        <ChatContext.Provider value={{ chat, chatID }}>
             {children}
         </ChatContext.Provider>
+    );
+}
+
+export function CurrentMessagesProvider({ children }: PropsWithChildren<{}>) {
+    const chat = useCurrentChat();
+
+    const [ messages, loadMore ] = useMessages(chat?.id!, true);
+
+    return (
+        <MessagesContext.Provider value={{ messages, loadMore }}>
+            {children}
+        </MessagesContext.Provider>
     );
 }

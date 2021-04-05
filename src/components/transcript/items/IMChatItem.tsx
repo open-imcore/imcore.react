@@ -47,7 +47,7 @@ export default function IMChatItem({ item, message, chat, changed, index }: Prop
 
     return (
         <>
-            <div className={`chat-item-container${isJumbo ? " chat-item-jumbo" : ""}`} data-has-acknowledgments={(acknowledgments.length > 0).toString()}>
+            <div className={`chat-item-container${isJumbo ? " chat-item-jumbo" : ""}`} data-has-acknowledgments={(acknowledgments.length > 0).toString()} attr-chat-item-id={item.payload.id}>
                 <div className="chat-item" data-item-type={item.type} attr-from-me={message.fromMe.toString()}>
                     <div className="item-inner">
                         <Component index={index} item={item.payload} message={message} chat={chat} changed={changed} key={item.payload.id} />

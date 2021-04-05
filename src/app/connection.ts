@@ -1,18 +1,18 @@
 import { AnyChatItemModel, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, IMWebSocketConnectionOptions, MessageRepresentation } from "imcore-ajax-core";
 import IMMakeLog from "../util/log";
-import {getPersistentValue, observePersistent} from "../util/use-persistent";
-import { chatChanged, chatDeleted, chatMessagesReceived, chatPropertiesChanged, chatsChanged } from "./reducers/chats";
+import { getPersistentValue, observePersistent } from "../util/use-persistent";
+import { chatChanged, chatDeleted, chatMessagesReceived, chatParticipantsUpdated, chatPropertiesChanged, chatsChanged } from "./reducers/chats";
+import { receivedBootstrap } from "./reducers/connection";
 import { contactChanged, contactDeleted, contactsChanged, strangersReceived } from "./reducers/contacts";
 import { messagesChanged, messagesDeleted, statusChanged } from "./reducers/messages";
 import { store } from "./store";
 import TypingAggregator from "./typing-aggregator";
 
-const Log = IMMakeLog("IMServerConnection");
+const Log = IMMakeLog("IMServerConnection", "info");
 
-const getEndpoint = () => getPersistentValue("imcore-host", "localhost:8090").value;
-let endpoint = getEndpoint();
+const imCoreHostConfig = getPersistentValue<string>("imcore-host", "localhost:8090");
 
-const formatURL = (protocol: string, path?: string) => `${protocol}://${endpoint}${path ? `/${path}` : ""}`;
+const formatURL = (protocol: string, path?: string) => `${protocol}://${imCoreHostConfig.value}${path ? `/${path}` : ""}`;
 
 const imCoreToken = () => getPersistentValue("imcore-token", undefined).value;
 export const apiClient = new IMHTTPClient({
@@ -57,13 +57,20 @@ socketClient.on(EventType.conversationDisplayNameChanged, receiveChangedChat);
 socketClient.on(EventType.conversationJoinStateChanged, receiveChangedChat);
 socketClient.on(EventType.conversationPropertiesChanged, conf => store.dispatch(chatPropertiesChanged(conf)));
 socketClient.on(EventType.conversationUnreadCountChanged, receiveChangedChat);
+socketClient.on(EventType.participantsChanged, ev => store.dispatch(chatParticipantsUpdated(ev)));
 
-export function receiveItems(items: AnyChatItemModel[]) {
-    const messages: MessageRepresentation[] = items.filter(item => item.type === ChatItemType.message).map(item => item.payload) as MessageRepresentation[];
+export function receiveMessages(messages: MessageRepresentation[]) {
+    Log.debug("Received %d messages from server", messages.length);
 
     store.dispatch(messagesChanged(messages));
     store.dispatch(chatMessagesReceived(messages));
     TypingAggregator.sharedInstance.messagesReceived(messages);
+}
+
+export function receiveItems(items: AnyChatItemModel[]) {
+    const messages: MessageRepresentation[] = items.filter(item => item.type === ChatItemType.message).map(item => item.payload) as MessageRepresentation[];
+
+    receiveMessages(messages);
 }
 
 socketClient.on(EventType.itemsReceived, ({ items }) => receiveItems(items));
@@ -85,4 +92,7 @@ socketClient.on(EventType.bootstrap, ({ chats, contacts, messages }) => {
     store.dispatch(chatsChanged(chats));
     store.dispatch(contactsChanged(contacts.contacts));
     store.dispatch(strangersReceived(contacts.strangers));
+    if (messages) receiveMessages(messages);
+
+    store.dispatch(receivedBootstrap());
 });

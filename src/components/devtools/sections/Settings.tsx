@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import GitInfo from "react-git-info/macro";
 import { useSelector } from "react-redux";
 import { reconnect } from "../../../app/connection";
 import { selectUseInvertedScrolling, setInvertedScrolling } from "../../../app/reducers/debug";
 import { store } from "../../../app/store";
 import { usePersistent } from "../../../util/use-persistent";
 import DebugBoolean from "../presentation/DebugBoolean";
+
+const shortHash = GitInfo().commit.shortHash;
 
 export default function DebugSettings() {
     const isScrollingInverted = useSelector(selectUseInvertedScrolling);
@@ -35,6 +38,10 @@ export default function DebugSettings() {
                         setIsReconnecting(false);
                     });
                 }}>Reconnect</button>
+
+                <label className="detail-row">
+                    <span className="detail-label">IMCore.React {shortHash}</span>
+                </label>
             </details>
         </React.Fragment>
     );

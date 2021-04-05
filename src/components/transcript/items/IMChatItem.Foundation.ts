@@ -14,7 +14,7 @@ export function extractAcknowledgments(item: AnyChatItemModel): AcknowledgmentCh
                 if (acknowledgment.acknowledgmentType < 3000) acknowledgments.push(acknowledgment);
             }
 
-            return acknowledgments.sort(ack => ack.fromMe ? -1 : 0);
+            return acknowledgments.sort((ack1, ack2) => ack1.fromMe ? -1 : (ack2.time - ack1.time));
         default:
             return [];
     }

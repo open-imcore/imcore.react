@@ -3,5 +3,7 @@
 
 .devtools-root {
     border-left: 1px solid $master-detail-border-color;
-    min-width: 285px;
+    width: 450px;
+    max-height: 100vh;
+    overflow-y: auto;
 }

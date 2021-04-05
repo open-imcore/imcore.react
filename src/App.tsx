@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { BrowserRouter as Router, Route } from "react-router-dom";
 import "./App.scss";
-import { apiClient } from "./app/connection";
+import { apiClient, socketClient } from "./app/connection";
+import { selectBootstrapState } from "./app/reducers/connection";
 import { selectIsPrivacyMode, selectShowingDevtools } from "./app/reducers/debug";
 import ChatSidebar from "./components/ChatSidebar";
 import DevtoolsRoot from "./components/devtools/DevtoolsRoot";
 import ChatTranscript from "./components/transcript/ChatTranscript";
-import { CurrentChatProvider } from "./components/transcript/ChatTranscriptFoundation";
+import { CurrentMessagesProvider, useCurrentChatID } from "./components/transcript/ChatTranscriptFoundation";
 
 function insertStyles() {
   const elm = document.getElementById("generated-styles") || document.head.appendChild(document.createElement("style"));
@@ -26,23 +26,36 @@ apiClient.getResourceMode().then(mode => document.body.classList.add(mode));
 function App() {
   const showingDevtools = useSelector(selectShowingDevtools);
   const isPrivacyMode = useSelector(selectIsPrivacyMode);
+  const currentChatID = useCurrentChatID();
+
+  useMemo(() => {
+    socketClient.connect(currentChatID ? { preload: currentChatID } : undefined);
+  }, []);
+
+  const didBootstrap = useSelector(selectBootstrapState);
 
   return (
-    <Router>
       <div className="app-root" attr-showing-devtools={showingDevtools.toString()} attr-privacy-mode={isPrivacyMode.toString()}>
-        <CurrentChatProvider>
+          <div className="app-bar">
+            <div className="chat-controls"></div>
+            <div className="main-toolbar"></div>
+          </div>
           <ChatSidebar />
-          <Route path={"/chats/:chatID"}>
-            <ChatTranscript />
-          </Route>
+          {
+            didBootstrap ? (
+              <CurrentMessagesProvider>
+                <ChatTranscript />
+              </CurrentMessagesProvider>
+            ) : (
+              <ChatTranscript />
+            )
+          }
           {
             showingDevtools ? (
               <DevtoolsRoot />
             ) : null
           }
-        </CurrentChatProvider>
       </div>
-    </Router>
   );
 }
 

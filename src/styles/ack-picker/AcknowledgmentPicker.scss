@@ -1,0 +1,73 @@
+@import "../core";
+
+@mixin acknowledgment-glyph($name) {
+    &[attr-acknowledgment-name=#{$name}]::after {
+        --acknowledgment-glyph-url: var(--ack-#{$name}-url);
+        @content;
+    }
+}
+
+.acknowledgment-picker {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    width: 200px;
+    column-gap: 5px;
+
+    background: white;
+
+    border: 1px solid black;
+    border-radius: 25px;
+
+    padding: 2.5px 7.5px;
+
+    .acknowledgment-button {
+        aspect-ratio: 1/1;
+        border-radius: 50%;
+        overflow: hidden;
+
+        position: relative;
+
+        cursor: pointer;
+
+        &::before, &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            transition: background-color 100ms linear;
+        }
+
+        &::before {
+            background-color: white;
+        }
+
+        &[attr-selected=true] {
+            &::before {
+                background-color: $active-chat;
+            }
+
+            &[attr-acknowledgment-name=heart] {
+                --active-ack-color: #E86895;
+            }
+
+            &:not([attr-acknowledgment-name=heart]) {
+                --active-ack-color: white;
+            }
+        }
+
+        @include acknowledgment-glyph(heart);
+
+        @include acknowledgment-glyph(thumbs-up);
+        @include acknowledgment-glyph(thumbs-down);
+        @include acknowledgment-glyph(emphasize);
+        @include acknowledgment-glyph(question);
+        @include acknowledgment-glyph(haha-en);
+
+        &::after {
+            mask-border-source: var(--acknowledgment-glyph-url);
+            background: var(--active-ack-color, #808080);
+        }
+    }
+}

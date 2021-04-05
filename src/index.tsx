@@ -1,16 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
+import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
-import { socketClient } from "./app/connection";
 import { store } from "./app/store";
+import { CurrentChatProvider } from "./components/transcript/ChatTranscriptFoundation";
 import "./index.css";
-
-socketClient.connect();
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Router>
+      <CurrentChatProvider>
+        <App />
+      </CurrentChatProvider>
+    </Router>
   </Provider>,
   document.getElementById("root")
 );

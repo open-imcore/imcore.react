@@ -1,16 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getPersistentValue } from "../../util/use-persistent";
 import { RootState } from "../store";
-
-function localBoolean(key: string, defaultValue: boolean): boolean {
-    switch (localStorage.getItem(key)) {
-        case "true":
-            return true;
-        case "false":
-            return false;
-        default:
-            return defaultValue;
-    }
-}
 
 interface DebugState {
     showDevtools: boolean;
@@ -18,10 +8,15 @@ interface DebugState {
     invertedScrolling: boolean;
 }
 
+const persistentConfig = {
+    showDevtools: getPersistentValue("showing-devtools", false),
+    invertedScrolling: getPersistentValue("use-inverted-scrolling", false)
+};
+
 const initialState: DebugState = {
-    showDevtools: false,
+    showDevtools: persistentConfig.showDevtools.value,
     privacy: false,
-    invertedScrolling: localBoolean("use-inverted-scrolling", false)
+    invertedScrolling: persistentConfig.invertedScrolling.value
 };
 
 export const debugSlice = createSlice({
@@ -29,14 +24,13 @@ export const debugSlice = createSlice({
     initialState,
     reducers: {
         setShowDevtools: (debug, { payload }: PayloadAction<boolean>) => {
-            debug.showDevtools = payload;
+            debug.showDevtools = persistentConfig.showDevtools.value = payload;
         },
         setPrivacyMode: (debug, { payload }: PayloadAction<boolean>) => {
             debug.privacy = payload;
         },
         setInvertedScrolling: (debug, { payload }: PayloadAction<boolean>) => {
-            debug.invertedScrolling = payload;
-            localStorage.setItem("use-inverted-scrolling", payload.toString());
+            debug.invertedScrolling = persistentConfig.invertedScrolling.value = payload;
         }
     }
 });

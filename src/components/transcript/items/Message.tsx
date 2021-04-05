@@ -1,4 +1,4 @@
-import { AnyChatItemModel, ChatItemType, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
+import { AnyChatItemModel, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
 import React, { PropsWithRef, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { selectHandleIDToContact } from "../../../app/reducers/contacts";
@@ -86,7 +86,7 @@ function Message({ eRef, message, nextMessage, prevMessage, lastDeliveredFromMe,
     return (
         items.length ? (
             <div className="message-container" ref={eRef as unknown as React.ClassAttributes<HTMLDivElement>["ref"]} style={style}>
-                <div className="message" attr-prev-contiguous={beginningContiguous.toString()} attr-next-contiguous={endingContiguous.toString()} attr-next-transcript-contiguous={(messageIsTranscriptMessage && nextIsTranscript).toString()} attr-prev-transcript-contiguous={(messageIsTranscriptMessage && prevIsTranscript).toString()} attr-from-me={message.fromMe.toString()} attr-service={message.service}>
+                <div className="message" attr-message-id={message.id} attr-prev-contiguous={beginningContiguous.toString()} attr-next-contiguous={endingContiguous.toString()} attr-next-transcript-contiguous={(messageIsTranscriptMessage && nextIsTranscript).toString()} attr-prev-transcript-contiguous={(messageIsTranscriptMessage && prevIsTranscript).toString()} attr-from-me={message.fromMe.toString()} attr-service={message.service}>
                     {
                         messageIsTranscriptMessage ? items : <>
                             {
@@ -117,46 +117,4 @@ function Message({ eRef, message, nextMessage, prevMessage, lastDeliveredFromMe,
     );
 }
 
-function itemsAreShallowEqual({ items: items1 }: MessageRepresentation, { items: items2 }: MessageRepresentation) {
-    if (items1.length !== items2.length) return false;
-
-    for (let i = 0; i < items1.length; i++)  {
-        const item1 = items1[i], item2 = items2[i];
-
-        if (item1.type !== item2.type) return false;
-
-        switch (item1.type) {
-            case ChatItemType.plugin:
-                if (JSON.stringify(item1.payload) !== JSON.stringify(item2.payload)) return false;
-        }
-    }
-
-    return true;
-}
-
-export default React.memo(Message, (prevProps, nextProps) => {
-    function itemChangedViaMemoState(item: MessageRepresentation) {
-        if (!item.fromMe) return false;
-        
-        switch (nextProps.lastDeliveredFromMe) {
-            case prevProps.lastDeliveredFromMe:
-                break;
-            case item.id:
-                return true;
-        }
-
-        switch (nextProps.lastReadFromMe) {
-            case prevProps.lastReadFromMe:
-                break;
-            case item.id:
-                return true;
-        }
-
-        return false;
-    }
-
-    if (prevProps.message.id !== nextProps.message.id) return false;
-    else if (itemChangedViaMemoState(prevProps.message) || itemChangedViaMemoState(nextProps.message)) return false;
-    else if (!itemsAreShallowEqual(prevProps.message, nextProps.message)) return false;
-    else return true;
-});
+export default Message;

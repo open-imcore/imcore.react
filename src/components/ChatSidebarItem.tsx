@@ -35,7 +35,7 @@ function ChatSidebarItem({ chat, style }: PropsWithChildren<{ chat: ChatRepresen
     const isActive = currentChat?.id === chat.id;
 
     return (
-        <Link to={`/chats/${chat.id}`} className="chat-sidebar-item" attr-chat-active={isActive.toString()} attr-unread-count={chat.unreadMessageCount} style={style}>
+        <Link to={`/chats/${chat.id}`} attr-chat-id={chat.id} className="chat-sidebar-item" attr-chat-active={isActive.toString()} attr-unread-count={chat.unreadMessageCount} style={style}>
             <div className="chat-sidebar-item--image">
                 <ChatBubble chat={chat} />
             </div>
