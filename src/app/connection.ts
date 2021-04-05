@@ -8,7 +8,7 @@ import { messagesChanged, messagesDeleted, statusChanged } from "./reducers/mess
 import { store } from "./store";
 import TypingAggregator from "./typing-aggregator";
 
-const Log = IMMakeLog("IMServerConnection");
+const Log = IMMakeLog("IMServerConnection", "info");
 
 const imCoreHostConfig = getPersistentValue<string>("imcore-host", "localhost:8090");
 
@@ -44,7 +44,7 @@ socketClient.on(EventType.conversationUnreadCountChanged, receiveChangedChat);
 socketClient.on(EventType.participantsChanged, ev => store.dispatch(chatParticipantsUpdated(ev)));
 
 export function receiveMessages(messages: MessageRepresentation[]) {
-    Log.info("Received %d messages from server", messages.length);
+    Log.debug("Received %d messages from server", messages.length);
 
     store.dispatch(messagesChanged(messages));
     store.dispatch(chatMessagesReceived(messages));

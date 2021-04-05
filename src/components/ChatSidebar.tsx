@@ -9,7 +9,7 @@ import { store } from "../app/store";
 import "../styles/ChatSidebar.scss";
 import { findAncestor } from "../util/dom";
 import ChatSidebarItem from "./ChatSidebarItem";
-import { TypedListChildComponentProps } from "./transcript/ChatTranscript.ReactWindow";
+import { TypedListChildComponentProps } from "./react-window-dynamic/DynamicSizeList";
 
 function findChatID(element: HTMLElement): string | null {
     return findAncestor(element, ancestor => {

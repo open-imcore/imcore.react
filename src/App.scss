@@ -13,7 +13,7 @@
 
   & > .app-bar {
     grid-row: 1;
-    grid-column: 1 / 4;
+    grid-column: 1 / 3;
     border-bottom: 1px solid $master-detail-border-color;
 
     display: grid;
@@ -26,6 +26,10 @@
 
   & > :not(.app-bar) {
     grid-row: 2;
+  }
+
+  & > .devtools-root {
+    grid-row: 1 / 3;
   }
 
   &[attr-showing-devtools=true] {
