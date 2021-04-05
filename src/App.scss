@@ -18,10 +18,6 @@
 
     display: grid;
     grid-template-columns: 285px minmax(0, 1fr);
-
-    & > .chat-controls {
-      border-right: 1px solid $master-detail-border-color;
-    }
   }
 
   & > :not(.app-bar) {

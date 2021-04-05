@@ -1,3 +1,4 @@
+import { ContactRepresentation } from "imcore-ajax-core";
 import parsePhoneNumber from "libphonenumber-js";
 import { useSelector } from "react-redux";
 import { selectHandleIDToContact } from "../app/reducers/contacts";
@@ -16,14 +17,18 @@ export function formatPhoneNumber(rawPhoneNumber: string): string {
     }
 }
 
-export function useFormattedHandles(handleIDs: string[]): string[] {
-    const handleIDToContact = useSelector(selectHandleIDToContact);
-    
+export function extractFormattedHandles(handleIDs: string[], contacts: Record<string, ContactRepresentation>): string[] {
     return handleIDs.map(handleID => {
-        const contact = handleIDToContact[handleID];
+        const contact = contacts[handleID];
         if (contact) return contact.fullName || handleID;
         else return formatPhoneNumber(handleID);
     });
+}
+
+export function useFormattedHandles(handleIDs: string[]): string[] {
+    const handleIDToContact = useSelector(selectHandleIDToContact);
+    
+    return extractFormattedHandles(handleIDs, handleIDToContact);
 }
 
 export function useFormattedHandle(handleID: string | undefined): string {

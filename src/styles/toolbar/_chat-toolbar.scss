@@ -1,0 +1,107 @@
+.chat-toolbar {
+    border-right: 1px solid $master-detail-border-color;
+
+    display: flex;
+    flex-flow: row;
+
+    align-items: center;
+
+    padding: 0 10px;
+
+    & > .search-field {
+        flex: 1;
+
+        background: url(../../assets/magnifying-glass.svg);
+        cursor: text;
+
+        display: flex;
+        flex-flow: row;
+
+        align-items: center;
+
+        padding: 7.5px;
+
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 5px;
+
+        --svg-color: rgba(0, 0, 0, 0.2);
+
+        & > input {
+            border: none;
+            flex: 1;
+            background: none;
+
+            font-size: 12px;
+            padding: 0;
+
+            margin-left: 5px;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        &:focus-within {
+            border: 2px solid transparentize($blue-text, 0.5);
+            margin: -2px;
+        }
+
+        & > svg {
+            fill: var(--svg-color);
+            height: 10px;
+            width: 11px;
+            stroke: var(--svg-color);
+            stroke-width: 2px;
+            overflow: visible;
+        }
+    }
+
+    .new-chat {
+        display: inline-flex;
+        flex-flow: row;
+
+        align-items: center;
+        justify-content: center;
+
+        height: 25px;
+        width: 25px;
+
+        background: none;
+        border: none;
+
+        margin-left: 5px;
+
+        border-radius: 5px;
+
+        cursor: pointer;
+
+        &:focus {
+            outline: none;
+        }
+
+        &, & svg {
+            transition: background-color 75ms linear;
+        }
+
+        & svg {
+            transform: scale(1.2) translate(0.5px, -1px);
+            fill: rgba(0, 0, 0, 0.8);
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+
+            & svg {
+                fill: rgba(0, 0, 0, 0.9);
+            }
+        }
+
+        &:active {
+            background-color: rgba(0, 0, 0, 0.2);
+
+            & svg {
+                fill: black;
+            }
+        }
+    }
+}

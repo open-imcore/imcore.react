@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import IMMakeLog from "../../util/log";
 import { RootState } from "../store";
 
 interface PresenceState {
@@ -15,12 +16,18 @@ const initialState: PresenceState = {
     hoveringOverChatID: null
 };
 
+const Log = IMMakeLog("Redux/Presences", "debug");
+
 export const presenceSlice = createSlice({
     name: "presence",
     initialState,
     reducers: {
         visibilityChanged: (presence) => {
-            presence.tabIsActive = document.visibilityState === "visible";
+            const isActive = document.visibilityState === "visible";
+
+            if (isActive !== presence.tabIsActive) Log.debug("Presence changed to %d", isActive);
+
+            presence.tabIsActive = isActive;
         },
         messageChanged: (presence, { payload: messageID }: PayloadAction<string | null>) => {
             presence.hoveringOverMessageID = messageID;

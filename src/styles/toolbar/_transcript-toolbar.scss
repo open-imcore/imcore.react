@@ -1,0 +1,17 @@
+.transcript-toolbar {
+    display: flex;
+    flex-flow: row;
+
+    align-items: center;
+
+    padding: 0 15px;
+
+    .chat-name {
+        font-size: 12px;
+
+        &::before {
+            content: 'To: ';
+            color: rgba(0, 0, 0, 0.6);
+        }
+    }
+}

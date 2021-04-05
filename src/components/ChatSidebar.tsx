@@ -1,11 +1,10 @@
 import { ChatRepresentation } from "imcore-ajax-core";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useContext, useMemo } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { areEqual, FixedSizeList as List } from "react-window";
-import { selectChats } from "../app/reducers/chats";
 import { chatChanged } from "../app/reducers/presence";
 import { store } from "../app/store";
+import { ChatSearchContext } from "../contexts/ChatSearchContext";
 import "../styles/ChatSidebar.scss";
 import { findAncestor } from "../util/dom";
 import ChatSidebarItem from "./ChatSidebarItem";
@@ -22,6 +21,8 @@ const RowRenderer = React.memo(function RowRenderer({
     data,
     style
 }: TypedListChildComponentProps<ChatRepresentation[]>) {
+    if (!data[index]) return null;
+
     return (
         <ChatSidebarItem style={style} chat={data[index]} />
     );
@@ -44,7 +45,9 @@ const RowRenderer = React.memo(function RowRenderer({
 });
 
 function ChatSidebar() {
-    const allChats = Object.values(useSelector(selectChats)).sort((c1, c2) => c2.lastMessageTime - c1.lastMessageTime);
+    const { chatResults } = useContext(ChatSearchContext);
+
+    const chats = useMemo(() => chatResults.slice().sort((c1, c2) => c2.lastMessageTime - c1.lastMessageTime), [chatResults]);
 
     return (
         <div onMouseOver={event => {
@@ -59,10 +62,10 @@ function ChatSidebar() {
                     <List
                         height={height}
                         className="chat-sidebar"
-                        itemCount={allChats.length}
-                        itemData={allChats}
+                        itemCount={chats.length}
+                        itemData={chats}
                         itemSize={60}
-                        itemKey={(index: number, data: ChatRepresentation[]) => data[index].id}
+                        itemKey={(index: number, data: ChatRepresentation[]) => data[index]?.id || Math.random()}
                         overscanCount={35}
                         width={285}
                     >

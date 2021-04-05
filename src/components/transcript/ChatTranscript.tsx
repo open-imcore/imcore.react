@@ -1,7 +1,9 @@
 import { MessageRepresentation } from "imcore-ajax-core";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { chatItemChanged } from "../../app/reducers/presence";
+import { apiClient } from "../../app/connection";
+import { chatItemChanged, selectVisibilityState } from "../../app/reducers/presence";
 import { store } from "../../app/store";
 import IMMakeLog from "../../util/log";
 import DynamicSizeList, { RowMeasurerPropsWithoutChildren } from "../react-window-dynamic/DynamicSizeList";
@@ -93,7 +95,23 @@ export default function ChatTranscript() {
 
     const [lastDeliveredFromMe, lastReadFromMe] = useMemo(() => getLastReadAndDeliveredFromMe(messages), [JSON.stringify(messages)]);
 
+    const unreadCount = chat?.unreadMessageCount || 0;
+    const isVisible = useSelector(selectVisibilityState);
+
     const itemKey = useCallback((index: number, data: MessageRepresentation[]) => data[index].id, []);
+
+    const [ processing, setIsProcessing ] = useState(false);
+
+    useEffect(() => {
+        (async () => {
+            if (unreadCount > 0 && isVisible && chat) {
+                if (processing) return;
+                setIsProcessing(true);
+                await apiClient.chats.readAllMessages(chat.id);
+                setIsProcessing(false);
+            }
+        })();
+    }, [unreadCount, isVisible, chat]);
 
     return (
         <div className="chat-transcript transcript-react-window" onMouseOver={event => {

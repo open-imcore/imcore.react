@@ -4,10 +4,13 @@ import "./App.scss";
 import { apiClient, socketClient } from "./app/connection";
 import { selectBootstrapState } from "./app/reducers/connection";
 import { selectIsPrivacyMode, selectShowingDevtools } from "./app/reducers/debug";
+import ChatBar from "./components/bar/ChatBar";
+import TranscriptBar from "./components/bar/TranscriptBar";
 import ChatSidebar from "./components/ChatSidebar";
 import DevtoolsRoot from "./components/devtools/DevtoolsRoot";
 import ChatTranscript from "./components/transcript/ChatTranscript";
 import { CurrentMessagesProvider, useCurrentChatID } from "./components/transcript/ChatTranscriptFoundation";
+import { ChatSearchProvider } from "./contexts/ChatSearchContext";
 
 function insertStyles() {
   const elm = document.getElementById("generated-styles") || document.head.appendChild(document.createElement("style"));
@@ -36,25 +39,27 @@ function App() {
 
   return (
       <div className="app-root" attr-showing-devtools={showingDevtools.toString()} attr-privacy-mode={isPrivacyMode.toString()}>
-          <div className="app-bar">
-            <div className="chat-controls"></div>
-            <div className="main-toolbar"></div>
-          </div>
-          <ChatSidebar />
-          {
-            didBootstrap ? (
-              <CurrentMessagesProvider>
+          <ChatSearchProvider>
+            <div className="app-bar">
+              <ChatBar />
+              <TranscriptBar />
+            </div>
+            <ChatSidebar />
+            {
+              didBootstrap ? (
+                <CurrentMessagesProvider>
+                  <ChatTranscript />
+                </CurrentMessagesProvider>
+              ) : (
                 <ChatTranscript />
-              </CurrentMessagesProvider>
-            ) : (
-              <ChatTranscript />
-            )
-          }
-          {
-            showingDevtools ? (
-              <DevtoolsRoot />
-            ) : null
-          }
+              )
+            }
+            {
+              showingDevtools ? (
+                <DevtoolsRoot />
+              ) : null
+            }
+          </ChatSearchProvider>
       </div>
   );
 }

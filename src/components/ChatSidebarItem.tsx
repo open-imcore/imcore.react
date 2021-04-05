@@ -1,10 +1,10 @@
 import { ChatRepresentation } from "imcore-ajax-core";
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { PropsWithChildren } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { selectTypingStatus } from "../app/reducers/chats";
 import { RootState } from "../app/store";
-import { useFormattedHandles } from "../hooks/useFormattedHandles";
+import useChatName from "../hooks/useChatName";
 import "../styles/ChatSidebarItem.scss";
 import { useFormattedReceipt } from "../util/receipt-formatting";
 import ChatBubble from "./chat/ChatBubble";
@@ -13,17 +13,6 @@ import IMTypingChatItem from "./transcript/items/chat/IMTypingChatItem";
 
 function useLastMessageTime(chat: ChatRepresentation) {
     return useFormattedReceipt(chat.lastMessageTime);
-}
-
-function useChatName(chat: ChatRepresentation) {
-    const [chatName, setChatName] = useState(null as string | null);
-    const formattedHandles = useFormattedHandles(chat.participants);
-
-    useEffect(() => {
-        setChatName(chat.displayName || null);
-    }, [chat]);
-
-    return chatName || formattedHandles.join(", ") || chat.id;
 }
 
 function ChatSidebarItem({ chat, style }: PropsWithChildren<{ chat: ChatRepresentation, style?: object }>) {

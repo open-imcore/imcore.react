@@ -131,7 +131,12 @@ export default function GroupSettings() {
                     <DebugButton click={() => apiClient.chats.deleteChat(currentChat.id)}>
                         Delete Chat
                     </DebugButton>
+                </div>
+            </details>
+            <details>
+                <summary>DSL</summary>
 
+                <div className="debug-details">
                     {DSLDebugTools.map(({ name, event }) => (
                         <DebugButton key={name} click={() => EventBus.emit(event)}>
                             {name}
