@@ -1,5 +1,5 @@
 import { ChatRepresentation } from "imcore-ajax-core";
-import React, { createContext, PropsWithChildren, useCallback, useState } from "react";
+import React, { createContext, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectChats } from "../app/reducers/chats";
 import { selectHandleIDToContact } from "../app/reducers/contacts";
@@ -21,19 +21,11 @@ export function ChatSearchProvider({ children }: PropsWithChildren<{}>) {
     const allChats = Object.values(useSelector(selectChats));
     const contacts = useSelector(selectHandleIDToContact);
 
-    const [ searchCriteria, internalSetSearchCriteria ] = useState<string>();
-    const [ chatResults, setChatResults ] = useState<ChatRepresentation[]>();
+    const [ searchCriteria, setSearchCriteria ] = useState<string>();
 
-    const setSearchCriteria = (searchCriteria: string | undefined) => {
-        internalSetSearchCriteria(searchCriteria);
-
-        if (!searchCriteria) setChatResults(allChats.slice());
-        else {
-            setChatResults(allChats.filter(chat => {
-                return [chat.displayName, chat.id, chat.lastMessage, chat.participants, chat.participants.map(participant => contacts[participant]?.fullName)].flat().some(text => text?.toLowerCase().includes(searchCriteria));
-            }));
-        };
-    };
+    const chatResults = useMemo(() => !searchCriteria ? allChats : allChats.filter(chat => {
+        return [chat.displayName, chat.id, chat.lastMessage, chat.participants, chat.participants.map(participant => contacts[participant]?.fullName)].flat().some(text => text?.toLowerCase().includes(searchCriteria));
+    }), [allChats, searchCriteria]);
 
     const clearSearchCriteria = useCallback(() => {
 
