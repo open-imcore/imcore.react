@@ -1,6 +1,6 @@
 import { AnyChatItemModel, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, IMWebSocketConnectionOptions, MessageRepresentation } from "imcore-ajax-core";
 import IMMakeLog from "../util/log";
-import { getPersistentValue, observePersistent } from "../util/use-persistent";
+import {getPersistentValue, observePersistent} from "../util/use-persistent";
 import { chatChanged, chatDeleted, chatMessagesReceived, chatPropertiesChanged, chatsChanged } from "./reducers/chats";
 import { contactChanged, contactDeleted, contactsChanged, strangersReceived } from "./reducers/contacts";
 import { messagesChanged, messagesDeleted, statusChanged } from "./reducers/messages";
@@ -14,10 +14,12 @@ let endpoint = getEndpoint();
 
 const formatURL = (protocol: string, path?: string) => `${protocol}://${endpoint}${path ? `/${path}` : ""}`;
 
-export const socketClient = new IMWebSocketClient(formatURL("ws", "stream"));
+const imCoreToken = () => getPersistentValue("imcore-token", undefined).value;
 export const apiClient = new IMHTTPClient({
-    baseURL: formatURL("http")
+    baseURL: formatURL("http"),
+    token: imCoreToken()
 });
+export const socketClient = new IMWebSocketClient(formatURL("ws", "stream"), imCoreToken());
 
 function rebuildEndpoints() {
     socketClient.url = formatURL("ws", "stream");
@@ -28,6 +30,15 @@ export async function reconnect(options?: IMWebSocketConnectionOptions): Promise
     await socketClient.close();
     rebuildEndpoints();
     socketClient.connect(options);
+}
+
+export async function updatePassword(oldPass:string, newPass:string){
+    apiClient.security.changePSK({ // propagates to api client, however not websocket.
+        oldPSK: newPass,
+        newPSK: newPass
+    }, true).then((token) => {
+        socketClient.token = token;
+    });
 }
 
 observePersistent<string>("imcore-host", newEndpoint => {
