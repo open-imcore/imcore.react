@@ -1,8 +1,8 @@
 import { AnyChatItemModel, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, IMWebSocketConnectionOptions, MessageRepresentation } from "imcore-ajax-core";
 import IMMakeLog from "../util/log";
-import { getPersistentValue, observePersistent } from "../util/use-persistent";
+import { getPersistentValue } from "../util/use-persistent";
 import { chatChanged, chatDeleted, chatMessagesReceived, chatParticipantsUpdated, chatPropertiesChanged, chatsChanged } from "./reducers/chats";
-import { receivedBootstrap } from "./reducers/connection";
+import { receivedBootstrap, tokenChanged } from "./reducers/connection";
 import { contactChanged, contactDeleted, contactsChanged, strangersReceived } from "./reducers/contacts";
 import { messagesChanged, messagesDeleted, statusChanged } from "./reducers/messages";
 import { store } from "./store";
@@ -14,7 +14,7 @@ const imCoreHostConfig = getPersistentValue<string>("imcore-host", "localhost:80
 
 const formatURL = (protocol: string, path?: string) => `${protocol}://${imCoreHostConfig.value}${path ? `/${path}` : ""}`;
 
-const imCoreToken = () => getPersistentValue("imcore-token", undefined).value;
+const imCoreToken = () => getPersistentValue("imcore-token", "").value;
 export const apiClient = new IMHTTPClient({
     baseURL: formatURL("http"),
     token: imCoreToken()
@@ -32,19 +32,19 @@ export async function reconnect(options?: IMWebSocketConnectionOptions): Promise
     socketClient.connect(options);
 }
 
-export async function updatePassword(oldPass:string, newPass:string){
-    apiClient.security.changePSK({ // propagates to api client, however not websocket.
-        oldPSK: newPass,
-        newPSK: newPass
-    }, true).then((token) => {
-        socketClient.token = token;
+export async function updatePassword(oldPass:string, newPass:string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        apiClient.security.changePSK({
+            oldPSK: newPass,
+            newPSK: newPass
+        }, true).then((token) => {
+            store.dispatch(tokenChanged(token));
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
     });
 }
-
-observePersistent<string>("imcore-host", newEndpoint => {
-    console.log({ newEndpoint });
-    endpoint = newEndpoint;
-});
 
 function receiveChangedChat(chat: ChatRepresentation) {
     store.dispatch(chatChanged(chat));
