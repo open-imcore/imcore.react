@@ -16,9 +16,6 @@ jobs:
         with:
           node-version: '14'
 
-      - name: ugh
-        run: npm i -g yarn
-
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
