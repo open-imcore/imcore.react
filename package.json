@@ -45,7 +45,9 @@
     "build:staging": "STAGING=1 yarn build",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "act": "act -s SSH_KEY=\"$(< .ssh.secret)\"",
+    "act:reuse": "yarn act --reuse"
   },
   "eslintConfig": {
     "extends": "react-app"
