@@ -1,6 +1,6 @@
 import { AttachmentRepresentation, RichLinkAsset, RichLinkAudio, RichLinkCaptionBar, RichLinkImage, RichLinkVideo } from "imcore-ajax-core";
 import React from "react";
-import { apiClient } from "../../../../../../app/connection";
+import { IMAttachmentResolver, useResourceURI } from "../../../../../../hooks/useResourceURI";
 import { LPRenderingContext } from "../LPBalloon";
 import LPAssetRenderer from "./LPAssetRenderer";
 import LPCaptionBar from "./LPCaptionBar";
@@ -14,16 +14,20 @@ interface LPMediaRenderingContext extends LPRenderingContext {
     changed: () => any;
 }
 
-function attachmentURL(asset: RichLinkAsset | undefined, attachments: AttachmentRepresentation[]) {
+function attachmentID(asset: RichLinkAsset | undefined, attachments: AttachmentRepresentation[]): string | null {
     if (!asset) return null;
     if (typeof asset.attachmentIndex !== "number") return null;
     if (!attachments[asset.attachmentIndex]) return null;
-    return apiClient.attachmentURL(attachments[asset.attachmentIndex].id);
+    return attachments[asset.attachmentIndex].id;
 }
 
 export default function LPMedia(ctx: LPMediaRenderingContext) {
-    const videoURL = ctx.video?.streamingURL || ctx.video?.youTubeURL || attachmentURL(ctx.video, ctx.attachments);
-    const imageURL = attachmentURL(ctx.image, ctx.attachments);
+    const alternativeURL = ctx.video?.streamingURL || ctx.video?.youTubeURL;
+
+    const innerVideoURL = useResourceURI(alternativeURL ? null : attachmentID(ctx.video, ctx.attachments), IMAttachmentResolver);
+    
+    const videoURL = alternativeURL || innerVideoURL;
+    const imageURL = useResourceURI(attachmentID(ctx.image, ctx.attachments), IMAttachmentResolver);
 
     if (!videoURL && !imageURL) return null;
 

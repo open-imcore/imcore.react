@@ -2,10 +2,68 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 const persistentCache: Map<string, VersionedValue<any>> = new Map();
 
-interface VersionedValue<T> {
+export interface VersionedValue<T> {
     value: T;
     revision: number;
     observe: (cb: (newValue: T) => any) => () => void;
+}
+
+type VersionedObserver<T> = Parameters<VersionedValue<T>["observe"]>[0];
+
+export interface VersionedValueWithStateAdapter<T> extends VersionedValue<T> {
+    useAsState: () => T;
+}
+
+export function makeVanillaVersionedValue<T>(defaultValue: T): VersionedValueWithStateAdapter<T> {
+    const observers: Set<VersionedObserver<T>> = new Set();
+
+    const versionedValue = new Proxy({
+        value: defaultValue,
+        revision: 0,
+        observe: (cb: (newValue: T) => any) => {
+            observers.add(cb);
+
+            return () => {
+                observers.delete(cb);
+            };
+        },
+        useAsState: () => {
+            const [ value, setValue ] = useState<T>();
+            const revision = useRef(-1);
+
+            if (revision.current !== versionedValue.revision) {
+                setValue(versionedValue.value);
+                revision.current = versionedValue.revision;
+            }
+
+            useEffect(() => versionedValue.observe((newValue: T) => {
+                setValue(newValue);
+                revision.current = versionedValue.revision;
+            }));
+
+            return value!;
+        }
+    }, {
+        set(target, property, value) {
+            switch (property) {
+                case "value":
+                    target.value = value;
+                    target.revision++;
+
+                    for (const observer of observers) {
+                        observer(value);
+                    }
+
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
+        }
+    });
+
+    return versionedValue;
 }
 
 const persistentObservers: Map<string, Set<(newValue: any) => void>> = new Map();
