@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { apiClient } from "../../../app/connection";
+import { useBusyController } from "../../../hooks/useBusyController";
 import { EventBus } from "../../../hooks/useEvent";
 import { DSLDebugTools } from "../../react-window-dynamic/DynamicSizeList";
 import { useCurrentChat } from "../../transcript/ChatTranscriptFoundation";
@@ -48,24 +49,6 @@ interface CheckboxProps extends InputProps {
 }
 
 const mergeClassName = (className: string, className1?: string | undefined) => `${className}${className1 ? ` ${className1}` : ""}`;
-
-type AnonymizedFunction<T> = T extends (...args: infer U) => any ? (...args: U) => Promise<void> : never;
-
-function useBusyController<T extends (...args: any) => any>({ disabled, fn }: { disabled?: boolean, fn: T }): [ boolean, AnonymizedFunction<T> ] {
-    const [ busy, setBusy ] = useState(false);
-    const canProceed = !(busy || disabled);
-
-    return [
-        !canProceed,
-        (async (...args: Parameters<T>[]) => {
-            if (!canProceed) return;
-
-            setBusy(true);
-            await fn(...args);
-            setBusy(false);
-        }) as unknown as AnonymizedFunction<T>
-    ];
-}
 
 function DebugCheckbox({ disabled, changed, className, children, value }: CheckboxProps) {
     const [ isDisabled, fire ] = useBusyController({ disabled, fn: changed });

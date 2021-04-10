@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import GitInfo from "react-git-info/macro";
 import { useSelector } from "react-redux";
 import { reconnect } from "../../../app/connection";
 import { selectUseInvertedScrolling, setInvertedScrolling } from "../../../app/reducers/debug";
 import { store } from "../../../app/store";
+import { useBusyController } from "../../../hooks/useBusyController";
 import { usePersistent } from "../../../util/use-persistent";
 import DebugBoolean from "../presentation/DebugBoolean";
 
@@ -12,10 +13,11 @@ const shortHash = GitInfo().commit.shortHash;
 export default function DebugSettings() {
     const isScrollingInverted = useSelector(selectUseInvertedScrolling);
     const [imCoreHost, setIMCoreHost] = usePersistent("imcore-host", "localhost");
-    const [isReconnecting, setIsReconnecting] = useState(false);
+
+    const [ isReconnecting, doReconnect ] = useBusyController(reconnect);
 
     return (
-        <React.Fragment>
+        <>
             <details>
                 <summary>Settings</summary>
 
@@ -32,17 +34,12 @@ export default function DebugSettings() {
                     <input type="text" placeholder="localhost:8090" value={imCoreHost} onChange={event => setIMCoreHost(event.target.value)} />
                 </label>
 
-                <button className="detail-row detail-btn" disabled={isReconnecting} onClick={() => {
-                    setIsReconnecting(true);
-                    reconnect().then(() => {
-                        setIsReconnecting(false);
-                    });
-                }}>Reconnect</button>
+                <button className="detail-row detail-btn" disabled={isReconnecting} onClick={() => doReconnect()}>Reconnect</button>
 
                 <label className="detail-row">
                     <span className="detail-label">IMCore.React {shortHash}</span>
                 </label>
             </details>
-        </React.Fragment>
+       </>
     );
 }

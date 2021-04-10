@@ -41,17 +41,6 @@ export async function reconnect(options?: IMWebSocketConnectionOptions): Promise
     socketClient.connect(options);
 }
 
-imCoreTokenConfig.observe(() => reconnect());
-
-export async function updatePassword(oldPSK: string, newPSK: string): Promise<void> {
-    const token = await apiClient.security.changePSK({
-        oldPSK,
-        newPSK
-    }, true);
-
-    store.dispatch(tokenChanged(token));
-}
-
 export async function refreshToken(psk: string) {
     const token = await apiClient.security.token(psk, true);
 

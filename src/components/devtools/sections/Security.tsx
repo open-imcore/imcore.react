@@ -1,15 +1,41 @@
-import React, { useRef, useState } from "react";
-import { updatePassword } from "../../../app/connection";
-import { getPersistentValue } from "../../../util/use-persistent";
+import React, { useState } from "react";
+import { apiClient, reconnect } from "../../../app/connection";
+import { useBusyController } from "../../../hooks/useBusyController";
+import { usePersistent } from "../../../util/use-persistent";
 import DebugDetails from "../presentation/DebugDetails";
 
 export default function Security() {
-    const getSecurityToken = () => getPersistentValue("imcore-token", undefined).value;
+    const [ securityToken, setSecurityToken ] = usePersistent<string | null>("imcore-token", null);
 
-    const currentPSK = useRef<HTMLInputElement>(null);
-    const newPSK = useRef<HTMLInputElement>(null);
+    const [ currentPSK, setCurrentPSK ] = useState("");
+    const [ newPSK, setNewPSK ] = useState("");
 
-    const [hasToken, setHasToken] = useState(getSecurityToken() === "");
+    const [ loginPSK, setLoginPSK ] = useState("");
+
+    const reset = async (token: string) => {
+        setSecurityToken(token);
+
+        setLoginPSK("");
+        setNewPSK("");
+        setCurrentPSK("");
+
+        await reconnect();
+    };
+
+    const [ cannotLogIn, login ] = useBusyController(async () => {
+        const token = await apiClient.security.token(loginPSK, true);
+
+        await reset(token);
+    });
+
+    const [ cannotChangePSK, changePSK ] = useBusyController(async () => {
+        const token = await apiClient.security.changePSK({
+            oldPSK: currentPSK,
+            newPSK
+        }, true);
+        
+        await reset(token);
+    });
 
     return (
         <React.Fragment>
@@ -17,37 +43,33 @@ export default function Security() {
                 <summary>PSK</summary>
 
                 <DebugDetails details={[
-                    ["Token", hasToken ? "None" : "Set"]
+                    ["Token", !securityToken ? "None" : "Set"]
                 ]} />
             </details>
             <details>
                 <summary>Login</summary>
 
-                
+                <label className="detail-row detail-input">
+                    <span className="detail-label">PSK</span>
+                    <input type="password" disabled={cannotLogIn} value={loginPSK} onChange={event => setLoginPSK(event.target.value)} />
+
+                    <button className="detail-row detail-btn" disabled={cannotLogIn} onClick={login}>Login</button>
+                </label>
             </details>
             <details>
                 <summary>Change PSK</summary>
 
                 <label className="detail-row detail-input">
-                    <span className="detail-label">Current Password</span>
-                    <input type="password" disabled={hasToken} placeholder=""  ref={currentPSK} />
+                    <span className="detail-label">Current PSK</span>
+                    <input type="password" disabled={cannotChangePSK} value={currentPSK} onChange={({ target: { value }}) => setCurrentPSK(value)} />
                 </label>
 
                 <label className="detail-row detail-input">
-                    <span className="detail-label">New Password</span>
-                    <input type="password" placeholder="" ref={newPSK} />
+                    <span className="detail-label">New PSK</span>
+                    <input type="password" disabled={cannotChangePSK} value={newPSK} onChange={({ target: { value }}) => setNewPSK(value)} />
                 </label>
 
-                <button className="detail-row detail-btn" onClick={() => {
-                    updatePassword(currentPSK.current!.value, newPSK.current!.value).then(() => {
-                        currentPSK.current!.value = "";
-                        newPSK.current!.value = "";
-
-                        setHasToken(true);
-                    }).catch((err) => {
-                        // Do error handling display
-                    });
-                }}>Change Password</button>
+                <button className="detail-row detail-btn" disabled={cannotChangePSK} onClick={changePSK}>Change Password</button>
             </details>
         </React.Fragment>
     );

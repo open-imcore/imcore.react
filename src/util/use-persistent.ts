@@ -4,14 +4,14 @@ const persistentCache: Map<string, VersionedValue<any>> = new Map();
 
 export interface VersionedValue<T> {
     value: T;
-    revision: number;
-    observe: (cb: (newValue: T) => any) => () => void;
+    readonly revision: number;
+    readonly observe: (cb: (newValue: T) => any) => () => void;
 }
 
 type VersionedObserver<T> = Parameters<VersionedValue<T>["observe"]>[0];
 
 export interface VersionedValueWithStateAdapter<T> extends VersionedValue<T> {
-    useAsState: () => T;
+    readonly useAsState: () => T;
 }
 
 export function makeVanillaVersionedValue<T>(defaultValue: T): VersionedValueWithStateAdapter<T> {
