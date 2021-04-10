@@ -1,5 +1,6 @@
 import { AnyChatItemModel, ChatItemType, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
 import React, { PropsWithChildren } from "react";
+import { IMURI } from "../../../context-menu";
 import "../../../styles/transcript/items/IMTranscriptItem.scss";
 import { useFormattedTimestamp } from "../../../util/receipt-formatting";
 import { IMItemRenderingContext } from "./Message";
@@ -51,7 +52,7 @@ export default function IMTranscriptItem({ item, message, chat, changed }: Props
     if (!Component) return null;
 
     return (
-        <div className="transcript-item-container">
+        <div className="transcript-item-container" attr-imcore-uri={IMURI.fromItem(item)} >
             <div className="transcript-label">{date} <span className="transcript-label-value">{time}</span></div>
             <Component item={item.payload} message={message} chat={chat} key={item.payload.id} changed={changed} />
         </div>

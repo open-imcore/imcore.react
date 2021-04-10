@@ -1,5 +1,6 @@
 import { ContactRepresentation } from "imcore-ajax-core";
 import React from "react";
+import { IMURI } from "../../context-menu";
 import { CNPictureResolver, useResourceURI } from "../../hooks/useResourceURI";
 import "../../styles/contacts/CNContactBubble.scss";
 
@@ -22,7 +23,7 @@ export default function CNContactBubble({ contact, className }: { contact: Conta
     const backgroundPhotoURL = useResourceURI(contact?.hasPicture ? contact.id : null, CNPictureResolver);
 
     return (
-        <div className={`${backgroundPhotoURL ? "cn-bubble" : contactInitials ? "cn-bubble cn-bubble-initials" : "cn-bubble cn-bubble-empty"}${className ? ` ${className}` : ""}`} style={backgroundPhotoURL ? {
+        <div attr-imcore-uri={contact && IMURI.fromContact(contact)} className={`${backgroundPhotoURL ? "cn-bubble" : contactInitials ? "cn-bubble cn-bubble-initials" : "cn-bubble cn-bubble-empty"}${className ? ` ${className}` : ""}`} style={backgroundPhotoURL ? {
             backgroundImage: `url(${backgroundPhotoURL})`
         }: {}}>
             {contactInitials}

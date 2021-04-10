@@ -1,4 +1,6 @@
 import React, { useMemo } from "react";
+import "react-contexify/dist/ReactContexify.css";
+import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 import "./App.scss";
 import { apiClient, reconnect } from "./app/connection";
@@ -10,7 +12,9 @@ import ChatSidebar from "./components/ChatSidebar";
 import DevtoolsRoot from "./components/devtools/DevtoolsRoot";
 import ChatTranscript from "./components/transcript/ChatTranscript";
 import { CurrentMessagesProvider, useCurrentChatID } from "./components/transcript/ChatTranscriptFoundation";
+import { ContextHost, useContextMenu } from "./context-menu";
 import { ChatSearchProvider } from "./contexts/ChatSearchContext";
+
 
 function insertStyles() {
   const elm = document.getElementById("generated-styles") || document.head.appendChild(document.createElement("style"));
@@ -30,6 +34,7 @@ function App() {
   const showingDevtools = useSelector(selectShowingDevtools);
   const isPrivacyMode = useSelector(selectIsPrivacyMode);
   const currentChatID = useCurrentChatID();
+  const contextHandler = useContextMenu();
 
   useMemo(() => {
     reconnect(currentChatID ? { preload: currentChatID } : undefined);
@@ -38,29 +43,34 @@ function App() {
   const didBootstrap = useSelector(selectBootstrapState);
 
   return (
-      <div className="app-root" attr-showing-devtools={showingDevtools.toString()} attr-privacy-mode={isPrivacyMode.toString()}>
-          <ChatSearchProvider>
-            <div className="app-bar">
-              <ChatBar />
-              <TranscriptBar />
-            </div>
-            <ChatSidebar />
-            {
-              didBootstrap ? (
-                <CurrentMessagesProvider>
+      <>
+        <div className="app-root" attr-showing-devtools={showingDevtools.toString()} attr-privacy-mode={isPrivacyMode.toString()} onContextMenu={contextHandler}>
+            <ChatSearchProvider>
+              <div className="app-bar">
+                <ChatBar />
+                <TranscriptBar />
+              </div>
+              <ChatSidebar />
+              {
+                didBootstrap ? (
+                  <CurrentMessagesProvider>
+                    <ChatTranscript />
+                  </CurrentMessagesProvider>
+                ) : (
                   <ChatTranscript />
-                </CurrentMessagesProvider>
-              ) : (
-                <ChatTranscript />
-              )
-            }
-            {
-              showingDevtools ? (
-                <DevtoolsRoot />
-              ) : null
-            }
-          </ChatSearchProvider>
-      </div>
+                )
+              }
+              {
+                showingDevtools ? (
+                  <DevtoolsRoot />
+                ) : null
+              }
+            </ChatSearchProvider>
+        </div>
+        {createPortal((
+          <ContextHost />
+        ), document.getElementById("ctx-host")!, "ctx-host")}
+      </>
   );
 }
 

@@ -2,6 +2,7 @@ import { AnyChatItemModel, ChatRepresentation, MessageRepresentation } from "imc
 import React, { PropsWithRef, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { selectHandleIDToContact } from "../../../app/reducers/contacts";
+import { IMURI } from "../../../context-menu";
 import { formatPhoneNumber } from "../../../hooks/useFormattedHandles";
 import "../../../styles/transcript/items/Message.scss";
 import { ChatStyle } from "../../chat/ChatBubble";
@@ -86,7 +87,7 @@ function Message({ eRef, message, nextMessage, prevMessage, lastDeliveredFromMe,
     return (
         items.length ? (
             <div className="message-container" ref={eRef as unknown as React.ClassAttributes<HTMLDivElement>["ref"]} style={style}>
-                <div className="message" attr-message-id={message.id} attr-prev-contiguous={beginningContiguous.toString()} attr-next-contiguous={endingContiguous.toString()} attr-next-transcript-contiguous={(messageIsTranscriptMessage && nextIsTranscript).toString()} attr-prev-transcript-contiguous={(messageIsTranscriptMessage && prevIsTranscript).toString()} attr-from-me={message.fromMe.toString()} attr-service={message.service}>
+                <div className="message" attr-message-id={message.id} attr-imcore-uri={IMURI.fromMessage(message)} attr-prev-contiguous={beginningContiguous.toString()} attr-next-contiguous={endingContiguous.toString()} attr-next-transcript-contiguous={(messageIsTranscriptMessage && nextIsTranscript).toString()} attr-prev-transcript-contiguous={(messageIsTranscriptMessage && prevIsTranscript).toString()} attr-from-me={message.fromMe.toString()} attr-service={message.service}>
                     {
                         messageIsTranscriptMessage ? items : <>
                             {

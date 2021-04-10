@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { selectTypingStatus } from "../app/reducers/chats";
 import { RootState } from "../app/store";
+import { IMURI } from "../context-menu";
 import useChatName from "../hooks/useChatName";
 import "../styles/ChatSidebarItem.scss";
 import { useFormattedReceipt } from "../util/receipt-formatting";
@@ -24,7 +25,7 @@ function ChatSidebarItem({ chat, style }: PropsWithChildren<{ chat: ChatRepresen
     const isActive = currentChat?.id === chat.id;
 
     return (
-        <Link to={`/chats/${chat.id}`} attr-chat-id={chat.id} className="chat-sidebar-item" attr-chat-active={isActive.toString()} attr-unread-count={chat.unreadMessageCount} style={style}>
+        <Link to={`/chats/${chat.id}`} attr-chat-id={chat.id} attr-imcore-uri={IMURI.fromChat(chat)} className="chat-sidebar-item" attr-chat-active={isActive.toString()} attr-unread-count={chat.unreadMessageCount} style={style}>
             <div className="chat-sidebar-item--image">
                 <ChatBubble chat={chat} />
             </div>

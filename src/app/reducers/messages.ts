@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AcknowledgmentChatItemRepresentation, AcknowledgmentType, ChatItemType, ItemStatusChangedEvent, MessageRepresentation } from "imcore-ajax-core";
+import { splitPartIDIntoParts } from "../../util/imcore";
 import IMMakeLog from "../../util/log";
 import { RootState } from "../store";
 
@@ -44,7 +45,7 @@ export const messagesSlice = createSlice({
 
             for (const acknowledgment of acknowledgments.sort((a1, a2) => a1.time - a2.time)) {
                 const messageStorage = state.messages[acknowledgment.chatID] ?? (state.messages[acknowledgment.chatID] = {});
-                const [ , messageID ] = acknowledgment.associatedID.split(acknowledgment.associatedID.includes("/") ? "/" : ":");
+                const [ , messageID ] = splitPartIDIntoParts(acknowledgment.associatedID);
 
                 if (!messageStorage[messageID]) {
                     Log.debug("Dropping dangling acknowledgment (ackID: %s, assID: %s)", acknowledgment.id, messageID);
