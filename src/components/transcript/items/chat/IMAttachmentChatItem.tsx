@@ -1,6 +1,6 @@
 import { AttachmentChatItemRepresentation, AttachmentRepresentation } from "imcore-ajax-core";
 import React, { PropsWithoutRef } from "react";
-import { apiClient } from "../../../../app/connection";
+import { IMAttachmentResolver, useResourceURI } from "../../../../hooks/useResourceURI";
 import RecycledElementRenderer from "../../Recycler";
 import { IMItemRenderingContext } from "../Message";
 
@@ -50,8 +50,9 @@ const IMImageAttachmentRenderer = RecycledElementRenderer(({ width, height, url,
     element.alt = description!;
 
     return element;
-}, ({ changed }, el) => {
+}, ({ changed, url }, el) => {
     el.addEventListener("load", changed);
+    if (el.src !== url) el.src = url;
 }, ({ changed }, el) => {
     el.removeEventListener("load", changed);
 });
@@ -66,8 +67,9 @@ const IMVideoAttachmentRenderer = RecycledElementRenderer(({ width, height, url 
     element.controls = true;
 
     return element;
-}, ({ changed }, el) => {
+}, ({ changed, url }, el) => {
     el.addEventListener("loadedmetadata", changed);
+    if (el.src !== url) el.src = url;
 }, ({ changed }, el) => {
     el.removeEventListener("loadedmetadata", changed);
 });
@@ -84,7 +86,7 @@ function IMRenderingImplementation(item: IMAttachmentChatItemRenderContext["item
 }
 
 function IMAttachmentChatItem({ item, message, changed }: PropsWithoutRef<IMAttachmentChatItemRenderContext>) {
-    const url = apiClient.attachmentURL(item.transferID);
+    const url = useResourceURI(item.transferID, IMAttachmentResolver);
     const { width, height } = item.metadata?.size || {};
 
     const RenderingImplementation = IMRenderingImplementation(item);
@@ -92,7 +94,7 @@ function IMAttachmentChatItem({ item, message, changed }: PropsWithoutRef<IMAtta
     if (!RenderingImplementation) return null;
 
     return (
-        <RenderingImplementation id={item.id} width={width} height={height} url={url} changed={changed} description={message.description} />
+        <RenderingImplementation id={item.id} width={width} height={height} url={url!} changed={changed} description={message.description} />
     );
 }
 

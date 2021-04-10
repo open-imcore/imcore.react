@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import "./App.scss";
-import { apiClient, socketClient } from "./app/connection";
+import { apiClient, reconnect } from "./app/connection";
 import { selectBootstrapState } from "./app/reducers/connection";
 import { selectIsPrivacyMode, selectShowingDevtools } from "./app/reducers/debug";
 import ChatBar from "./components/bar/ChatBar";
@@ -32,7 +32,7 @@ function App() {
   const currentChatID = useCurrentChatID();
 
   useMemo(() => {
-    socketClient.connect(currentChatID ? { preload: currentChatID } : undefined);
+    reconnect(currentChatID ? { preload: currentChatID } : undefined);
   }, []);
 
   const didBootstrap = useSelector(selectBootstrapState);

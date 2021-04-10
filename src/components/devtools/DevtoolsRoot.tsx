@@ -3,6 +3,7 @@ import NewWindow from "react-new-window";
 import { TracingProvider } from "../../hooks/useTracer";
 import DebugSettings from "./sections/DebugSettings";
 import GroupSettings from "./sections/GroupSettings";
+import Security from "./sections/Security";
 import Settings from "./sections/Settings";
 import Statistics from "./sections/Statistics";
 import TracerRoot from "./tracer/TracerRoot";
@@ -21,6 +22,7 @@ export default function DevtoolsRoot() {
             <DebugSettings />
             <GroupSettings />
             <Settings />
+            <Security />
             <TracingProvider shouldTrace={showedTracer}>
                 <details>
                     <summary>Tracer</summary>

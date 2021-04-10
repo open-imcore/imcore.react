@@ -3,7 +3,7 @@ import { EventBus } from "../hooks/useEvent";
 import IMMakeLog from "../util/log";
 import { getPersistentValue } from "../util/use-persistent";
 import { chatChanged, chatDeleted, chatMessagesReceived, chatParticipantsUpdated, chatPropertiesChanged, chatsChanged } from "./reducers/chats";
-import { receivedBootstrap } from "./reducers/connection";
+import { receivedBootstrap, tokenChanged } from "./reducers/connection";
 import { contactChanged, contactDeleted, contactsChanged, strangersReceived } from "./reducers/contacts";
 import { messagesChanged, messagesDeleted, statusChanged } from "./reducers/messages";
 import { store } from "./store";
@@ -11,27 +11,43 @@ import TypingAggregator from "./typing-aggregator";
 
 const Log = IMMakeLog("IMServerConnection", "info");
 
-const imCoreHostConfig = getPersistentValue<string>("imcore-host", "localhost:8090");
+const imCoreHostConfig = getPersistentValue("imcore-host", "localhost:8090");
+const imCoreTokenConfig = getPersistentValue("imcore-token", "");
 
 const formatURL = (protocol: string, path?: string) => `${protocol}://${imCoreHostConfig.value}${path ? `/${path}` : ""}`;
 
 export const apiClient = new IMHTTPClient({
     baseURL: formatURL("http"),
+    token: imCoreTokenConfig.value,
     trace: payload => EventBus.emit("trace", payload)
 });
 
-export const socketClient = new IMWebSocketClient(formatURL("ws", "stream"));
+export const socketClient = new IMWebSocketClient(formatURL("ws", "stream"), imCoreTokenConfig.value);
 socketClient.on("trace", (payload: AnyTraceData) => EventBus.emit("trace", payload));
 
 function rebuildEndpoints() {
     socketClient.url = formatURL("ws", "stream");
+    socketClient.token = imCoreTokenConfig.value;
     apiClient.baseURL = formatURL("http");
+    apiClient.token = imCoreTokenConfig.value;
 }
 
 export async function reconnect(options?: IMWebSocketConnectionOptions): Promise<void> {
     await socketClient.close();
+    
     rebuildEndpoints();
+
+    if (imCoreTokenConfig.value) {
+        await apiClient.security.attachmentSession();
+    }
+
     socketClient.connect(options);
+}
+
+export async function refreshToken(psk: string) {
+    const token = await apiClient.security.token(psk, true);
+
+    store.dispatch(tokenChanged(token));
 }
 
 function receiveChangedChat(chat: ChatRepresentation) {

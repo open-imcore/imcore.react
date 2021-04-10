@@ -1,7 +1,7 @@
 import { ChatRepresentation } from "imcore-ajax-core";
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import { apiClient } from "../../app/connection";
 import { useContactResolver } from "../../hooks/useContactResolver";
+import { IMAttachmentResolver, useResourceURI } from "../../hooks/useResourceURI";
 import CNContactBubble from "../contacts/CNContactBubble";
 
 export enum ChatStyle {
@@ -44,12 +44,13 @@ function GroupChatBubble(props: PropsWithChildren<{ chat: ChatRepresentation }>)
 
 function ChatBubble(props: PropsWithChildren<{ chat: ChatRepresentation }>) {
     const chat = props.chat;
+    const groupPhotoURL = useResourceURI(chat.groupPhotoID || null, IMAttachmentResolver);
 
     if (chat.style === ChatStyle.group) {
-        if (chat.groupPhotoID) {
+        if (chat.groupPhotoID && groupPhotoURL) {
             return (
                 <div className="cn-bubble chat-bubble--image" style={{
-                    backgroundImage: `url(${apiClient.attachmentURL(chat.groupPhotoID)})`
+                    backgroundImage: `url(${groupPhotoURL})`
                 }} />
             );
         } else {
