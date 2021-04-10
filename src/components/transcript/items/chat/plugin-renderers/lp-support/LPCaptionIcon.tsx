@@ -1,6 +1,5 @@
 import { AttachmentRepresentation, RichLinkImage } from "imcore-ajax-core";
 import React from "react";
-import { apiClient } from "../../../../../../app/connection";
 import { IMAttachmentResolver, useResourceURI } from "../../../../../../hooks/useResourceURI";
 import { LPRenderingContext } from "../LPBalloon";
 
@@ -20,16 +19,11 @@ function iconAttachmentID(icon: RichLinkImage | undefined, attachments: Attachme
     else return attachments[icon.attachmentIndex].id;
 }
 
-function computeIconSrc(icon: RichLinkImage | undefined, attachments: AttachmentRepresentation[]) {
-    if (!icon) return null;
-    else if (isSyntheticImage(icon)) return icon.src;
-    else if (typeof icon.attachmentIndex === "undefined" || !attachments[icon.attachmentIndex]) return null;
-    else return apiClient.attachmentURL(attachments[icon.attachmentIndex].id);
-}
-
 export default function LPCaptionIcon({ icon, attachments, position }: LPCaptionIconRenderingContext) {
-    const src = useResourceURI(iconAttachmentID(icon, attachments), IMAttachmentResolver);
+    const attachmentSrc = useResourceURI(iconAttachmentID(icon, attachments), IMAttachmentResolver);
     const syntheticSrc = icon && isSyntheticImage(icon) ? icon.src : null || null;
+
+    const src = syntheticSrc || attachmentSrc;
 
     if (!src) return null;
 
