@@ -1,4 +1,5 @@
 import { EventEmitter, EventListener } from "eventemitter3";
+import { AnyTraceData } from "imcore-ajax-core";
 import { useEffect } from "react";
 
 export interface EventTypes {
@@ -6,6 +7,7 @@ export interface EventTypes {
     dumpDSLMeasurements: [];
     dumpDSLListRef: [];
     dslRescroll: [];
+    trace: [AnyTraceData];
 }
 
 export const EventBus = new EventEmitter<EventTypes>();

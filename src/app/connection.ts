@@ -1,4 +1,5 @@
-import { AnyChatItemModel, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, IMWebSocketConnectionOptions, MessageRepresentation } from "imcore-ajax-core";
+import { AnyChatItemModel, AnyTraceData, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, IMWebSocketConnectionOptions, MessageRepresentation } from "imcore-ajax-core";
+import { EventBus } from "../hooks/useEvent";
 import IMMakeLog from "../util/log";
 import { getPersistentValue } from "../util/use-persistent";
 import { chatChanged, chatDeleted, chatMessagesReceived, chatParticipantsUpdated, chatPropertiesChanged, chatsChanged } from "./reducers/chats";
@@ -14,10 +15,13 @@ const imCoreHostConfig = getPersistentValue<string>("imcore-host", "localhost:80
 
 const formatURL = (protocol: string, path?: string) => `${protocol}://${imCoreHostConfig.value}${path ? `/${path}` : ""}`;
 
-export const socketClient = new IMWebSocketClient(formatURL("ws", "stream"));
 export const apiClient = new IMHTTPClient({
-    baseURL: formatURL("http")
+    baseURL: formatURL("http"),
+    trace: payload => EventBus.emit("trace", payload)
 });
+
+export const socketClient = new IMWebSocketClient(formatURL("ws", "stream"));
+socketClient.on("trace", (payload: AnyTraceData) => EventBus.emit("trace", payload));
 
 function rebuildEndpoints() {
     socketClient.url = formatURL("ws", "stream");

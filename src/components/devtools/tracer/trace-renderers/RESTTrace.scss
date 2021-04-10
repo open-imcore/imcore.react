@@ -1,0 +1,34 @@
+.rest-trace-entry {
+    display: flex;
+    flex-flow: column;
+    padding: 10px;
+
+    .rest-trace-label {
+        display: flex;
+        flex-flow: row;
+
+        margin-bottom: 5px;
+
+        & > .rest-trace-method {
+            margin-right: 5px;
+            text-transform: uppercase;
+        }
+    }
+
+    .rest-trace-data {
+        &:not(:last-child) {
+            margin-bottom: 5px;
+        }
+    }
+
+    .rest-trace-response {
+        display: flex;
+        flex-flow: column;
+
+        & > .rest-trace-response-status {
+            &:not(:last-child) {
+                margin-bottom: 5px;
+            }
+        }
+    }
+}

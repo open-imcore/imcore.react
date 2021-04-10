@@ -1,0 +1,9 @@
+.ws-trace-entry {
+    display: flex;
+    flex-flow: column;
+    padding: 10px;
+
+    .ws-trace-data {
+        margin-top: 5px;
+    }
+}
