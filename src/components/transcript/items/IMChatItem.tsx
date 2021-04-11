@@ -1,7 +1,9 @@
 import { AnyChatItemModel, ChatItemType, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
-import React, { PropsWithChildren, useMemo } from "react";
+import React, { PropsWithChildren, useContext, useMemo, useRef } from "react";
 import { IMURI } from "../../../context-menu";
+import { TapbackContext } from "../../../contexts/TapbackContext";
 import "../../../styles/transcript/items/IMChatItem.scss";
+import AcknowledgmentPickerPresenter from "../acknowledgments/AcknowledgmentPickerPresenter";
 import IMAttachmentChatItem from "./chat/IMAttachmentChatItem";
 import IMPluginChatItem from "./chat/IMPluginChatItem";
 import IMTextChatItem from "./chat/IMTextChatItem";
@@ -44,11 +46,17 @@ export default function IMChatItem({ item, message, chat, changed, index }: Prop
     const acknowledgments = extractAcknowledgments(item);
     const isJumbo = useMemo(() => IMItemIsJumbo(item), [item]);
 
+    const { tapbackItemID } = useContext(TapbackContext);
+
+    const itemContainer = useRef<HTMLDivElement>(null);
+
+    const isAcknowledgingCurrent = tapbackItemID === item.payload.id;
+
     if (!Component) return null;
 
     return (
         <>
-            <div className={`chat-item-container${isJumbo ? " chat-item-jumbo" : ""}`} attr-imcore-uri={IMURI.fromItem(item)} data-has-acknowledgments={(acknowledgments.length > 0).toString()} attr-chat-item-id={item.payload.id}>
+            <div ref={itemContainer} className={`chat-item-container${isJumbo ? " chat-item-jumbo" : ""}`} attr-is-acknowledging={(tapbackItemID === item.payload.id).toString()} attr-imcore-uri={IMURI.fromItem(item)} data-has-acknowledgments={(acknowledgments.length > 0).toString()} attr-chat-item-id={item.payload.id}>
                 <div className="chat-item" data-item-type={item.type} attr-from-me={message.fromMe.toString()}>
                     <div className="item-inner">
                         <Component index={index} item={item.payload} message={message} chat={chat} changed={changed} key={item.payload.id} />
@@ -62,6 +70,12 @@ export default function IMChatItem({ item, message, chat, changed, index }: Prop
                                 <div className="acknowledgment-item" key={ack.id} data-ack-type={ack.acknowledgmentType} data-from-me={ack.fromMe} />
                             ))}
                         </div>
+                    ) : null
+                }
+
+                {
+                    isAcknowledgingCurrent ? (
+                        <AcknowledgmentPickerPresenter rootRef={itemContainer} />
                     ) : null
                 }
             </div>

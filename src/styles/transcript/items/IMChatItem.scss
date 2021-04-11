@@ -224,6 +224,16 @@
             z-index: 0;
         }
 
+        &[attr-is-acknowledging=true] {
+            .acknowledgment-overlay {
+                opacity: 0;
+            }
+
+            &[data-has-acknowledgments=true]::after {
+                opacity: 0;
+            }
+        }
+
         .acknowledgment-overlay {
             --bubble-bg: rgb(229, 229, 234);
             --bubble-from-me-bg: var(--imessage-gradient);

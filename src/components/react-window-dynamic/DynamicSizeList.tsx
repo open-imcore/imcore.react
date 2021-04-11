@@ -23,11 +23,12 @@ export interface RowMeasurerProps<T extends { id: string }, MemoState> {
     style: CSSProperties;
     children: RowRenderer<T, MemoState>;
     memoState: MemoState;
+    rootProps?: object;
 }
 
 export type RowMeasurerPropsWithoutChildren<T extends { id: string }, MemoState> = Omit<RowMeasurerProps<T, MemoState>, "children">;
 
-export function RowMeasurer<T extends { id: string }, MemoState>({ index, id, width, data, style, children, memoState }: RowMeasurerProps<T, MemoState>) {
+export function RowMeasurer<T extends { id: string }, MemoState>({ index, id, rootProps = {}, width, data, style, children, memoState }: RowMeasurerProps<T, MemoState>) {
     const { setSize } = useContext(DynamicListContext);
     const rowRoot = useRef<null | HTMLDivElement>(null);
 
@@ -45,7 +46,7 @@ export function RowMeasurer<T extends { id: string }, MemoState>({ index, id, wi
     }, [id, setSize, width]);
 
     return (
-        <div style={style}>
+        <div style={style} {...rootProps}>
             {children({
                 ref: rowRoot,
                 index,
@@ -80,6 +81,7 @@ export interface DynamicSizeListProps<T extends { id: string }, MemoState> {
     isSame?: (oldProps: RowMeasurerPropsWithoutChildren<T, MemoState>, newProps: RowMeasurerPropsWithoutChildren<T, MemoState>) => boolean;
     memoState: MemoState;
     itemKey?: (index: number, data: T[]) => string;
+    getProps?: (index: number) => object;
 }
 
 const sizeStorage: Map<string, Record<string, number>> = new Map();
@@ -165,7 +167,7 @@ export default function DynamicSizeList<T extends { id: string }, MemoState>(pro
 
         function Renderer(rowProps: ListChildComponentProps) {
             return (
-                <RowMeasurer {...createRendererProps(rowProps)} key={rowProps.data[rowProps.index].id}>
+                <RowMeasurer {...createRendererProps(rowProps)} rootProps={props.getProps ? props.getProps(rowProps.index) : undefined} key={rowProps.data[rowProps.index].id}>
                     {props.children as any}
                 </RowMeasurer>
             );

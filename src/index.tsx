@@ -7,6 +7,7 @@ import { visibilityChanged } from "./app/reducers/presence";
 import { store } from "./app/store";
 import { CurrentChatProvider } from "./components/transcript/ChatTranscriptFoundation";
 import { ContextMenuContextProvider } from "./context-menu";
+import { TapbackProvider } from "./contexts/TapbackContext";
 import "./index.css";
 import "./util/debug";
 
@@ -15,7 +16,9 @@ ReactDOM.render(
     <Router>
       <CurrentChatProvider>
         <ContextMenuContextProvider>
-          <App />
+          <TapbackProvider>
+            <App />
+          </TapbackProvider>
         </ContextMenuContextProvider>
       </CurrentChatProvider>
     </Router>

@@ -8,6 +8,7 @@ export interface EventTypes {
     dumpDSLListRef: [];
     dslRescroll: [];
     trace: [AnyTraceData];
+    triggerTapback: [string];
 }
 
 export const EventBus = new EventEmitter<EventTypes>();

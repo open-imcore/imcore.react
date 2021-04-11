@@ -1,10 +1,11 @@
 import { MessageRepresentation } from "imcore-ajax-core";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { apiClient } from "../../app/connection";
 import { chatItemChanged, selectVisibilityState } from "../../app/reducers/presence";
 import { store } from "../../app/store";
+import { TapbackContext } from "../../contexts/TapbackContext";
 import IMMakeLog from "../../util/log";
 import DynamicSizeList, { RowMeasurerPropsWithoutChildren } from "../react-window-dynamic/DynamicSizeList";
 import { useCurrentChat, useCurrentMessages } from "./ChatTranscriptFoundation";
@@ -102,6 +103,8 @@ export default function ChatTranscript() {
 
     const [ processing, setIsProcessing ] = useState(false);
 
+    const { close: clearTapbackView, isAcknowledging, tapbackItemID } = useContext(TapbackContext);
+
     useEffect(() => {
         (async () => {
             if (unreadCount > 0 && isVisible && chat) {
@@ -113,8 +116,12 @@ export default function ChatTranscript() {
         })();
     }, [unreadCount, isVisible, chat]);
 
+    useEffect(() => {
+        clearTapbackView();
+    }, [chat]);
+
     return (
-        <div className="chat-transcript transcript-react-window" onMouseOver={event => {
+        <div className="chat-transcript transcript-react-window" attr-is-acknowledging={isAcknowledging.toString()} onMouseOver={event => {
             if (!(event.target instanceof Node)) return;
             const { messageID, chatItemID } = searchNodeForMessageRelations(event.target);
 
@@ -135,6 +142,9 @@ export default function ChatTranscript() {
                             memoState={{ lastDeliveredFromMe, lastReadFromMe }}
                             isSame={compareMessageRenderProps}
                             itemKey={itemKey}
+                            getProps={index => ({
+                                "attr-is-acknowledging": (tapbackItemID?.endsWith(messages[index].id) || false).toString()
+                            })}
                             >
                             {({ ref, index, data }) => (
                                 <Message

@@ -86,10 +86,14 @@ export class IMURI {
 
     }
 
-    public get item(): AnyChatItemModel["payload"] | null {
+    public get rawItem(): AnyChatItemModel | null {
         if (!this.isItem) return null;
 
-        return this.message?.items.find(item => item.payload.id === this.id)?.payload || null;
+        return this.message?.items.find(item => item.payload.id === this.id) || null;
+    }
+
+    public get item(): AnyChatItemModel["payload"] | null {
+        return this.rawItem?.payload || null;
     }
 
     public get message(): MessageRepresentation | null {

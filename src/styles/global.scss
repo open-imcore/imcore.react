@@ -91,6 +91,48 @@
         perspective: 1px;
     }
 
+    &[attr-is-acknowledging=true] {
+        & > .message-transcript-container > div > div > div {
+            position: relative;
+
+            &::after {
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                height: 100%;
+                width: 100%;
+                content: '';
+
+                background: rgba(0, 0, 0, 0.3);
+            }
+
+            & > [attr-is-acknowledging=true] {
+                z-index: 1;
+
+                .items-track {
+                    position: relative;
+
+                    & > :not([attr-is-acknowledging=true]) {
+                        filter: brightness(70%);
+                    }
+
+                    & > [attr-is-acknowledging=true] {
+                        z-index: 1;
+                    }
+
+                    &::after {
+                        position: absolute;
+                        left: 0px;
+                        top: 0px;
+                        height: 100%;
+                        width: 100%;
+                        content: '';
+                    }
+                }
+            }
+        }
+    }
+
     .composition {
         // grid-row: 2;
     }
@@ -104,3 +146,9 @@
 @import "./devtools/index";
 @import "./toolbar";
 @import "./context-menu";
+
+#ack-tray-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+}

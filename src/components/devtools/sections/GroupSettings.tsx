@@ -67,7 +67,7 @@ interface ButtonProps extends InputProps {
     click: () => any;
 }
 
-function DebugButton({ disabled, click, className, children }: ButtonProps) {
+export function DebugButton({ disabled, click, className, children }: ButtonProps) {
     const [ isDisabled, fire ] = useBusyController({ disabled, fn: click });
 
     return (

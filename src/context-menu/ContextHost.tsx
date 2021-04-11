@@ -1,30 +1,16 @@
 import React, { useContext, useEffect } from "react";
-import { Item, Menu } from "react-contexify";
-import { copyTextToClipboard } from "../util/clipboard";
+import { Menu } from "react-contexify";
 import { CTX_ID } from "./const";
 import { ContextMenuContext } from "./context";
-import { IMEntityType, IMURI } from "./uri";
+import CoreItems from "./items/CoreItems";
+import MessageItems from "./items/MessageItems";
+import { ContextDonor, ContextRenderer } from "./types";
+import { IMURI } from "./uri";
 
-interface ContextRenderer {
-    (props: { uri: IMURI }): JSX.Element;
-}
-
-interface ContextDonor {
-    types: IMEntityType[];
-    render: ContextRenderer;
-}
 
 const donors: ContextDonor[] = [
-    {
-        types: [IMEntityType.message, IMEntityType.item, IMEntityType.chat, IMEntityType.contact],
-        render: ({ uri }) => (
-            <Item onClick={() => {
-                copyTextToClipboard(uri.id);
-            }}>
-                Copy ID
-            </Item>
-        )
-    }
+    ...MessageItems,
+    ...CoreItems
 ];
 
 function componentsForURI(uri: IMURI): ContextRenderer[] {
