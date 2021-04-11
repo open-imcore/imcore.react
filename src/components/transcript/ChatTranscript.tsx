@@ -6,6 +6,7 @@ import { apiClient } from "../../app/connection";
 import { chatItemChanged, selectVisibilityState } from "../../app/reducers/presence";
 import { store } from "../../app/store";
 import { TapbackContext } from "../../contexts/TapbackContext";
+import { findAncestor } from "../../util/dom";
 import IMMakeLog from "../../util/log";
 import DynamicSizeList, { RowMeasurerPropsWithoutChildren } from "../react-window-dynamic/DynamicSizeList";
 import { useCurrentChat, useCurrentMessages } from "./ChatTranscriptFoundation";
@@ -127,6 +128,15 @@ export default function ChatTranscript() {
 
             if (!messageID) return;
             store.dispatch(chatItemChanged({ messageID, chatItemID }));
+        }} onClick={event => {
+            if (!(event.target instanceof HTMLElement)) return;
+            if (!isAcknowledging) return;
+
+            const isSafe = findAncestor(event.target, el => el.classList.contains("chat-item-container") && el.getAttribute("attr-is-acknowledging") === "true");
+
+            if (isSafe) return;
+
+            clearTapbackView();
         }}>
             <div className="message-transcript-container">
                 <AutoSizer>
