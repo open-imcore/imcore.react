@@ -1,23 +1,13 @@
-import { AcknowledgmentChatItemRepresentation, AcknowledgmentType, AnyChatItemModel, ChatItemAcknowledgableRepresentation, ChatItemType, MessageRepresentation } from "imcore-ajax-core";
+import { AcknowledgmentChatItemRepresentation, AcknowledgmentType, AnyChatItemModel, MessageRepresentation } from "imcore-ajax-core";
 import React from "react";
 import { apiClient, receiveMessages } from "../../../app/connection";
 import "../../../styles/ack-picker/AcknowledgmentPicker.scss";
+import { itemIsAcknowledgable } from "../../../util/imcore";
 import { extractAcknowledgments } from "../items/IMChatItem.Foundation";
 
 export interface AcknowledgmentPickerProps {
     message: MessageRepresentation;
     chatItem: AnyChatItemModel;
-}
-
-function itemIsAcknowledgable(type: AnyChatItemModel["type"], item: AnyChatItemModel["payload"]): item is ChatItemAcknowledgableRepresentation {
-    switch (type) {
-        case ChatItemType.text:
-        case ChatItemType.plugin:
-        case ChatItemType.attachment:
-            return true;
-        default:
-            return false;
-    }
 }
 
 interface AcknowledgmentButtonProps extends AcknowledgmentPickerProps {
