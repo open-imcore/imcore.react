@@ -1,4 +1,3 @@
-import { ChatRepresentation } from "imcore-ajax-core";
 import React, { useContext, useMemo } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { areEqual, FixedSizeList as List } from "react-window";
@@ -67,7 +66,7 @@ function ChatSidebar() {
                         itemCount={chats.length}
                         itemData={chats}
                         itemSize={60}
-                        itemKey={(index: number, data: ChatRepresentation[]) => data[index]?.id || Math.random()}
+                        itemKey={(index: number, data: ChatEntry[]) => data[index]?.chat.id || Math.random()}
                         overscanCount={35}
                         width={285}
                     >
