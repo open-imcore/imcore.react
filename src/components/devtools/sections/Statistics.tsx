@@ -10,6 +10,8 @@ import { useCurrentChat, useHoveredChat, useHoveredChatItem } from "../../transc
 import DebugDetails from "../presentation/DebugDetails";
 import { DebugButton } from "./GroupSettings";
 
+const emptySrc = {};
+
 export default function Statistics() {
     const loadedChats = Object.values(useSelector(selectChats)).length;
     const loadedMessages = Object.values(useSelector(selectMessages)).flatMap(record => Object.values(record)).length;
@@ -42,7 +44,7 @@ export default function Statistics() {
             </details>
             <details>
                 <summary>Message Information</summary>
-                <ReactJson src={hoveredMessage || {}} />
+                <ReactJson src={hoveredMessage || emptySrc} />
             </details>
             <details>
                 <summary>Acknowledgments</summary>
@@ -65,7 +67,7 @@ export default function Statistics() {
             </details>
             <details>
                 <summary>Chat Information</summary>
-                <ReactJson src={hoveredChat || {}} />
+                <ReactJson src={hoveredChat || emptySrc} />
             </details>
         </>
     );
