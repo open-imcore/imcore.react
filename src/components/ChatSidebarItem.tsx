@@ -18,7 +18,7 @@ function ChatSidebarItem({ entry: { chat, message, sortKey }, style }: PropsWith
     const lastMessageTime = useFormattedReceipt(sortKey);
     const isTyping = useSelector(state => selectTypingStatus(state as RootState, chat.id));
 
-    const isActive = currentChat?.id === chat.id;
+    const isActive = !message && currentChat?.id === chat.id;
 
     return (
         <Link to={`/chats/${chat.id}`} attr-chat-id={chat.id} attr-imcore-uri={IMURI.fromChat(chat)} className="chat-sidebar-item" attr-chat-active={isActive.toString()} attr-unread-count={chat.unreadMessageCount} style={style}>
