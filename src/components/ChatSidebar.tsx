@@ -60,7 +60,11 @@ function ChatSidebar() {
                         itemCount={chats.length}
                         itemData={chats}
                         itemSize={60}
-                        itemKey={(index: number, data: ChatEntry[]) => data[index]?.chat.id || Math.random()}
+                        itemKey={(index: number, data: ChatEntry[]) => {
+                            const entry = data[index];
+                            if (!entry.message) return entry.chat.id;
+                            else return `${entry.chat.id}-${entry.message.id}`;
+                        }}
                         overscanCount={35}
                         width={285}
                     >
