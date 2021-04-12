@@ -33,16 +33,16 @@ export function RowMeasurer<T extends { id: string }, MemoState>({ index, id, ro
     const { setSize } = useContext(DynamicListContext);
     const rowRoot = useRef<null | HTMLDivElement>(null);
 
-    const observer = useRef(new ResizeObserver((([ entry ]: ResizeObserverEntry[]) => {
+    const observer = useMemo(() => new ResizeObserver((([ entry ]: ResizeObserverEntry[]) => {
         if (setSize && entry.contentRect.height) {
             setSize(id, entry.contentRect.height);
         }
-    })));
+    })), []);
     
     useEffect(() => {
         if (rowRoot.current) {
-            observer.current.disconnect();
-            observer.current.observe(rowRoot.current);
+            observer.disconnect();
+            observer.observe(rowRoot.current);
         }
     }, [id, setSize, width]);
 
