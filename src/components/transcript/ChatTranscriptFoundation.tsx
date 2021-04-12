@@ -1,5 +1,5 @@
 import { AnyChatItemModel, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
-import React, { createContext, PropsWithChildren, useContext, useEffect, useMemo } from "react";
+import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { matchPath, useLocation } from "react-router";
 import { apiClient, receiveMessages } from "../../app/connection";
@@ -43,7 +43,7 @@ export function useMessages(chatID?: string, reverse = false, injectTimestamps =
 
     return [
         processedMessages,
-        async () => {
+        useCallback(async () => {
             if (!chatID) return;
             if (loadingLedger[chatID] || isDoneLedger[chatID]) return;
             loadingLedger[chatID] = true;
@@ -51,7 +51,7 @@ export function useMessages(chatID?: string, reverse = false, injectTimestamps =
             const lastMessageID = lastMessage[TIMESTAMP_ASSOCIATION] as string || lastMessage.id;
             await reload(chatID, lastMessageID);
             loadingLedger[chatID] = false;
-        }
+        }, [processedMessages])
     ] as [MessageRepresentation[], () => Promise<void>];
 }
 
