@@ -56,7 +56,6 @@ export function ChatSearchProvider({ children }: PropsWithChildren<{}>) {
 
     useEffect(() => {
         debouncedSearch(searchCriteria, chatDictionary);
-        console.log("fuck being");
     }, [searchCriteria]);
 
     const clearSearchCriteria = useCallback(() => {
