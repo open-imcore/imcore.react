@@ -104,6 +104,8 @@ export default function ChatTranscript() {
 
     const { close: clearTapbackView, isAcknowledging, tapbackItemID } = useContext(TapbackContext);
 
+    const getID = useCallback((index: number) => messages[index]?.id || "-1", [messages]);
+
     useEffect(() => {
         (async () => {
             if (unreadCount > 0 && isVisible && chat) {
@@ -157,6 +159,7 @@ export default function ChatTranscript() {
                             {({ ref, index, data }) => (
                                 <Message
                                     eRef={ref as any}
+                                    chat={chat!}
                                     message={data[index]}
                                     nextMessage={data[index - 1]}
                                     prevMessage={data[index + 1]}
