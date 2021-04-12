@@ -1,4 +1,5 @@
 import { AnyChatItemModel, AnyTraceData, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, IMWebSocketConnectionOptions, MessageRepresentation } from "imcore-ajax-core";
+import { batch } from "react-redux";
 import { getPersistentValue } from "react-use-persistent";
 import { EventBus } from "../hooks/useEvent";
 import IMMakeLog from "../util/log";
@@ -66,8 +67,11 @@ socketClient.on(EventType.participantsChanged, ev => store.dispatch(chatParticip
 export function receiveMessages(messages: MessageRepresentation[]) {
     Log.debug("Received %d messages from server", messages.length);
 
-    store.dispatch(messagesChanged(messages));
-    store.dispatch(chatMessagesReceived(messages));
+    batch(() => {
+        store.dispatch(messagesChanged(messages));
+        store.dispatch(chatMessagesReceived(messages));
+    });
+
     TypingAggregator.sharedInstance.messagesReceived(messages);
 }
 
@@ -93,10 +97,13 @@ socketClient.on(EventType.contactRemoved, c => store.dispatch(contactDeleted(c.i
 
 socketClient.on(EventType.bootstrap, ({ chats, contacts, messages }) => {
     Log.info("Got bootstrap from event stream");
-    store.dispatch(chatsChanged(chats));
-    store.dispatch(contactsChanged(contacts.contacts));
-    store.dispatch(strangersReceived(contacts.strangers));
-    if (messages) receiveMessages(messages);
+    
+    batch(() => {
+        store.dispatch(chatsChanged(chats));
+        store.dispatch(contactsChanged(contacts.contacts));
+        store.dispatch(strangersReceived(contacts.strangers));
+        if (messages) receiveMessages(messages);
 
-    store.dispatch(receivedBootstrap());
+        store.dispatch(receivedBootstrap());
+    });
 });

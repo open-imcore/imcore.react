@@ -1,4 +1,5 @@
 import { ChatItemType, MessageRepresentation } from "imcore-ajax-core";
+import { batch } from "react-redux";
 import IMMakeLog from "../util/log";
 import { setTypingStatus } from "./reducers/chats";
 import { messagesDeleted } from "./reducers/messages";
@@ -34,8 +35,11 @@ export default class TypingAggregator {
         
         this.timeouts.set(message.chatID, setTimeout(() => {
             if (this.typingMessageForChat(message.chatID)?.id === message.id) {
-                store.dispatch(messagesDeleted([message.id]));
-                store.dispatch(setTypingStatus({ chatID: message.chatID, typing: false }));
+                batch(() => {
+                    store.dispatch(messagesDeleted([message.id]));
+                    store.dispatch(setTypingStatus({ chatID: message.chatID, typing: false }));
+                });
+                
                 this.chats.delete(message.chatID);
             }
 
