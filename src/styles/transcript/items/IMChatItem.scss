@@ -117,7 +117,7 @@
         margin-top: 7px;
     }
 
-    &[attr-next-contiguous=true], .chat-item-container:not(:last-child) {
+    &[attr-next-contiguous=true], .chat-item-container:not(:last-of-type) {
         --from-me-border: url(../../../assets/masks/bubble-notail.svg);
         --not-from-me-border: url(../../../assets/masks/bubble-notail-flip.svg);
     }
