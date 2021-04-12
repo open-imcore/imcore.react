@@ -143,7 +143,7 @@
                 --bubble-url: var(--ack-bubble-url);
             }
 
-            &[data-acknowledgment-count='3'] {
+            &:not([data-acknowledgment-count='1']):not([data-acknowledgment-count='2']) {
                 --stack-url: var(--ack-stack-url);
                 --bubble-url: var(--ack-bubble-url);
             }
@@ -177,7 +177,7 @@
                 --bubble-url: var(--ack-bubble-flip-url);
             }
 
-            &[data-acknowledgment-count='3'] {
+            &:not([data-acknowledgment-count='1']):not([data-acknowledgment-count='2']) {
                 --stack-url: var(--ack-stack-flip-url);
                 --bubble-url: var(--ack-bubble-flip-url);
             }
