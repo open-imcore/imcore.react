@@ -91,17 +91,34 @@
         perspective: 1px;
     }
 
+    @mixin property-dim($property) {
+        transition: $property 100ms linear;
+    }
+
+    & > .message-transcript-container > div > div > div {
+        &::after {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            height: 100%;
+            width: 100%;
+            content: '';
+
+            z-index: -100;
+            @include property-dim(background);
+        }
+
+        & > .items-track > * {
+            @include property-dim(filter);
+        }
+    }
+
     &[attr-is-acknowledging=true] {
         & > .message-transcript-container > div > div > div {
             position: relative;
 
             &::after {
-                position: absolute;
-                left: 0px;
-                top: 0px;
-                height: 100%;
-                width: 100%;
-                content: '';
+                z-index: 0;
 
                 background: rgba(0, 0, 0, 0.3);
             }
@@ -111,6 +128,10 @@
 
                 .items-track {
                     position: relative;
+
+                    & > * {
+                        @include property-dim(filter);
+                    }
 
                     & > :not([attr-is-acknowledging=true]) {
                         filter: brightness(70%);
