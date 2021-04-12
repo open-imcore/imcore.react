@@ -1,3 +1,4 @@
+import { VariableSizeListProps } from "@erics-world/react-window";
 import React, { CSSProperties, MutableRefObject, ReactNode, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
 import { areEqual, ListChildComponentProps, VariableSizeList } from "react-window";
@@ -96,8 +97,37 @@ export const DSLDebugTools: Array<{
     { name: "Rescroll DSL", event: "dslRescroll" }
 ];
 
+const styleCaches: Record<string, object> = {};
+
+class PatchedVariableSizeList extends (VariableSizeList as unknown as {
+    new(props: VariableSizeListProps): VariableSizeList & {
+        _getItemStyle: (index: number) => object;
+    }
+}) {
+    constructor(props: VariableSizeListProps) {
+        super(props);
+
+        // @ts-ignore
+        if (this._getItemStyle) {
+            const oldGetItemStyle = this._getItemStyle;
+
+            super._getItemStyle = this._getItemStyle = (index: number) => {
+                const style = oldGetItemStyle(index);
+
+                const token = JSON.stringify(style);
+
+                if (styleCaches[JSON.stringify(style)]) {
+                    return styleCaches[token];
+                }
+                
+                return styleCaches[token] = style;
+            };
+        }
+    }
+}
+
 export default function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSizeListProps<T, MemoState>) {
-    const listRef = useRef<VariableSizeList | null>(null);
+    const listRef = useRef<PatchedVariableSizeList | null>(null);
     const scrollWatcher = useInvertScrollDirection(useSelector(selectUseInvertedScrolling) || hostIsMacOS);
 
     const sizeMap = React.useRef<{ [key: string]: number }>({});
@@ -180,7 +210,7 @@ export default function DynamicSizeList<T extends { id: string }, MemoState>(pro
 
     return (
         <DynamicListContext.Provider value={{ setSize }}>
-            <VariableSizeList
+            <PatchedVariableSizeList
                 ref={listRef}
                 width={props.width}
                 height={props.height}
@@ -194,7 +224,7 @@ export default function DynamicSizeList<T extends { id: string }, MemoState>(pro
                 itemKey={props.itemKey}
                 >
                 {MemoizedRowMeasurer}
-            </VariableSizeList>
+            </PatchedVariableSizeList>
         </DynamicListContext.Provider>
     );
 }
