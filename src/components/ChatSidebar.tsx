@@ -4,7 +4,7 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { areEqual, FixedSizeList as List } from "react-window";
 import { chatChanged } from "../app/reducers/presence";
 import { store } from "../app/store";
-import { ChatSearchContext } from "../contexts/ChatSearchContext";
+import { ChatEntry, ChatSearchContext } from "../contexts/ChatSearchContext";
 import "../styles/ChatSidebar.scss";
 import { findAncestor } from "../util/dom";
 import ChatSidebarItem from "./ChatSidebarItem";
@@ -20,17 +20,19 @@ const RowRenderer = React.memo(function RowRenderer({
     index,
     data,
     style
-}: TypedListChildComponentProps<ChatRepresentation[]>) {
+}: TypedListChildComponentProps<ChatEntry[]>) {
     if (!data[index]) return null;
 
     return (
-        <ChatSidebarItem style={style} chat={data[index]} />
+        <ChatSidebarItem style={style} entry={data[index]} />
     );
 }, (prevProps, nextProps) => {
     if (!areEqual(prevProps, nextProps)) return false;
 
-    const prevChat = prevProps.data[prevProps.index];
-    const nextChat = nextProps.data[nextProps.index];
+    const prevChat = prevProps.data[prevProps.index].chat;
+    const nextChat = nextProps.data[nextProps.index].chat;
+
+    if (prevProps.data[prevProps.index].sortKey !== nextProps.data[nextProps.index].sortKey) return false;
 
     if (prevChat.id !== nextChat.id) return false;
     if (prevChat.lastMessage !== nextChat.lastMessage) return false;
@@ -47,7 +49,7 @@ const RowRenderer = React.memo(function RowRenderer({
 function ChatSidebar() {
     const { chatResults } = useContext(ChatSearchContext);
 
-    const chats = useMemo(() => chatResults.slice().sort((c1, c2) => c2.lastMessageTime - c1.lastMessageTime), [chatResults]);
+    const chats = useMemo(() => chatResults.slice().sort((c1, c2) => c2.sortKey - c1.sortKey), [chatResults]);
 
     return (
         <div onMouseOver={event => {

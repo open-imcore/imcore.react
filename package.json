@@ -17,6 +17,7 @@
     "eventemitter3": "^4.0.7",
     "imcore-ajax-core": "^1.0.9",
     "libphonenumber-js": "^1.9.8",
+    "lodash.debounce": "^4.0.8",
     "luxon": "^1.25.0",
     "prosemirror-commands": "^1.1.7",
     "prosemirror-keymap": "^1.1.4",
@@ -67,6 +68,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.6",
     "@types/luxon": "^1.25.1",
     "@types/prosemirror-commands": "^1.0.4",
     "@types/prosemirror-keymap": "^1.0.4",
