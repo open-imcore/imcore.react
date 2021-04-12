@@ -39,6 +39,7 @@ interface AttachmentRenderingContext {
     width?: number;
     height?: number;
     description?: string;
+    filename?: string;
 }
 
 const IMImageAttachmentRenderer = RecycledElementRenderer(({ width, height, url, description }: AttachmentRenderingContext) => {
@@ -74,6 +75,14 @@ const IMVideoAttachmentRenderer = RecycledElementRenderer(({ width, height, url 
     el.removeEventListener("loadedmetadata", changed);
 });
 
+function IMFileRenderer({ id, filename }: AttachmentRenderingContext) {
+    return (
+        <div className="attachment-file">
+            {filename || id}
+        </div>
+    );
+}
+
 function IMRenderingImplementation(item: IMAttachmentChatItemRenderContext["item"]) {
     switch (ERComputeRenderingFormat(item)) {
         case IMAttachmentRenderingFormat.image:
@@ -81,7 +90,7 @@ function IMRenderingImplementation(item: IMAttachmentChatItemRenderContext["item
         case IMAttachmentRenderingFormat.video:
             return IMVideoAttachmentRenderer;
         default:
-            return null;
+            return IMFileRenderer;
     }
 }
 
@@ -94,7 +103,7 @@ function IMAttachmentChatItem({ item, message, changed }: PropsWithoutRef<IMAtta
     if (!RenderingImplementation) return null;
 
     return (
-        <RenderingImplementation id={item.id} width={width} height={height} url={url!} changed={changed} description={message.description} />
+        <RenderingImplementation id={item.id} filename={item.metadata?.filename} width={width} height={height} url={url!} changed={changed} description={message.description} />
     );
 }
 

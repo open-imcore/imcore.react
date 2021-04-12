@@ -416,6 +416,18 @@
                     max-width: 100%;
                     height: auto;
                 }
+
+                .attachment-file {
+                    display: flex;
+                    align-items: center;
+                    width: 170px;
+                    height: 125px;
+                    background: #E9E9EB;
+                    color: #7C7C7D;
+                    font-size: 10px;
+                    text-align: center;
+                    padding: 0 10px;
+                }
             }
         }
 

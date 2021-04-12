@@ -184,6 +184,7 @@
                     width: 170px;
                     background: #E9E9EB;
                     margin-right: 5px;
+                    padding: 0 10px;
 
                     &::after {
                         content: attr(name);
