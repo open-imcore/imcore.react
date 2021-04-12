@@ -9801,6 +9801,11 @@ react-textarea-autosize@^8.3.2:
     use-composed-ref "^1.0.0"
     use-latest "^1.0.0"
 
+react-use-persistent@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/react-use-persistent/-/react-use-persistent-1.0.2.tgz#46c19e573bd5d6c2e677bb491a0170617cf86b40"
+  integrity sha512-KzNLih5UGifiU0SQJRWN8Js+zbN/3Fj+WDrHT/3e3vlNZFY9nM+wkPUBVXsFbzbsr3aAtSwRV0WAt2AZL5WZIw==
+
 react-virtualized-auto-sizer@^1.0.5:
   version "1.0.5"
   resolved "https://registry.npmjs.org/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.5.tgz#9eeeb8302022de56fbd7a860b08513120ce36509"

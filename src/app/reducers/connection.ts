@@ -1,6 +1,6 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getPersistentValue } from "react-use-persistent";
 import { RootState } from "../store";
-import {getPersistentValue} from "../../util/use-persistent";
 
 interface ConnectionState {
     bootstrapped: boolean;

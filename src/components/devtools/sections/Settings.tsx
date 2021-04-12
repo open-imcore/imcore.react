@@ -1,11 +1,11 @@
 import React from "react";
 import GitInfo from "react-git-info/macro";
 import { useSelector } from "react-redux";
+import { usePersistent } from "react-use-persistent";
 import { reconnect } from "../../../app/connection";
 import { selectUseInvertedScrolling, setInvertedScrolling } from "../../../app/reducers/debug";
 import { store } from "../../../app/store";
 import { useBusyController } from "../../../hooks/useBusyController";
-import { usePersistent } from "../../../util/use-persistent";
 import DebugBoolean from "../presentation/DebugBoolean";
 
 const shortHash = GitInfo().commit.shortHash;

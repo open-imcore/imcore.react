@@ -1,6 +1,6 @@
+import { getPersistentValue } from "react-use-persistent";
 import * as Connection from "../app/connection";
 import * as Store from "../app/store";
-import { getPersistentValue } from "./use-persistent";
 
 Object.assign(window, {
     Connection,

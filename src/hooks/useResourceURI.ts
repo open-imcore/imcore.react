@@ -1,5 +1,5 @@
+import { makeVersionedValue, VersionedValueWithStateAdapter } from "react-use-persistent";
 import { apiClient } from "../app/connection";
-import { makeVanillaVersionedValue, VersionedValueWithStateAdapter } from "../util/use-persistent";
 
 export interface AttachmentResolverFn {
     (id: string): Promise<Blob>;
@@ -9,17 +9,17 @@ export const IMAttachmentResolver: AttachmentResolverFn = (id: string) => apiCli
 export const CNPictureResolver: AttachmentResolverFn = (id: string) => apiClient.fetchContactPhoto(id);
 
 const VersionedValues: Record<string, VersionedValueWithStateAdapter<string | null>> = {};
-const noopVersionedValue = makeVanillaVersionedValue(null);
+const noopVersionedValue = makeVersionedValue(null);
 
 export function useResourceURI(id: string | null, resovler: (id: string) => Promise<Blob | null>): string | null {
-    if (!id) return noopVersionedValue.useAsState();
+    if (!id) return noopVersionedValue.useAsState()[0];
 
-    if (VersionedValues[id]) return VersionedValues[id].useAsState();
+    if (VersionedValues[id]) return VersionedValues[id].useAsState()[0];
     else {
-        const versionedValue = VersionedValues[id] = makeVanillaVersionedValue<string | null>(null);
+        const versionedValue = VersionedValues[id] = makeVersionedValue<string | null>(null);
 
         resovler(id).then(blob => versionedValue.value = blob ? URL.createObjectURL(blob) : null);
 
-        return versionedValue.useAsState();
+        return versionedValue.useAsState()[0];
     }
 }

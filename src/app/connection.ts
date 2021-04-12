@@ -1,7 +1,7 @@
 import { AnyChatItemModel, AnyTraceData, ChatItemType, ChatRepresentation, ContactRepresentation, EventType, IMHTTPClient, IMWebSocketClient, IMWebSocketConnectionOptions, MessageRepresentation } from "imcore-ajax-core";
+import { getPersistentValue } from "react-use-persistent";
 import { EventBus } from "../hooks/useEvent";
 import IMMakeLog from "../util/log";
-import { getPersistentValue } from "../util/use-persistent";
 import { chatChanged, chatDeleted, chatMessagesReceived, chatParticipantsUpdated, chatPropertiesChanged, chatsChanged } from "./reducers/chats";
 import { receivedBootstrap, tokenChanged } from "./reducers/connection";
 import { contactChanged, contactDeleted, contactsChanged, strangersReceived } from "./reducers/contacts";

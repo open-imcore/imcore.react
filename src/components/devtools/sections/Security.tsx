@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import { usePersistent } from "react-use-persistent";
 import { apiClient, reconnect } from "../../../app/connection";
 import { useBusyController } from "../../../hooks/useBusyController";
-import { usePersistent } from "../../../util/use-persistent";
 import DebugDetails from "../presentation/DebugDetails";
 
 export default function Security() {

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getPersistentValue } from "../../util/use-persistent";
+import { getPersistentValue } from "react-use-persistent";
 import { RootState } from "../store";
 
 interface DebugState {
