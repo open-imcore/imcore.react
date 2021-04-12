@@ -39,12 +39,11 @@ export function isTranscriptItem(item: AnyChatItemModel) {
     return itemIsTranscriptLike(item) && componentForItem(item) !== null;
 }
 
-export default function IMTranscriptItem({ item, message, chat, changed }: PropsWithChildren<IMItemRenderingContext>) {
+export default function IMTranscriptItem({ item, message, chat }: PropsWithChildren<IMItemRenderingContext>) {
     const Component = componentForItem(item) as ((opts: {
         item: AnyChatItemModel["payload"],
         message: MessageRepresentation,
-        chat: ChatRepresentation,
-        changed: IMItemRenderingContext["changed"]
+        chat: ChatRepresentation
     }) => JSX.Element) | null;
 
     const { date, time } = useFormattedTimestamp(message.time) || {};
@@ -54,7 +53,7 @@ export default function IMTranscriptItem({ item, message, chat, changed }: Props
     return (
         <div className="transcript-item-container" attr-imcore-uri={IMURI.fromItem(item)} >
             <div className="transcript-label">{date} <span className="transcript-label-value">{time}</span></div>
-            <Component item={item.payload} message={message} chat={chat} key={item.payload.id} changed={changed} />
+            <Component item={item.payload} message={message} chat={chat} key={item.payload.id} />
         </div>
     );
 }

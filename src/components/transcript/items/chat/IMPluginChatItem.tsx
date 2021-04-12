@@ -10,7 +10,7 @@ interface IMPluginChatItemRenderContext extends IMItemRenderingContext<PluginCha
 
 const Log = IMMakeLog("IMPluginChatItem");
 
-function componentForItem(item: PluginChatItemRepresentation): null | ((ctx: Partial<PluginChatItemRepresentation> & { changed: () => any }) => JSX.Element) {
+function componentForItem(item: PluginChatItemRepresentation): null | ((ctx: Partial<PluginChatItemRepresentation>) => JSX.Element) {
     switch (item.bundleID.split(":")[0]) {
         case "com.apple.messages.URLBalloonProvider":
             if (!item.richLink) return null;
@@ -23,13 +23,13 @@ function componentForItem(item: PluginChatItemRepresentation): null | ((ctx: Par
     }
 }
 
-function IMPluginChatItem({ item, ...ctx }: PropsWithoutRef<IMPluginChatItemRenderContext>) {
+function IMPluginChatItem({ item }: PropsWithoutRef<IMPluginChatItemRenderContext>) {
     const Component = componentForItem(item);
 
     if (!Component) return null;
 
     return (
-        <Component changed={ctx.changed} {...item} />
+        <Component {...item} />
     );
 }
 

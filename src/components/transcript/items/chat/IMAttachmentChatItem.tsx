@@ -35,7 +35,6 @@ function ERComputeRenderingFormat({ metadata }: AttachmentChatItemRepresentation
 interface AttachmentRenderingContext {
     id: string;
     url: string;
-    changed: () => any;
     width?: number;
     height?: number;
     description?: string;
@@ -51,12 +50,9 @@ const IMImageAttachmentRenderer = RecycledElementRenderer(({ width, height, url,
     element.alt = description!;
 
     return element;
-}, ({ changed, url }, el) => {
-    el.addEventListener("load", changed);
+}, ({ url }, el) => {
     if (el.src !== url) el.src = url;
-}, ({ changed }, el) => {
-    el.removeEventListener("load", changed);
-});
+}, () => undefined);
 
 const IMVideoAttachmentRenderer = RecycledElementRenderer(({ width, height, url }: AttachmentRenderingContext) => {
     const element = document.createElement("video");
@@ -68,12 +64,9 @@ const IMVideoAttachmentRenderer = RecycledElementRenderer(({ width, height, url 
     element.controls = true;
 
     return element;
-}, ({ changed, url }, el) => {
-    el.addEventListener("loadedmetadata", changed);
+}, ({ url }, el) => {
     if (el.src !== url) el.src = url;
-}, ({ changed }, el) => {
-    el.removeEventListener("loadedmetadata", changed);
-});
+}, () => undefined);
 
 function IMFileRenderer({ id, filename }: AttachmentRenderingContext) {
     return (
@@ -94,7 +87,7 @@ function IMRenderingImplementation(item: IMAttachmentChatItemRenderContext["item
     }
 }
 
-function IMAttachmentChatItem({ item, message, changed }: PropsWithoutRef<IMAttachmentChatItemRenderContext>) {
+function IMAttachmentChatItem({ item, message }: PropsWithoutRef<IMAttachmentChatItemRenderContext>) {
     const url = useResourceURI(item.transferID, IMAttachmentResolver);
     const { width, height } = item.metadata?.size || {};
 
@@ -103,7 +96,7 @@ function IMAttachmentChatItem({ item, message, changed }: PropsWithoutRef<IMAtta
     if (!RenderingImplementation) return null;
 
     return (
-        <RenderingImplementation id={item.id} filename={item.metadata?.filename} width={width} height={height} url={url!} changed={changed} description={message.description} />
+        <RenderingImplementation id={item.id} filename={item.metadata?.filename} width={width} height={height} url={url!} description={message.description} />
     );
 }
 

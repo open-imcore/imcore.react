@@ -15,7 +15,6 @@ type ChatItemComponentRenderer = ((opts: {
     item: AnyChatItemModel["payload"],
     message: MessageRepresentation,
     chat: ChatRepresentation,
-    changed: IMItemRenderingContext["changed"],
     index: number
 }) => JSX.Element) | null;
 
@@ -39,7 +38,7 @@ export function isChatItem(item: AnyChatItemModel) {
     return !!chatItemComponentForItem(item);
 }
 
-export default function IMChatItem({ item, message, chat, changed, index }: PropsWithChildren<IMItemRenderingContext>) {
+export default function IMChatItem({ item, message, chat, index }: PropsWithChildren<IMItemRenderingContext>) {
     if (item.type === ChatItemType.plugin && item.payload.fallback) item = item.payload.fallback;
     const Component = chatItemComponentForItem(item) as ChatItemComponentRenderer;
 
@@ -59,7 +58,7 @@ export default function IMChatItem({ item, message, chat, changed, index }: Prop
             <div ref={itemContainer} className={`chat-item-container${isJumbo ? " chat-item-jumbo" : ""}`} attr-is-acknowledging={(tapbackItemID === item.payload.id).toString()} attr-imcore-uri={IMURI.fromItem(item)} data-has-acknowledgments={(acknowledgments.length > 0).toString()} attr-chat-item-id={item.payload.id}>
                 <div className="chat-item" data-item-type={item.type} attr-from-me={message.fromMe.toString()}>
                     <div className="item-inner">
-                        <Component index={index} item={item.payload} message={message} chat={chat} changed={changed} key={item.payload.id} />
+                        <Component index={index} item={item.payload} message={message} chat={chat} key={item.payload.id} />
                     </div>
                 </div>
 

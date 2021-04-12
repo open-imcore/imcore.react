@@ -7,7 +7,6 @@ import { formatPhoneNumber } from "../../../hooks/useFormattedHandles";
 import "../../../styles/transcript/items/Message.scss";
 import { ChatStyle } from "../../chat/ChatBubble";
 import CNContactBubble from "../../contacts/CNContactBubble";
-import { useCurrentChat } from "../ChatTranscriptFoundation";
 import IMChatItem, { isChatItem } from "./IMChatItem";
 import IMTranscriptItem, { isTranscriptItem } from "./IMTranscriptItem";
 import { analyzeMessage } from "./Message.foundation";
@@ -18,7 +17,6 @@ export interface IMItemRenderingContext<Item = AnyChatItemModel> {
     message: MessageRepresentation
     chat: ChatRepresentation
     index: number
-    changed: () => any
 }
 
 function componentForItem(item: AnyChatItemModel) {
@@ -46,17 +44,16 @@ function useMessageSenderName(message: MessageRepresentation) {
     else return formatPhoneNumber(message.sender || "<< system >>");
 }
 
-function Message({ eRef, message, nextMessage, prevMessage, lastDeliveredFromMe, lastReadFromMe, changed, style }: PropsWithRef<{
+function Message({ eRef, chat, message, nextMessage, prevMessage, lastDeliveredFromMe, lastReadFromMe, style }: PropsWithRef<{
     message: MessageRepresentation,
+    chat: ChatRepresentation,
     nextMessage?: MessageRepresentation,
     prevMessage?: MessageRepresentation,
     lastDeliveredFromMe?: string | null,
     lastReadFromMe?: string | null,
     style?: any,
-    changed?: () => any,
     eRef?: (elm: Element) => any
 }>) {
-    const chat = useCurrentChat()!;
     const messageSenderContact = useContact(message);
     
     const { beginningContiguous, endingContiguous, showImage, showName } = useMemo(() => analyzeMessage({
@@ -64,17 +61,15 @@ function Message({ eRef, message, nextMessage, prevMessage, lastDeliveredFromMe,
         nextMessage,
         chat,
         prevMessage
-    }), [JSON.stringify(message), JSON.stringify(nextMessage), JSON.stringify(prevMessage), chat]);
+    }), [message.id, nextMessage?.id, prevMessage?.id, message.time, nextMessage?.time, prevMessage?.time, nextMessage?.description, prevMessage?.description, message.description, chat.style]);
 
-    changed = changed || (() => undefined);
-
-    const items = message.items.map((item, index) => {
+    const items = useMemo(() => message.items.map((item, index) => {
         const Component = componentForItem(item);
 
         if (!Component) return null;
         
-        return <Component key={item.payload.id} index={index} changed={changed!} item={item} message={message} chat={chat} />;
-    }).filter(item => item);
+        return <Component key={item.payload.id} index={index} item={item} message={message} chat={chat} />;
+    }).filter(item => item), [message.items]);
 
     const messageIsTranscriptMessage = message.items.every(isTranscriptItem);
     const nextIsTranscript = nextMessage?.items.every(isTranscriptItem) || false;
