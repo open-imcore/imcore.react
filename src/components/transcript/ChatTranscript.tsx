@@ -132,7 +132,7 @@ export default function ChatTranscript() {
             if (!(event.target instanceof HTMLElement)) return;
             if (!isAcknowledging) return;
 
-            const isSafe = findAncestor(event.target, el => el.classList.contains("chat-item-container") && el.getAttribute("attr-is-acknowledging") === "true");
+            const isSafe = findAncestor(event.target, el => el.classList.contains("acknowledgment-picker-container"));
 
             if (isSafe) return;
 
