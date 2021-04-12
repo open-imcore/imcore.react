@@ -1,6 +1,7 @@
 import { AttachmentRepresentation } from "imcore-ajax-core";
 import { DOMOutputSpec, Schema } from "prosemirror-model";
 import { Plugin } from "prosemirror-state";
+import { EditorView } from "prosemirror-view";
 import { v4 as makeUUID } from "uuid";
 import { apiClient } from "../../../../app/connection";
 import { getFileImage, replaceDOMIDPRNode } from "../MCUtils";
@@ -67,48 +68,60 @@ export function elementForFileWithID(id: string): DOMOutputSpec {
     return ["div", baseProps];
 }
 
+function handleIngest(view: EditorView<any>, files: File[], schema: Schema): boolean {
+    const selection = view.state.tr.selection;
+
+    for (const file of files) {
+        const id = makeUUID();
+
+        // store file so it can be uploaded if the message is sent
+        IMFileCache.set(id, file);
+
+        // insert node into prosemirror
+        const node = view.state.tr.insert(selection.$from.pos, schema.nodes.attachment.create({
+            attachmentID: id
+        }));
+
+        if (file.type.startsWith("image") || file.type.startsWith("video")) {
+            // process thumbnail
+
+            getFileImage(file).then((result: string | null) => {
+                IMImageBase64Cache.set(id, result as string);
+
+                // replace the inserted prose node with the processed thumbnail
+                replaceDOMIDPRNode(id, schema.nodes.attachment.create({
+                    attachmentID: id,
+                    resolved: true
+                }), view);
+            });
+        }
+
+        view.dispatch(node.scrollIntoView());
+    }
+
+    return false;
+}
+
 export function makeDragAndDropPlugin(schema: Schema): Plugin {
     return new Plugin({
         props: {
             handleDOMEvents: {
+                paste(view, event) {
+                    const files = event.clipboardData?.files as unknown as File[] | null;
+
+                    if (!files || files.length === 0) return false;
+
+                    return handleIngest(view, files, schema);
+                },
                 drop(view, event) {
                     const files = event.dataTransfer?.files as unknown as File[] | null;
-                    const selection = view.state.tr.selection;
 
                     // no files >:( we've been swindled
                     if (!files || files.length === 0) return false;
 
                     event.preventDefault();
 
-                    for (const file of files) {
-                        const id = makeUUID();
-
-                        // store file so it can be uploaded if the message is sent
-                        IMFileCache.set(id, file);
-
-                        // insert node into prosemirror
-                        const node = view.state.tr.insert(selection.$from.pos, schema.nodes.attachment.create({
-                            attachmentID: id
-                        }));
-                        
-                        if (file.type.startsWith("image") || file.type.startsWith("video")) {
-                            // process thumbnail
-
-                            getFileImage(file).then((result: string | null) => {
-                                IMImageBase64Cache.set(id, result as string);
-
-                                // replace the inserted prose node with the processed thumbnail
-                                replaceDOMIDPRNode(id, schema.nodes.attachment.create({
-                                    attachmentID: id,
-                                    resolved: true
-                                }), view);
-                            });
-                        }
-
-                        view.dispatch(node.scrollIntoView());
-                    }
-
-                    return false;
+                    return handleIngest(view, files, schema);
                 }
             }
         }
