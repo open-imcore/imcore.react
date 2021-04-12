@@ -51,13 +51,7 @@ function ChatSidebar() {
     const chats = useMemo(() => chatResults.slice().sort((c1, c2) => c2.sortKey - c1.sortKey), [chatResults]);
 
     return (
-        <div onMouseOver={event => {
-            if (!(event.target instanceof HTMLElement)) return;
-            const currentChatID = findChatID(event.target);
-            if (!currentChatID) return;
-            if (currentChatID === store.getState().presence.hoveringOverChatID) return;
-            store.dispatch(chatChanged(currentChatID));
-        }}>
+        <div>
             <AutoSizer>
                 {({height}) => (
                     <List

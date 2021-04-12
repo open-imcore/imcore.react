@@ -100,8 +100,6 @@ export default function ChatTranscript() {
     const unreadCount = chat?.unreadMessageCount || 0;
     const isVisible = useSelector(selectVisibilityState);
 
-    const itemKey = useCallback((index: number, data: MessageRepresentation[]) => data[index].id, []);
-
     const [ processing, setIsProcessing ] = useState(false);
 
     const { close: clearTapbackView, isAcknowledging, tapbackItemID } = useContext(TapbackContext);
@@ -121,14 +119,16 @@ export default function ChatTranscript() {
         clearTapbackView();
     }, [chat]);
 
-    return (
-        <div className="chat-transcript transcript-react-window" attr-is-acknowledging={isAcknowledging.toString()} onMouseOver={event => {
-            if (!(event.target instanceof Node)) return;
-            const { messageID, chatItemID } = searchNodeForMessageRelations(event.target);
+    const memoState = useMemo(() => ({ lastDeliveredFromMe, lastReadFromMe }), [ lastDeliveredFromMe, lastReadFromMe ]);
 
-            if (!messageID) return;
-            store.dispatch(chatItemChanged({ messageID, chatItemID }));
-        }} onClick={event => {
+    const getProps = useCallback((index: number) => ({
+        "attr-is-acknowledging": (tapbackItemID?.endsWith(messages[index].id) || false).toString()
+    }), [tapbackItemID, messages]);
+
+    const itemKey = useCallback((index: number, data: MessageRepresentation[]) => data[index].id, []);
+
+    return (
+        <div className="chat-transcript transcript-react-window" attr-is-acknowledging={isAcknowledging.toString()} onClick={event => {
             if (!(event.target instanceof HTMLElement)) return;
             if (!isAcknowledging) return;
 
@@ -146,15 +146,13 @@ export default function ChatTranscript() {
                             width={width}
                             nonce={chat?.id}
                             itemData={messages}
-                            getID={index => messages[index]?.id || "-1"}
+                            getID={getID}
                             itemCount={messages.length}
                             nearEnd={loadMore}
-                            memoState={{ lastDeliveredFromMe, lastReadFromMe }}
+                            memoState={memoState}
                             isSame={compareMessageRenderProps}
                             itemKey={itemKey}
-                            getProps={index => ({
-                                "attr-is-acknowledging": (tapbackItemID?.endsWith(messages[index].id) || false).toString()
-                            })}
+                            getProps={getProps}
                             >
                             {({ ref, index, data }) => (
                                 <Message
