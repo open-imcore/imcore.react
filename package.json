@@ -47,6 +47,7 @@
   },
   "scripts": {
     "start": "craco start",
+    "start:wdyr": "REACT_APP_WDYR=I_WANTED_TO craco start",
     "build:staging": "STAGING=1 yarn build",
     "build": "craco build",
     "test": "craco test",

@@ -1,36 +1,31 @@
-const presetReact = require("@babel/preset-react").default;
-const presetCRA = require("babel-preset-react-app");
-
 module.exports = {
-    babel: process.env.WDYR ? {
-        pluginOptions: (babelLoaderOptions, {
-            env,
-            paths
-        }) => {
-            const origBabelPresetReactAppIndex = babelLoaderOptions.presets.findIndex(preset => {
+    babel: process.env.REACT_APP_WDYR === "I_WANTED_TO" ? {
+        loaderOptions: (babelLoaderOptions) => {
+            console.log("🚨 Building with WDYR injected. This is terrible for perf. Only use for render profiling.");
+
+            const origBabelPresetCRAIndex = babelLoaderOptions.presets.findIndex((preset) => {
                 return preset[0].includes("babel-preset-react-app");
             });
 
-            if (origBabelPresetReactAppIndex === -1) {
-                return babelLoaderOptions;
-            }
+            const origBabelPresetCRA = babelLoaderOptions.presets[origBabelPresetCRAIndex];
 
-            const overridenBabelPresetReactApp = (...args) => {
-                const babelPresetReactAppResult = presetCRA(...args);
-                const origPresetReact = babelPresetReactAppResult.presets.find(preset => {
-                    return preset[0] === presetReact;
+            babelLoaderOptions.presets[origBabelPresetCRAIndex] = function overridenPresetCRA(api, opts, env) {
+                const babelPresetCRAResult = require(
+                    origBabelPresetCRA[0]
+                )(api, origBabelPresetCRA[1], env);
+
+                babelPresetCRAResult.presets.forEach(preset => {
+                    // detect @babel/preset-react with {development: true, runtime: 'automatic'}
+                    if (!preset || !preset[1] || preset[1].runtime !== "automatic" || !preset[1].development) return;
+                    preset[1].importSource = "@welldone-software/why-did-you-render";
                 });
-                Object.assign(origPresetReact[1], {
-                    importSource: "@welldone-software/why-did-you-render",
-                });
-                return babelPresetReactAppResult;
+
+                return babelPresetCRAResult;
             };
 
-            babelLoaderOptions.presets[origBabelPresetReactAppIndex] = overridenBabelPresetReactApp;
-
             return babelLoaderOptions;
-        }
-    } : undefined,
+        },
+    } : {},
     webpack: {
         configure: config => {
             if (process.env.STAGING) {
