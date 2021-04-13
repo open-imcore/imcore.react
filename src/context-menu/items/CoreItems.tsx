@@ -10,6 +10,24 @@ export default [
         render: ({ uri }) => (
             <>
                 <Item onClick={() => {
+                    switch (uri.type) {
+                        case IMEntityType.item:
+                            console.log(uri.item);
+                            break;
+                        case IMEntityType.message:
+                            console.log(uri.message);
+                            break;
+                        case IMEntityType.chat:
+                            console.log(uri.chat);
+                            break;
+                        case IMEntityType.contact:
+                            console.log(uri.contact);
+                            break;
+                    }
+                }}>
+                    console.log
+                </Item>
+                <Item onClick={() => {
                     copyTextToClipboard(uri.id);
                 }}>
                     Copy ID

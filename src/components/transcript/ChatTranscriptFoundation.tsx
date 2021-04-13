@@ -1,11 +1,10 @@
-import { AnyChatItemModel, ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
+import { ChatRepresentation, MessageRepresentation } from "imcore-ajax-core";
 import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { matchPath, useLocation } from "react-router";
 import { apiClient, receiveMessages } from "../../app/connection";
 import { selectChats } from "../../app/reducers/chats";
 import { selectMessages } from "../../app/reducers/messages";
-import { selectHoveringOverChatID, selectHoveringOverChatItemID, selectHoveringOverMessageID } from "../../app/reducers/presence";
 import IMMakeLog from "../../util/log";
 import { prepareMessagesForPresentation, TIMESTAMP_ASSOCIATION } from "../../util/message-presentation";
 
@@ -83,40 +82,6 @@ export function useCurrentChat(): ChatRepresentation | null {
 
 export function useCurrentChatID(): string | null {
     return useContext(ChatContext).chatID;
-}
-
-function useResolvedMessage(messageID: string | null, chatID?: string): MessageRepresentation | null {
-    const messages = useSelector(selectMessages);
-    const currentChat = useCurrentChat();
-
-    if (!messageID) return null;
-    if (!chatID) chatID = currentChat?.id;
-    if (!chatID) return null;
-
-    return messages[chatID]?.[messageID] || null;
-}
-
-export function useHoveredMessage(): MessageRepresentation | null {
-    const hoveredMessage = useSelector(selectHoveringOverMessageID);
-
-    return useResolvedMessage(hoveredMessage);
-}
-
-export function useHoveredChatItem(): [AnyChatItemModel | null, MessageRepresentation | null] {
-    const hoveredMessage = useHoveredMessage();
-    const hoveredChatItemID = useSelector(selectHoveringOverChatItemID);
-
-    if (!hoveredChatItemID || !hoveredMessage) return [null, hoveredMessage];
-
-    return [hoveredMessage.items.find(item => item.payload.id === hoveredChatItemID) || null, hoveredMessage];
-}
-
-export function useHoveredChat(): ChatRepresentation | null {
-    const hoveredChat = useSelector(selectHoveringOverChatID);
-    const chats = useSelector(selectChats);
-
-    if (!hoveredChat) return null;
-    return chats[hoveredChat] || null;
 }
 
 export function CurrentChatProvider({ children }: PropsWithChildren<{}>) {
