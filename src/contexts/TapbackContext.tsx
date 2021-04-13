@@ -1,4 +1,4 @@
-import React, { createContext, PropsWithChildren, useState } from "react";
+import React, { createContext, PropsWithChildren, useCallback, useState } from "react";
 
 export interface TapbackContextState {
     tapbackItemID: string | null;
@@ -17,9 +17,11 @@ export const TapbackContext = createContext<TapbackContextState>({
 export function TapbackProvider({ children }: PropsWithChildren<{}>) {
     const [ tapbackItemID, setTapbackItemID ] = useState<string | null>(null);
 
+    const close = useCallback(() => setTapbackItemID(null), []);
+
     return (
         <TapbackContext.Provider value={{
-            tapbackItemID, setTapbackItemID, close: () => setTapbackItemID(null),
+            tapbackItemID, setTapbackItemID, close,
             isAcknowledging: tapbackItemID !== null
         }}>
             {children}
