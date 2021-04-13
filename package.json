@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^6.1.1",
     "@reduxjs/toolkit": "^1.2.5",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -12,6 +13,7 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.7",
+    "@welldone-software/why-did-you-render": "^6.1.1",
     "browser-bunyan": "^1.6.3",
     "emoji-regex": "^9.2.1",
     "eventemitter3": "^4.0.7",
@@ -26,7 +28,6 @@
     "prosemirror-state": "^1.3.4",
     "prosemirror-view": "^1.18.1",
     "react": "^17.0.1",
-    "react-app-rewired": "^2.1.8",
     "react-contexify": "^5.0.0",
     "react-dom": "^17.0.1",
     "react-git-info": "^2.0.0",
@@ -45,11 +46,10 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "craco start",
     "build:staging": "STAGING=1 yarn build",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-scripts eject",
+    "build": "craco build",
+    "test": "craco test",
     "act": "act -s SSH_KEY=\"$(< .ssh.secret)\"",
     "act:reuse": "yarn act --reuse"
   },
