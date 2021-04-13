@@ -37,3 +37,10 @@ jobs:
           remote_port: ${{ secrets.SSH_PORT }}
           remote_user: ${{ secrets.SSH_USERNAME }}
           remote_key: ${{ secrets.SSH_KEY }}
+
+      - name: Tell the kids
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@0.3.0
+        with:
+          args: 'New staging build is up!'
