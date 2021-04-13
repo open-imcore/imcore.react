@@ -45,9 +45,7 @@ export function ChatSearchProvider({ children }: PropsWithChildren<{}>) {
     const [ chatResults, setChatResults ] = useState<ChatEntry[] | null>(null);
 
     const debouncedSearch = useCallback(debounce(async (searchCriteria: string | undefined, chats: Record<string, ChatRepresentation>) => {
-        console.log("asdf");
         if (!searchCriteria) return setChatResults(null);
-        console.log("asss");
         
         const result = await runSearch(searchCriteria);
 
