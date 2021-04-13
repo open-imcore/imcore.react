@@ -3,7 +3,7 @@ import { baseKeymap, splitBlock } from "prosemirror-commands";
 import { keymap } from "prosemirror-keymap";
 import { EditorState, Plugin, Transaction } from "prosemirror-state";
 import "prosemirror-view/style/prosemirror.css";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { MutableRefObject, useLayoutEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Handle, ProseMirror, useProseMirror } from "use-prosemirror";
 import { apiClient } from "../../../app/connection";
@@ -22,21 +22,19 @@ let currentChat: ChatRepresentation | null = null;
 
 const IMTypingLedger: Map<string, boolean> = new Map();
 
-async function fireSendMessage(state: EditorState, dispatch?: ((tr: Transaction<any>) => void) | undefined): Promise<EditorState> {
-    if (!currentChat) return state;
+async function fireSendMessage(state: MutableRefObject<EditorState>, dispatch?: ((tr: Transaction<any>) => void) | undefined) {
+    if (!currentChat) return;
 
     const chat = currentChat;
     
-    await sendMessage(state.doc, chat);
+    await sendMessage(state.current!.doc, chat);
 
     IMTypingLedger.set(chat.id, false);
 
-    const transaction = state.tr.delete(0, state.doc.content.size);
+    const transaction = state.current!.tr.delete(0, state.current!.doc.content.size);
 
     if (dispatch) dispatch(transaction);
-    else state = state.apply(transaction);
-
-    return state;
+    else state.current = state.current!.apply(transaction);
 }
 
 /**
@@ -58,6 +56,8 @@ export default function Composition() {
     }, [editorView]);
 
     const [canSend, setCanSend] = useState(false);
+
+    const stateRef = useRef<EditorState>(null!);
 
     const [state, setState] = useProseMirror({
         schema: IMProseSchema,
@@ -104,8 +104,8 @@ export default function Composition() {
             keymap({
                 "Shift-Enter": splitBlock,
                 "Backspace": baseKeymap["Backspace"],
-                "Enter": (state: EditorState, dispatch) => {
-                    fireSendMessage(state, dispatch);
+                "Enter": (_, dispatch) => {
+                    fireSendMessage(stateRef, dispatch);
             
                     return false;
                 }
@@ -113,11 +113,19 @@ export default function Composition() {
         ]
     });
 
+    useLayoutEffect(() => {
+        stateRef.current = state;
+    }, [state]);
+
     return (
         <div className="composition">
             <div className="devtools-trigger" onClick={() => store.dispatch(setShowDevtools(!showingDevtools))} />
             <ProseMirror className="composition-editor" state={state} onChange={setState} ref={editorView} />
-            <div attr-can-send={canSend.toString()} className="send-composition" onClick={() => fireSendMessage(state).then(state => setState(state))} />
+            <div attr-can-send={canSend.toString()} className="send-composition" onClick={() => {
+                fireSendMessage(stateRef).then(() => {
+                    setState(stateRef.current);
+                });
+            }} />
         </div>
     );
 }
