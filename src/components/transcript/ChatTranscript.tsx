@@ -66,6 +66,14 @@ function getLastReadAndDeliveredFromMe(messages: MessageRepresentation[]): [stri
     return [lastDeliveredFromMe, lastReadFromMe];
 }
 
+const acknowledgingProps = {
+    "attr-is-acknowledging": "true"
+};
+
+const notAcknowledgingProps = {
+    "attr-is-acknowledging": "false"
+};
+
 export default function ChatTranscript() {
     const chat = useCurrentChat();
     const [ messages, loadMore ] = useCurrentMessages();
@@ -98,9 +106,7 @@ export default function ChatTranscript() {
 
     const memoState = useMemo(() => ({ lastDeliveredFromMe, lastReadFromMe }), [ lastDeliveredFromMe, lastReadFromMe ]);
 
-    const getProps = useCallback((index: number) => ({
-        "attr-is-acknowledging": (tapbackItemID?.endsWith(messages[index].id) || false).toString()
-    }), [tapbackItemID, messages]);
+    const getProps = (index: number) => tapbackItemID?.endsWith(messages[index].id) ? acknowledgingProps : notAcknowledgingProps;
 
     const itemKey = useCallback((index: number, data: MessageRepresentation[]) => data[index].id, []);
 
