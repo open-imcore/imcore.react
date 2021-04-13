@@ -48,7 +48,7 @@ export default function AcknowledgmentPickerPresenter({ rootRef }: {
 }) {
     const { tapbackItemID } = useContext(TapbackContext);
 
-    const { width, height } = useSize(rootRef);
+    const { width } = useSize(rootRef);
 
     if (!tapbackItemID) return null;
 

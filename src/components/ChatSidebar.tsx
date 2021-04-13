@@ -1,19 +1,10 @@
 import React, { useContext, useMemo } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { areEqual, FixedSizeList as List } from "react-window";
-import { chatChanged } from "../app/reducers/presence";
-import { store } from "../app/store";
 import { ChatEntry, ChatSearchContext } from "../contexts/ChatSearchContext";
 import "../styles/ChatSidebar.scss";
-import { findAncestor } from "../util/dom";
 import ChatSidebarItem from "./ChatSidebarItem";
 import { TypedListChildComponentProps } from "./react-window-dynamic/DynamicSizeList";
-
-function findChatID(element: HTMLElement): string | null {
-    return findAncestor(element, ancestor => {
-        return ancestor.hasAttribute("attr-chat-id");
-    })?.getAttribute("attr-chat-id") || null;
-}
 
 const RowRenderer = React.memo(function RowRenderer({
     index,

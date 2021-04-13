@@ -3,8 +3,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 import { useSelector } from "react-redux";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { apiClient } from "../../app/connection";
-import { chatItemChanged, selectVisibilityState } from "../../app/reducers/presence";
-import { store } from "../../app/store";
+import { selectVisibilityState } from "../../app/reducers/presence";
 import { TapbackContext } from "../../contexts/TapbackContext";
 import { findAncestor } from "../../util/dom";
 import IMMakeLog from "../../util/log";
@@ -65,30 +64,6 @@ function getLastReadAndDeliveredFromMe(messages: MessageRepresentation[]): [stri
     }
 
     return [lastDeliveredFromMe, lastReadFromMe];
-}
-
-function searchNodeForMessageRelations(node: Node): {
-    chatItemID: string | null;
-    messageID: string | null;
-} {
-    let chatItemID: string | null = null, messageID: string | null = null;
-
-    let next: Node | null = node;
-    while (next !== null) {
-        if (next instanceof HTMLElement) {
-            if (!chatItemID) chatItemID = next.getAttribute("attr-chat-item-id");
-            if (!messageID) messageID = next.getAttribute("attr-message-id");
-        }
-
-        if ((chatItemID && messageID) || (messageID && !chatItemID)) break;
-
-        next = next.parentNode;
-    }
-
-    return {
-        chatItemID,
-        messageID
-    };
 }
 
 export default function ChatTranscript() {
