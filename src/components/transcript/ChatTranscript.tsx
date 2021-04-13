@@ -134,7 +134,6 @@ export default function ChatTranscript() {
                             {({ ref, index, data }) => (
                                 <Message
                                     eRef={ref as any}
-                                    chat={chat!}
                                     message={data[index]}
                                     nextMessage={data[index - 1]}
                                     prevMessage={data[index + 1]}

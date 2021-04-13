@@ -7,6 +7,7 @@ import { formatPhoneNumber } from "../../../hooks/useFormattedHandles";
 import "../../../styles/transcript/items/Message.scss";
 import { ChatStyle } from "../../chat/ChatBubble";
 import CNContactBubble from "../../contacts/CNContactBubble";
+import { useCurrentChat } from "../ChatTranscriptFoundation";
 import IMChatItem, { isChatItem } from "./IMChatItem";
 import IMTranscriptItem, { isTranscriptItem } from "./IMTranscriptItem";
 import { analyzeMessage } from "./Message.foundation";
@@ -44,9 +45,8 @@ function useMessageSenderName(message: MessageRepresentation) {
     else return formatPhoneNumber(message.sender || "<< system >>");
 }
 
-function Message({ eRef, chat, message, nextMessage, prevMessage, lastDeliveredFromMe, lastReadFromMe, style }: PropsWithRef<{
+function Message({ eRef, message, nextMessage, prevMessage, lastDeliveredFromMe, lastReadFromMe, style }: PropsWithRef<{
     message: MessageRepresentation,
-    chat: ChatRepresentation,
     nextMessage?: MessageRepresentation,
     prevMessage?: MessageRepresentation,
     lastDeliveredFromMe?: string | null,
@@ -54,6 +54,7 @@ function Message({ eRef, chat, message, nextMessage, prevMessage, lastDeliveredF
     style?: any,
     eRef?: (elm: Element) => any
 }>) {
+    const chat = useCurrentChat()!;
     const messageSenderContact = useContact(message);
     
     const { beginningContiguous, endingContiguous, showImage, showName } = useMemo(() => analyzeMessage({
