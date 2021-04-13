@@ -6,11 +6,11 @@ import { selectHandleIDToContact } from "../app/reducers/contacts";
 const cache: Record<string, string> = {};
 
 export function formatPhoneNumber(rawPhoneNumber: string): string {
-    try {
-        if (cache[rawPhoneNumber]) return cache[rawPhoneNumber];
+    if (cache[rawPhoneNumber]) return cache[rawPhoneNumber];
 
+    try {
         const phoneNumber = parsePhoneNumber(rawPhoneNumber);
-        if (!phoneNumber) return rawPhoneNumber;
+        if (!phoneNumber) return cache[rawPhoneNumber] = rawPhoneNumber;
         else return cache[rawPhoneNumber] = `+${phoneNumber.countryCallingCode} ${phoneNumber.formatNational()}`;
     } catch {
         return rawPhoneNumber;
