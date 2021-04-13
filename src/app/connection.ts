@@ -4,7 +4,7 @@ import { getPersistentValue } from "react-use-persistent";
 import { EventBus } from "../hooks/useEvent";
 import IMMakeLog from "../util/log";
 import { chatChanged, chatDeleted, chatMessagesReceived, chatParticipantsUpdated, chatPropertiesChanged, chatsChanged } from "./reducers/chats";
-import { receivedBootstrap, tokenChanged } from "./reducers/connection";
+import { receivedBootstrap } from "./reducers/connection";
 import { contactChanged, contactDeleted, contactsChanged, strangersReceived } from "./reducers/contacts";
 import { messagesChanged, messagesDeleted, statusChanged } from "./reducers/messages";
 import { store } from "./store";
@@ -46,9 +46,7 @@ export async function reconnect(options?: IMWebSocketConnectionOptions): Promise
 }
 
 export async function refreshToken(psk: string) {
-    const token = await apiClient.security.token(psk, true);
-
-    store.dispatch(tokenChanged(token));
+    imCoreTokenConfig.value = await apiClient.security.token(psk, true);
 }
 
 function receiveChangedChat(chat: ChatRepresentation) {

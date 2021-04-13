@@ -1,19 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getPersistentValue } from "react-use-persistent";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 interface ConnectionState {
     bootstrapped: boolean;
-    token: string;
 }
 
 const initialState: ConnectionState = {
-    bootstrapped: false,
-    token: ""
-};
-
-const persistentConfig = {
-    token: getPersistentValue("imcore-token", "")
+    bootstrapped: false
 };
 
 export const connectionSlice = createSlice({
@@ -22,14 +15,11 @@ export const connectionSlice = createSlice({
     reducers: {
         receivedBootstrap: (connection) => {
             connection.bootstrapped = true;
-        },
-        tokenChanged: (connection, { payload }: PayloadAction<string>) => {
-            connection.token = persistentConfig.token.value = payload;
         }
     }
 });
 
-export const { receivedBootstrap, tokenChanged } = connectionSlice.actions;
+export const { receivedBootstrap } = connectionSlice.actions;
 
 export const selectBootstrapState = (state: RootState) => state.connection.bootstrapped;
 
