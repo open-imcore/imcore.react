@@ -1,6 +1,6 @@
 import { VariableSizeListProps } from "@erics-world/react-window";
 import React, { CSSProperties, MutableRefObject, ReactNode, useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import { useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 import { areEqual, ListChildComponentProps, VariableSizeList } from "react-window";
 import { selectUseInvertedScrolling } from "../../app/reducers/debug";
 import { EventTypes, useEvent } from "../../hooks/useEvent";
@@ -29,7 +29,7 @@ export interface RowMeasurerProps<T extends { id: string }, MemoState> {
 
 export type RowMeasurerPropsWithoutChildren<T extends { id: string }, MemoState> = Omit<RowMeasurerProps<T, MemoState>, "children">;
 
-export function RowMeasurer<T extends { id: string }, MemoState>({ index, id, rootProps = {}, width, data, style, children, memoState }: RowMeasurerProps<T, MemoState>) {
+export function RowMeasurer<T extends { id: string }, MemoState>({ index, rootProps, id, width, data, style, children, memoState }: RowMeasurerProps<T, MemoState>) {
     const { setSize } = useContext(DynamicListContext);
     const rowRoot = useRef<null | HTMLDivElement>(null);
 
@@ -185,46 +185,33 @@ export default function DynamicSizeList<T extends { id: string }, MemoState>(pro
         return estimatedHeight / keys.length;
     }, [sizeMap]);
 
-    const MemoizedRowMeasurer = useMemo(() => {
-        Log.debug("Regenerating memo component");
+    const getProps = useCallback(props.getProps || ((index: number) => undefined), [props.getProps]);
 
-        const createRendererProps = (rowProps: TypedListChildComponentProps<T[]>, listProps: DynamicSizeListProps<T, MemoState> = props, memoState: MemoState = props.memoState): Omit<RowMeasurerProps<T, MemoState>, "children"> => ({
-            ...rowProps,
-            id: rowProps.data[rowProps.index].id,
-            width: listProps.width,
-            memoState
-        });
-
-        function Renderer(rowProps: ListChildComponentProps) {
-            return (
-                <RowMeasurer {...createRendererProps(rowProps)} rootProps={props.getProps ? props.getProps(rowProps.index) : undefined} key={rowProps.data[rowProps.index].id}>
-                    {props.children as any}
-                </RowMeasurer>
-            );
-        }
-
-        return props.isSame ? React.memo<ListChildComponentProps>(Renderer, (prevProps, nextProps) => {
-            return areEqual(prevProps, nextProps) && props.isSame!(createRendererProps(prevProps), createRendererProps(nextProps));
-        }) : Renderer;
-    }, [props.isSame, props.memoState]);
+    const MemoizedRowMeasurer = useMemo(() => props.isSame ? React.memo<RowMeasurerProps<T, MemoState>>(RowMeasurer, (prevProps, nextProps) => {
+        return areEqual(prevProps, nextProps) && props.isSame!(prevProps, nextProps) && shallowEqual(prevProps.rootProps, nextProps.rootProps);
+    }) : RowMeasurer, [props.isSame]);
 
     return (
         <DynamicListContext.Provider value={{ setSize }}>
-            <PatchedVariableSizeList
-                ref={listRef}
-                width={props.width}
-                height={props.height}
-                itemCount={props.itemCount}
-                itemData={props.itemData}
-                itemSize={getSize}
-                estimatedItemSize={calcEstimatedSize()}
-                outerRef={scrollWatcher}
-                overscanCount={props.overscanCount}
-                onItemsRendered={props.nearEnd ? ({ overscanStartIndex, overscanStopIndex }) => overscanStopIndex >= (props.itemData.length - 10) ? props.nearEnd!() : undefined : undefined}
-                itemKey={props.itemKey}
-                >
-                {MemoizedRowMeasurer}
-            </PatchedVariableSizeList>
+                <PatchedVariableSizeList
+                    ref={listRef}
+                    width={props.width}
+                    height={props.height}
+                    itemCount={props.itemCount}
+                    itemData={props.itemData}
+                    itemSize={getSize}
+                    estimatedItemSize={calcEstimatedSize()}
+                    outerRef={scrollWatcher}
+                    overscanCount={props.overscanCount}
+                    onItemsRendered={props.nearEnd ? ({ overscanStartIndex, overscanStopIndex }) => overscanStopIndex >= (props.itemData.length - 10) ? props.nearEnd!() : undefined : undefined}
+                    itemKey={props.itemKey}
+                    >
+                    {rowProps => (
+                        <MemoizedRowMeasurer {...rowProps} rootProps={getProps(rowProps.index)} id={rowProps.data[rowProps.index].id} width={props.width} memoState={props.memoState} key={rowProps.data[rowProps.index].id}>
+                            {props.children}
+                        </MemoizedRowMeasurer>
+                    )}
+                </PatchedVariableSizeList>
         </DynamicListContext.Provider>
     );
 }
