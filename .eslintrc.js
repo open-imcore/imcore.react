@@ -8,7 +8,8 @@ module.exports = {
     {
       "files": ["**/*.ts?(x)"],
       "rules": {
-        "react-hooks/exhaustive-deps": "off"
+        "react-hooks/exhaustive-deps": "off",
+        "import/first": "off"
       }
     }
   ]
