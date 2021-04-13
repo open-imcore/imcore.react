@@ -12,14 +12,14 @@ const initialState: ChatState = {
     typingStatus: {}
 };
 
-const acceptedLastMessageTypes = [
+const acceptedLastMessageTypes = new Set([
     ChatItemType.acknowledgment,
     ChatItemType.associated,
     ChatItemType.plugin,
     ChatItemType.sticker,
     ChatItemType.attachment,
     ChatItemType.text
-];
+]);
 
 export const chatSlice = createSlice({
     name: "chats",
@@ -39,11 +39,9 @@ export const chatSlice = createSlice({
                 if (!chats.byID[chatID]) continue;
                 if (time <= chats.byID[chatID].lastMessageTime) continue;
 
-                const isTyping = items.some(item => item.type === ChatItemType.typing);
+                chats.typingStatus[chatID] = items.some(item => item.type === ChatItemType.typing);
 
-                chats.typingStatus[chatID] = isTyping;
-
-                if (!items.some(item => acceptedLastMessageTypes.includes(item.type))) continue;
+                if (!items.some(item => acceptedLastMessageTypes.has(item.type))) continue;
 
                 Object.assign(chats.byID[chatID], {
                     lastMessage: description,
