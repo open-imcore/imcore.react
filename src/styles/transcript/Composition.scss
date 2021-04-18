@@ -10,7 +10,7 @@
     & > .devtools-trigger {
         width: 25px;
         height: 25px;
-        background: var(--not-from-me-background);
+        background: var(--not-from-me);
         border-radius: 50%;
 
         display: flex;
@@ -28,7 +28,7 @@
             content: '';
             width: 50%;
             height: 50%;
-            background: white;
+            background: var(--text-invert);
             border-radius: 50%;
 
             transition: transform 0.25s cubic-bezier(.27,-0.16,.42,1.22);
@@ -67,12 +67,12 @@
             height: 100%;
             width: 100%;
 
-            background-color: darken($not-from-me-color, 10);
+            background-color: var(--not-from-me-d10);
             transition: background-color 50ms linear;
         }
 
         &[attr-can-send=true]::before {
-            background-color: $from-me-color;
+            background-color: var(--from-me);
         }
 
         &::after {
@@ -100,7 +100,7 @@
             mask-border-source: var(--bubble-stroke-notail-url);
             mask-border-slice: var(--from-me-slice);
             mask-border-width: var(--from-me-width);
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--composition-placeholder);
         }
 
         display: grid;
@@ -132,7 +132,7 @@
 
                     &::after {
                         content: attr(service);
-                        color: rgba(0, 0, 0, 0.3);
+                        color: var(--composition-placeholder);
                     }
                 }
             }
@@ -151,7 +151,7 @@
                 position: relative;
 
                 &[attachment-resolved=false] {
-                    background: black;
+                    background: var(--attachment-loading);
                 }
 
                 img {
@@ -175,20 +175,20 @@
                         content: '\25BA';
                         position: absolute;
                         font-size: 24px;
-                        color: rgba(255, 255, 255, 0.5);
+                        color: var(--attachment-video-play);
                     }
                 }
 
                 &:not([attachment-type=video]):not([attachment-type=image]) {
                     height: $max-height;
                     width: 170px;
-                    background: #E9E9EB;
+                    background: var(--attachment-background);
                     margin-right: 5px;
                     padding: 0 10px;
 
                     &::after {
                         content: attr(name);
-                        color: #7C7C7D;
+                        color: var(--attachment-label);
                         font-size: 10px;
                         text-align: center;
                     }

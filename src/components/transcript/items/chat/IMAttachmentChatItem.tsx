@@ -1,5 +1,5 @@
 import { AttachmentChatItemRepresentation, AttachmentRepresentation } from "imcore-ajax-core";
-import React, { PropsWithoutRef } from "react";
+import React, { PropsWithoutRef, useEffect, useRef } from "react";
 import { IMAttachmentResolver, useResourceURI } from "../../../../hooks/useResourceURI";
 import RecycledElementRenderer from "../../Recycler";
 import { IMItemRenderingContext } from "../Message";
@@ -52,7 +52,14 @@ const IMImageAttachmentRenderer = RecycledElementRenderer(({ width, height, url,
     return element;
 }, ({ url }, el) => {
     if (el.src !== url) el.src = url;
-}, () => undefined);
+});
+
+interface HTMLVideoElementSnapshot {
+    currentTime: number;
+    muted: boolean;
+    playbackRate: number;
+    volume: number;
+}
 
 const IMVideoAttachmentRenderer = RecycledElementRenderer(({ width, height, url }: AttachmentRenderingContext) => {
     const element = document.createElement("video");
@@ -66,7 +73,7 @@ const IMVideoAttachmentRenderer = RecycledElementRenderer(({ width, height, url 
     return element;
 }, ({ url }, el) => {
     if (el.src !== url) el.src = url;
-}, () => undefined);
+});
 
 function IMFileRenderer({ id, filename }: AttachmentRenderingContext) {
     return (

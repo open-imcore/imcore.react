@@ -1,7 +1,7 @@
 @import '../core';
 
 .cn-bubble {
-    background-image: linear-gradient($contact-silhouette-gradient-start, $contact-silhouette-gradient-end);
+    background-image: var(--contact-silhouette-gradient);
     background-size: contain;
     border-radius: 50%;
     overflow: hidden;
@@ -50,6 +50,6 @@
 }
 
 [attr-privacy-mode=true] .cn-bubble {
-    background-image: linear-gradient($contact-silhouette-gradient-start, $contact-silhouette-gradient-end) !important;
+    background-image: var(--contact-silhouette-gradient) !important;
     font-size: 0;
 }

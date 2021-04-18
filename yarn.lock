@@ -9821,6 +9821,14 @@ react-virtualized-auto-sizer@^1.0.5:
   resolved "https://registry.npmjs.org/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.5.tgz#9eeeb8302022de56fbd7a860b08513120ce36509"
   integrity sha512-kivjYVWX15TX2IUrm8F1jaCEX8EXrpy3DD+u41WGqJ1ZqbljWpiwscV+VxOM1l7sSIM1jwi2LADjhhAJkJ9dxA==
 
+react-window-dynamic-size-list@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/react-window-dynamic-size-list/-/react-window-dynamic-size-list-1.0.0.tgz#d3d5fbd33904c363cce8b292c10d3f55ee40451b"
+  integrity sha512-OrHGkNYrC4a8ntqp1HIfh+hvg1VmrC7Wov76HiHMNnAfCUCgi5Iha6xAc4gdDYdqqDinwAh8p7vepubH1DR4JA==
+  dependencies:
+    react-window "^1.8.6"
+    shallowequal "^1.1.0"
+
 react-window@^1.8.6:
   version "1.8.6"
   resolved "https://registry.npmjs.org/react-window/-/react-window-1.8.6.tgz#d011950ac643a994118632665aad0c6382e2a112"
@@ -10555,6 +10563,11 @@ shallow-clone@^3.0.0:
   integrity sha512-/6KqX+GVUdqPuPPd2LxDDxzX6CAbjJehAAOKlNpqqUpAqPM6HeL8f+o3a+JsyGjn2lv0WY8UsTgUJjU9Ok55NA==
   dependencies:
     kind-of "^6.0.2"
+
+shallowequal@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/shallowequal/-/shallowequal-1.1.0.tgz#188d521de95b9087404fd4dcb68b13df0ae4e7f8"
+  integrity sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==
 
 shebang-command@^1.2.0:
   version "1.2.0"

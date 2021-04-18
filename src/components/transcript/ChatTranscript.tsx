@@ -7,11 +7,13 @@ import { selectVisibilityState } from "../../app/reducers/presence";
 import { TapbackContext } from "../../contexts/TapbackContext";
 import { findAncestor } from "../../util/dom";
 import IMMakeLog from "../../util/log";
-import DynamicSizeList, { RowMeasurerPropsWithoutChildren } from "../react-window-dynamic/DynamicSizeList";
+import DynamicSizeList, { RowMeasurerPropsWithoutChildren } from "react-window-dynamic-size-list";
 import { useCurrentChat, useCurrentMessages } from "./ChatTranscriptFoundation";
 import Composition from "./composition/Composition";
 import Message from "./items/Message";
 import { itemsAreShallowEqual } from "./items/Message.foundation";
+import { selectUseInvertedScrolling } from "../../app/reducers/debug";
+import { hostIsMacOS, useInvertScrollDirection } from "../../hooks/useInvertScrollDirection";
 
 const MemoLog = IMMakeLog("MessageMemo", "error");
 
@@ -108,7 +110,10 @@ export default function ChatTranscript() {
 
     const getProps = (index: number) => tapbackItemID?.endsWith(messages[index].id) ? acknowledgingProps : notAcknowledgingProps;
 
-    const itemKey = useCallback((index: number, data: MessageRepresentation[]) => data[index].id, []);
+    const permitInvertedScrolling = useSelector(selectUseInvertedScrolling);
+    const invertedScroll = useInvertScrollDirection(permitInvertedScrolling ? hostIsMacOS : false);
+
+    console.log({ permitInvertedScrolling, hostIsMacOS });
 
     return (
         <div className="chat-transcript transcript-react-window" attr-is-acknowledging={isAcknowledging.toString()} onClick={event => {
@@ -130,11 +135,10 @@ export default function ChatTranscript() {
                             nonce={chat?.id}
                             itemData={messages}
                             getID={getID}
-                            itemCount={messages.length}
                             nearEnd={loadMore}
                             memoState={memoState}
+                            outerRef={invertedScroll}
                             isSame={compareMessageRenderProps}
-                            itemKey={itemKey}
                             getProps={getProps}
                             >
                             {({ ref, index, data }) => (

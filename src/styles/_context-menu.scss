@@ -1,7 +1,7 @@
 .react-contexify {
     padding: 4px;
     background: none;
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--context-background);
     backdrop-filter: blur(10px);
     min-width: unset;
 
@@ -12,6 +12,7 @@
 
         .react-contexify__item__content {
             padding: 4px 6px;
+            color: white !important;
         }
     }
 }

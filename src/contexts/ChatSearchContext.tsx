@@ -22,7 +22,7 @@ export const ChatSearchContext = createContext<ChatSearchContextData>({
 
 export interface ChatEntry {
     chat: ChatRepresentation;
-    sortKey: number;
+    sortKey: number
     message?: MessageRepresentation;
 }
 

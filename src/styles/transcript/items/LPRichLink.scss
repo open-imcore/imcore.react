@@ -1,7 +1,14 @@
 .lp-balloon {
     display: flex;
     flex-flow: column;
-    background-color: rgb(229, 230, 233);
+
+    --lp-background-override: var(--light-lp-background-override);
+
+    @media (prefers-color-scheme: dark) {
+        --lp-background-override: var(--dark-lp-background-override);
+    }
+
+    background-color: var(--lp-background-override, rgb(229, 230, 233));
 
     max-width: 300px;
 
@@ -19,7 +26,7 @@
         flex-flow: column;
         position: relative;
 
-        background-color: rgba(0, 0, 0, 0.05);
+        background-color: var(--text-t05);
 
         & > video, & > img {
             object-fit: fill;
@@ -65,6 +72,7 @@
         font-weight: 200;
         white-space: pre-wrap;
         word-break: break-all;
+        color: var(--text);
     }
 
     .lp-caption-bar {
@@ -88,11 +96,12 @@
                 &.lp-caption-section-top, &.lp-caption-section-aboveTop {
                     font-size: 12px;
                     font-weight: 500;
+                    color: var(--text);
                 }
 
                 &.lp-caption-section-bottom, &.lp-caption-section-belowBottom {
                     font-size: 11px;
-                    color: rgb(142, 142, 145);
+                    color: var(--lp-bottom-caption);
                 }
             }
         }
@@ -116,7 +125,7 @@
     }
 
     .lp-quoted-text {
-        text-shadow: 0 0 10px black;
+        text-shadow: 0 0 10px var(--text);
         color: rgba(0, 0, 0, 0);
     }
 }

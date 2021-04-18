@@ -20,14 +20,16 @@ function makeRGBA(color: Color | undefined) {
 }
 
 export default function LPBalloon({ className, richLink, changed, attachments, id }: LPBalloonRenderingContext) {
-    const backgroundRGBA = makeRGBA(richLink.backgroundColor);
+    const lightBackground = makeRGBA(richLink.backgroundColor?.light);
+    const darkBackground = makeRGBA(richLink.backgroundColor?.dark);
 
     const Element = richLink.url ? "a" : "div";
 
     return (
         <Element href={richLink.url} target="_blank" className={className ? `lp-balloon ${className}` : "lp-balloon"} style={{
-            background: backgroundRGBA
-        }}>
+            "--light-lp-background-override": lightBackground,
+            "--dark-lp-background-override": darkBackground
+        } as any}>
             <LPMedia id={id} changed={changed} video={richLink.video} image={richLink.image} audio={richLink.audio} topCaptionBar={richLink.mediaTopCaptionBar} bottomCaptionBar={richLink.mediaBottomCpationBar} attachments={attachments} />
             {
                 richLink.quotedText ? (

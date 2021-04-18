@@ -1,11 +1,10 @@
-import { VariableSizeListProps } from "@erics-world/react-window";
-import React, { CSSProperties, MutableRefObject, ReactNode, useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import { shallowEqual, useSelector } from "react-redux";
-import { areEqual, ListChildComponentProps, VariableSizeList } from "react-window";
-import { selectUseInvertedScrolling } from "../../app/reducers/debug";
-import { EventTypes, useEvent } from "../../hooks/useEvent";
-import IMMakeLog from "../../util/log";
-import { DynamicListContext, hostIsMacOS, useInvertScrollDirection } from "./DynamicSizeList.Foundation";
+import React, { createContext, CSSProperties, MutableRefObject, ReactNode, useCallback, useContext, useEffect, useMemo, useRef } from "react";
+import { shallowEqual } from "react-redux";
+import { VariableSizeListProps, areEqual, ListChildComponentProps, VariableSizeList } from "react-window";
+
+const DynamicListContext = createContext<
+    Partial<{ setSize: (id: string, size: number) => void }>
+>({});
 
 export type RowRenderingContext<T extends { id: string },
  MemoState> = RowMeasurerPropsWithoutChildren<T, MemoState> & {
@@ -65,8 +64,6 @@ export type TypedListChildComponentProps<T = any> = Omit<ListChildComponentProps
     data: T;
 }
 
-const Log = IMMakeLog("ReactWindow.DynamicSizeList", "info");
-
 export interface DynamicSizeListProps<T extends { id: string }, MemoState> {
     height: number;
     width: number;
@@ -83,19 +80,10 @@ export interface DynamicSizeListProps<T extends { id: string }, MemoState> {
     memoState: MemoState;
     itemKey?: (index: number, data: T[]) => string;
     getProps?: (index: number) => object;
+    forceDisable?: boolean;
 }
 
 const sizeStorage: Map<string, Record<string, number>> = new Map();
-
-export const DSLDebugTools: Array<{
-    name: string;
-    event: keyof EventTypes
-}> = [
-    { name: "Reset DSL", event: "resetDynamicSizeList" },
-    { name: "Dump DSL ListRef", event: "dumpDSLListRef" },
-    { name: "Dump DSL SizeMap", event: "dumpDSLMeasurements" },
-    { name: "Rescroll DSL", event: "dslRescroll" }
-];
 
 const styleCaches: Record<string, object> = {};
 
@@ -128,39 +116,22 @@ class PatchedVariableSizeList extends (VariableSizeList as unknown as {
 
 export default function DynamicSizeList<T extends { id: string }, MemoState>(props: DynamicSizeListProps<T, MemoState>) {
     const listRef = useRef<PatchedVariableSizeList | null>(null);
-    const scrollWatcher = useInvertScrollDirection(useSelector(selectUseInvertedScrolling) || hostIsMacOS);
-
     const sizeMap = React.useRef<{ [key: string]: number }>({});
 
-    const resetList = useCallback(async () => {
-        Log.debug("Resetting DynamicSizeList");
-
-        listRef.current?.resetAfterIndex(0);
-    }, [listRef]);
+    const resetList = useCallback(() => listRef.current?.resetAfterIndex(0), [listRef]);
 
     const setSize = React.useCallback((id: string, size: number) => {
         // Performance: Only update the sizeMap and reset cache if an actual value changed
         if (sizeMap.current[id] !== size) {
-            Log.debug("DynamicSizeList caught resize", { id, from: sizeMap.current[id], to: size });
             sizeMap.current = { ...sizeMap.current, [id]: size };
             sizeStorage.set(props.nonce!, sizeMap.current);
             
             if (listRef.current) {
                 // Clear cached data and rerender
-                Log.debug("DynamicSizeList rerendering VariableSizeList");
                 resetList();
             }
         }
     }, [props.nonce, listRef, resetList, sizeMap]);
-
-    useEvent("resetDynamicSizeList", resetList);
-
-    useEvent("dumpDSLListRef", () => console.log(listRef.current));
-    useEvent("dumpDSLMeasurements", () => console.log(sizeMap.current));
-
-    useEvent("dslRescroll", () => {
-        listRef.current?.scrollTo((listRef.current.state as { scrollOffset: number }).scrollOffset);
-    });
 
     useEffect(() => {
         resetList();
@@ -170,7 +141,6 @@ export default function DynamicSizeList<T extends { id: string }, MemoState>(pro
         sizeMap.current = sizeStorage.get(props.nonce!) || {};
         listRef.current?.resetAfterIndex(0);
         listRef.current?.scrollToItem(0);
-        Log.debug("Cleared caches");
     }, [props.nonce]);
 
     const getSize = React.useCallback((index: number) => (
@@ -201,7 +171,7 @@ export default function DynamicSizeList<T extends { id: string }, MemoState>(pro
                     itemData={props.itemData}
                     itemSize={getSize}
                     estimatedItemSize={calcEstimatedSize()}
-                    outerRef={scrollWatcher}
+                    outerRef={props.outerRef}
                     overscanCount={props.overscanCount}
                     onItemsRendered={props.nearEnd ? ({ overscanStartIndex, overscanStopIndex }) => overscanStopIndex >= (props.itemData.length - 10) ? props.nearEnd!() : undefined : undefined}
                     itemKey={props.itemKey}

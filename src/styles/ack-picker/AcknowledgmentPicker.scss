@@ -44,15 +44,15 @@
 
         &[attr-selected=true] {
             &::before {
-                background-color: $active-chat;
+                background-color: var(--active-chat);
             }
 
             &[attr-acknowledgment-name=heart] {
-                --active-ack-color: #E86895;
+                --active-ack-color: var(--heart-active);
             }
 
             &:not([attr-acknowledgment-name=heart]) {
-                --active-ack-color: white;
+                --active-ack-color: var(--ack-active);
             }
         }
 

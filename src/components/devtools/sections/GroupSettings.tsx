@@ -2,7 +2,6 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { apiClient } from "../../../app/connection";
 import { useBusyController } from "../../../hooks/useBusyController";
 import { EventBus } from "../../../hooks/useEvent";
-import { DSLDebugTools } from "../../react-window-dynamic/DynamicSizeList";
 import { useCurrentChat } from "../../transcript/ChatTranscriptFoundation";
 
 function DraftInput({ label, placeholder, value, commit }: { label: ReactNode, placeholder: string | undefined, value: string | undefined, commit: (savedValue: string | undefined | null) => any }) {
@@ -114,17 +113,6 @@ export default function GroupSettings() {
                     <DebugButton click={() => apiClient.chats.deleteChat(currentChat.id)}>
                         Delete Chat
                     </DebugButton>
-                </div>
-            </details>
-            <details>
-                <summary>DSL</summary>
-
-                <div className="debug-details">
-                    {DSLDebugTools.map(({ name, event }) => (
-                        <DebugButton key={name} click={() => EventBus.emit(event)}>
-                            {name}
-                        </DebugButton>
-                    ))}
                 </div>
             </details>
             {currentChat.style === 43 ? (

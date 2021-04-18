@@ -2,7 +2,7 @@
 @import "./details";
 
 .devtools-root {
-    border-left: 1px solid $master-detail-border-color;
+    border-left: 1px solid var(--master-detail-border-color);
     width: 450px;
     max-height: 100vh;
     overflow-y: auto;

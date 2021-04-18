@@ -1,0 +1,176 @@
+$transcript-imessage-gradient-start: #67a7fa;
+$transcript-imessage-gradient-stop: #236df5;
+$transcript-imessage-gradient-dark-start: #5797f8;
+$transcript-imessage-gradient-dark-stop: #2875f1;
+$transcript-sms-gradient-start: rgb(0,202,69);
+$transcript-sms-gradient-stop: rgb(0,185,64);
+$transcript-business-chat-gradient-start: rgb(132,142,153);
+$transcript-business-chat-gradient-stop: rgb(132,142,153);
+$transcript-business-chat-gradient-dark-start: rgb(141,141,141);
+$transcript-business-chat-gradient-dark-stop: rgb(141,141,141);
+
+$colors: (
+    from-me: rgb(0,119,248),
+    from-me-text: white,
+    not-from-me: (
+        light: rgb(229,229,234),
+        dark: #3B3B3D
+    ),
+    not-from-me-text: (
+        light: black,
+        dark: white
+    ),
+    context-background: (
+        light: rgba(255, 255, 255, 0.8),
+        dark: rgba(41, 41, 41, 0.8)
+    ),
+    // unread-indicator: #3478F6,
+    active-chat: #0069D9,
+    active-chat-text: white,
+    master-detail-background: (
+        light: #F0F0F0,
+        dark: #242424
+    ),
+    master-detail-border-color: (
+        light: #E2E2E2,
+        dark: #424242
+    ),
+    chat-sidebar-title: (
+        light: #555655,
+        dark: white
+    ),
+    ack-bubble-background: (
+        light: rgb(229, 229, 234),
+        dark: rgb(92, 86, 84)
+    ),
+    ack-glyph-color: (
+        light: rgb(124, 124, 124),
+        dark: rgb(206, 206, 210)
+    ),
+    chat-sidebar-description: #808080,
+    blue-text: #2888F6,
+    unread-indicator: #007AFF,
+    contact-silhouette-gradient: linear-gradient(#A5AAB8, #858A94),
+    // gradients are reversed because we do flipping to the transcript to handle bottom-up virtual scrolling
+    imessage-gradient: (
+        light: linear-gradient($transcript-imessage-gradient-stop, $transcript-imessage-gradient-start),
+        dark: linear-gradient($transcript-imessage-gradient-dark-stop, $transcript-imessage-gradient-dark-start)
+    ),
+    sms-gradient: linear-gradient($transcript-sms-gradient-stop, $transcript-sms-gradient-start),
+    business-chat-gradient: (
+        light: linear-gradient($transcript-business-chat-gradient-stop, $transcript-business-chat-gradient-start),
+        dark: linear-gradient($transcript-business-chat-gradient-dark-stop, $transcript-business-chat-gradient-dark-start)
+    ),
+    heart-active: #E86895,
+    ack-active: white,
+    attachment-background: (
+        light: #E9E9EB,
+        dark: #2f2f2f
+    ),
+    attachment-label: #7C7C7D,
+    attachment-video-play: rgba(255, 255, 255, 0.5),
+    attachment-loading: (
+        light: black,
+        dark: white
+    ),
+    composition-placeholder: (
+        light: rgba(0, 0, 0, 0.3),
+        dark: rgba(255, 255, 255, 0.3)
+    ),
+    text: (
+        light: black,
+        dark: white
+    ),
+    text-invert: (
+        light: white,
+        dark: black
+    ),
+    background: (
+        light: white,
+        dark: #1E1E1E
+    ),
+    background-secondary: (
+        light: rgba(0, 0, 0, 0.1),
+        dark: rgba(255, 255, 255, 0.1)
+    ),
+    lp-bottom-caption: rgb(142, 142, 145)
+);
+
+$darkened: (
+    (not-from-me, 10),
+    (not-from-me, 15),
+    (not-from-me, 35),
+    (from-me, 10),
+    (from-me, 20),
+);
+
+$transparentized: (
+    (blue-text, 0.5, 50),
+    (text, 0.6, 60),
+    (text, 0.8, 80),
+    (text, 0.05, '05'),
+    (text, 0.2, 20),
+    (text, 0.9, 90),
+    (text, 0.1, 10)
+);
+
+@each $pair in $darkened {
+    $key: nth($pair, 1);
+    $modifier: nth($pair, 2);
+    
+    $color: map-get($colors, $key);
+
+    @if type-of($value: $color) == map {
+        $colors: map-merge($map1: $colors, $map2: (
+            #{$key}-d#{$modifier}: (
+                light: darken(map-get($color, light), $modifier),
+                dark: darken(map-get($color, dark), $modifier),
+            )
+        ));
+    } @else {
+        $colors: map-merge($map1: $colors, $map2: (
+            #{$key}-d#{$modifier}: darken($color, $modifier)
+        ));
+    }
+}
+
+@each $pair in $transparentized {
+    $key: nth($pair, 1);
+    $modifier: 1.0 - nth($pair, 2);
+    $name-modifier: nth($pair, 3);
+    
+    $color: map-get($colors, $key);
+
+    @if type-of($value: $color) == map {
+        $colors: map-merge($map1: $colors, $map2: (
+            #{$key}-t#{$name-modifier}: (
+                light: transparentize(map-get($color, light), $modifier),
+                dark: transparentize(map-get($color, dark), $modifier),
+            )
+        ));
+    } @else {
+        $colors: map-merge($map1: $colors, $map2: (
+            #{$key}-t#{$name-modifier}: transparentize($color, $modifier)
+        ));
+    }
+}
+
+:root {
+    @each $key, $color in $colors {
+        @if type-of($color) == map {
+            --#{$key}: #{map-get($color, light)};
+        } @else {
+            --#{$key}: #{$color};
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        @each $key, $color in $colors {
+            @if type-of($color) == map and map-has-key($map: $color, $key: dark) {
+                --#{$key}: #{map-get($color, dark)};
+            }
+        }
+    }
+
+    color: var(--text);
+}

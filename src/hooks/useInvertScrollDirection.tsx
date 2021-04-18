@@ -1,8 +1,4 @@
-import { createContext, useCallback, useEffect, useRef } from "react";
-
-export const DynamicListContext = createContext<
-    Partial<{ setSize: (id: string, size: number) => void }>
->({});
+import { useCallback, useEffect, useRef } from "react";
 
 export const useInvertScrollDirection = (enabled: boolean) => {
     const ref = useRef<HTMLDivElement>();

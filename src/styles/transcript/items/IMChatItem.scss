@@ -1,10 +1,6 @@
 @import "../../variables";
 
 :root {
-    --imessage-gradient: linear-gradient(rgb(86,196,250), rgb(0,119,248));
-    --sms-gradient: linear-gradient(rgb(0,202,69), rgb(0,185,64));
-    --business-chat-gradient: linear-gradient(rgb(132,142,153), rgb(132,142,153));
-    --not-from-me-background: #{$not-from-me-color};
     --not-from-me-slice: 42.8% 27.3% 42.8% 38.1% fill;
     --not-from-me-width: 11.25px 11.25px 11.25px 15.75px;
     --from-me-slice: 42.8% 38.1% 42.8% 27.3% fill;
@@ -104,7 +100,7 @@
     }
 
     &[attr-from-me=false] {
-        --bubble-background: var(--not-from-me-background);
+        --bubble-background: var(--not-from-me);
 
         .items-track {
             align-items: flex-start;
@@ -131,9 +127,9 @@
             right: -15px;
         }
 
-        .acknowledgment-overlay {
-            right: -20px;
+        --ack-overlay-right-offset: -20px;
 
+        .acknowledgment-overlay {
             &[data-acknowledgment-count='1'] {
                 --bubble-url: var(--ack-bubble-url);
             }
@@ -165,9 +161,9 @@
             left: -14px;
         }
 
-        .acknowledgment-overlay {
-            left: -20px;
+        --ack-overlay-left-offset: -20px;
 
+        .acknowledgment-overlay {
             &[data-acknowledgment-count='1'] {
                 --bubble-url: var(--ack-bubble-flip-url);
             }
@@ -211,17 +207,19 @@
             margin-top: 11px;
         }
 
-        &[data-has-acknowledgments=true]::after {
-            content: '';
-            position: absolute;
-
-            top: -13px;
-            height: 25.08px;
-            width: 25.08px;
-
-            background: white;
-            border-radius: 50%;
-            z-index: 0;
+        &[data-has-acknowledgments=true] {
+            &::after {
+                content: '';
+                position: absolute;
+    
+                top: -13px;
+                height: 25.08px;
+                width: 25.08px;
+    
+                background: var(--background);
+                border-radius: 50%;
+                z-index: 0;
+            }
         }
 
         &[attr-is-acknowledging=true] {
@@ -235,30 +233,25 @@
         }
 
         .acknowledgment-overlay {
-            --bubble-bg: rgb(229, 229, 234);
             --bubble-from-me-bg: var(--imessage-gradient);
-            --glyph-color: rgb(124, 124, 124);
             --glyph-from-me-color: white;
             --heart-glyph-color: rgb(250, 90, 155);
 
             z-index: 1;
 
-            @if false {
-                @media (prefers-color-scheme: dark) {
-                    --glyph-color: rgb(206, 206, 210);
-                    --bubble-bg: rgb(92, 86, 84);
-                }
-            }
-
             position: absolute;
             top: -12.5px;
+            left: var(--ack-overlay-left-offset);
+            right: var(--ack-overlay-right-offset);
             width: 30px;
             height: 26.08px;
             
-            background: var(--bubble-bg);
+            background: var(--ack-bubble-background);
 
             @mixin from-me-background {
                 background: var(--bubble-from-me-bg);
+                background-attachment: fixed;
+                background-size: 100vh 100vw;
             }
 
             &[data-acknowledgment-from-me=true] {
@@ -275,7 +268,7 @@
                     content: '';
 
                     position: absolute;
-                    background: var(--bubble-bg);
+                    background: var(--ack-bubble-background);
                     width: 100%;
                     height: 100%;
                 }
@@ -300,12 +293,12 @@
 
             & > :first-child {
                 &[data-from-me=true] {
-                    --glyph-color: var(--glyph-from-me-color);
+                    --ack-glyph-color: var(--glyph-from-me-color);
                 }
 
                 width: 20px;
                 height: 20px;
-                background: var(--glyph-color);
+                background: var(--ack-glyph-color);
                 z-index: 1;
 
                 &[data-ack-type='2000'] {
@@ -382,8 +375,22 @@
         }
         
         &[data-item-type=text] {
-            background: var(--bubble-background);
-            background-size: 100vh 100vw;
+
+            position: relative;
+
+            &::after {
+                content: '';
+                background: var(--bubble-background);
+                position: absolute;
+                background-attachment: fixed;
+                background-size: 100vh 100vw;
+                display: block;
+                height: 100%;
+                width: 100%;
+                top: 0;
+                transform: scale(-1);
+                z-index: -1;
+            }
             
             white-space: pre-wrap;
             overflow-wrap: break-word;
@@ -391,11 +398,11 @@
             --font-size: 13px;
 
             &[attr-from-me=true] {
-                --text-color: white;
+                --text-color: var(--from-me-text);
             }
 
             &[attr-from-me=false] {
-                --text-color: black;
+                --text-color: var(--not-from-me-text);
             }
 
             overflow: hidden;
@@ -422,8 +429,8 @@
                     align-items: center;
                     width: 170px;
                     height: 125px;
-                    background: #E9E9EB;
-                    color: #7C7C7D;
+                    background: var(--attachment-background);
+                    color: var(--attachment-label);
                     font-size: 10px;
                     text-align: center;
                     padding: 0 10px;
@@ -496,7 +503,7 @@
             width: 100%;
             height: 100%;
 
-            background: black;
+            background: var(--text);
         }
     }
 

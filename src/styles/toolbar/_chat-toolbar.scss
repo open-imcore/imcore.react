@@ -1,5 +1,5 @@
 .chat-toolbar {
-    border-right: 1px solid $master-detail-border-color;
+    border-right: 1px solid var(--master-detail-border-color);
 
     display: flex;
     flex-flow: row;
@@ -21,10 +21,10 @@
 
         padding: 7.5px;
 
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--text-t05);
         border-radius: 5px;
 
-        --svg-color: rgba(0, 0, 0, 0.2);
+        --svg-color: var(--text-t20);
 
         & > input {
             border: none;
@@ -39,10 +39,14 @@
             &:focus {
                 outline: none;
             }
+
+            &::placeholder {
+                color: var(--text);
+            }
         }
 
         &:focus-within {
-            border: 2px solid transparentize($blue-text, 0.5);
+            border: 2px solid var(--blue-text-t50);
             margin: -2px;
         }
 
@@ -85,22 +89,22 @@
 
         & svg {
             transform: scale(1.2) translate(0.5px, -1px);
-            fill: rgba(0, 0, 0, 0.8);
+            fill: var(--text-t80);
         }
 
         &:hover {
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: var(--text-t10);
 
             & svg {
-                fill: rgba(0, 0, 0, 0.9);
+                fill: var(--text-t90);
             }
         }
 
         &:active {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: var(--text-t20);
 
             & svg {
-                fill: black;
+                fill: var(--text);
             }
         }
     }

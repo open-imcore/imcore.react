@@ -26,7 +26,7 @@
         width: 265px;
         bottom: 0;
         right: 0;
-        border-bottom: 1px solid $master-detail-border-color;
+        border-bottom: 1px solid var(--master-detail-border-color);
     }
 
     &:not([attr-unread-count='0']) .chat-sidebar-item--image::before {
@@ -34,7 +34,7 @@
         position: absolute;
         left: -12.5px;
         top: 23px;
-        background-color: #3478F6;
+        background-color: var(--unread-indicator);
         height: 7px;
         width: 7px;
         border-radius: 50%;
@@ -48,7 +48,7 @@
         --chat-bubble--image-initials-size: 1.5em;
 
         & .chat-bubble--image {
-            border: 2px solid var(--chat-bubble--image-background, $master-detail-background);
+            border: 2px solid var(--chat-bubble--image-background, var(--master-detail-background));
         }
 
         & > .chat-bubble--image {
@@ -90,7 +90,7 @@
             .chat-sidebar-item--title-label {
                 @include bold;
                 @include line-clamp(1);
-                color: $chat-sidebar-title;
+                color: var(--chat-sidebar-title);
                 max-height: 1.1em;
                 flex: 1;
             }
@@ -98,7 +98,7 @@
             .chat-sidebar-item--title-timestamp {
                 text-transform: capitalize;
 
-                color: $chat-sidebar-description;
+                color: var(--chat-sidebar-description);
             }
         }
 
@@ -106,22 +106,21 @@
             @include line-clamp(2);
             white-space: pre-line;
 
-            color: $chat-sidebar-description;
+            color: var(--chat-sidebar-description);
         }
     }
 
     &[attr-chat-active=true] {
-        background-color: #007AFF;
-        color: white;
-
-        --chat-bubble--image-background: #007AFF;
+        background-color: var(--unread-indicator);
+        --chat-bubble--image-background: var(--unread-indicator);
+        color: var(--active-chat-text);
         
         &::after {
             border-bottom: none;
         }
 
         .chat-sidebar-item--title-label, .chat-sidebar-item--title-timestamp, .chat-sidebar-item--summary {
-            color: white !important;
+            color: var(--active-chat-text) !important;
         }
     }
 }

@@ -40,6 +40,7 @@
     "react-use-persistent": "^1.0.2",
     "react-virtualized-auto-sizer": "^1.0.5",
     "react-window": "^1.8.6",
+    "react-window-dynamic-size-list": "^1.0.0",
     "sass": "^1.32.4",
     "typescript": "~3.8.2",
     "use-prosemirror": "^1.2.1",

@@ -39,11 +39,11 @@
         transition: color 100ms linear;
 
         &:hover {
-            color: darken($from-me-color, 10);
+            color: var(--from-me-d10);
         }
 
         &:active {
-            color: darken($from-me-color, 20);
+            color: var(--from-me-d20);
         }
     }
 
@@ -94,11 +94,11 @@ details {
         margin: 0 -10px;
         padding: 5px 10px;
 
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--text-t60);
 
         &:hover {
-            color: rgba(0, 0, 0, 0.8);
-            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-t80);
+            background-color: var(--text-t05);
         }
 
         &:focus {
@@ -113,12 +113,12 @@ details {
     &[open] > summary {
         margin: 0 -10px 5px -10px;
         
-        color: black;
-        background-color: rgba(0, 0, 0, 0.1);
+        color: var(--text);
+        background-color: var(--background-secondary);
 
         &:hover {
-            color: black;
-            background-color: rgba(0, 0, 0, 0.1);
+            color: var(--text);
+            background-color: var(--background-secondary);
         }
     }
 }

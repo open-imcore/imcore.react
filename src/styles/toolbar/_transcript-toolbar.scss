@@ -6,6 +6,8 @@
 
     padding: 0 15px;
 
+    position: relative;
+
     .chat-name {
         font-size: 12px;
 
@@ -13,6 +15,19 @@
             content: 'To: ';
             color: rgba(0, 0, 0, 0.6);
         }
+    }
+
+    &::after {
+        content: '';
+        bottom: -1px;
+        left: 0;
+        width: 0%;
+        height: 1px;
+        position: absolute;
+
+        background: var(--blue-text);
+
+        transition: width 100ms linear;
     }
 }
 
