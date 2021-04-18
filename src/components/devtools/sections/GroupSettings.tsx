@@ -1,7 +1,6 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { apiClient } from "../../../app/connection";
 import { useBusyController } from "../../../hooks/useBusyController";
-import { EventBus } from "../../../hooks/useEvent";
 import { useCurrentChat } from "../../transcript/ChatTranscriptFoundation";
 
 function DraftInput({ label, placeholder, value, commit }: { label: ReactNode, placeholder: string | undefined, value: string | undefined, commit: (savedValue: string | undefined | null) => any }) {
