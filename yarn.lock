@@ -6094,10 +6094,10 @@ ignore@^5.1.4:
   resolved "https://registry.npmjs.org/ignore/-/ignore-5.1.8.tgz#f150a8b50a34289b33e22f5889abd4d8016f0e57"
   integrity sha512-BMpfD7PpiETpBl/A6S498BaIJ6Y/ABT93ETbby2fP00v4EbvPBXWEoaR1UBPKs3iR53pJY7EtZk5KACI57i1Uw==
 
-imcore-ajax-core@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.npmjs.org/imcore-ajax-core/-/imcore-ajax-core-1.0.9.tgz#b1184944512f4988a53e3a966d7ab38a54d0526e"
-  integrity sha512-5NY5dJcugHhDAW/FIRRW8IBuQVle0t2bh7v3W81ewdAIbh61tzu5dPZSOxbmSgjEoMoOWUMbnz7RQcDOkwysaQ==
+imcore-ajax-core@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.npmjs.org/imcore-ajax-core/-/imcore-ajax-core-1.0.10.tgz#e41cbee67b70ae281297d80c7bc1d43033eed692"
+  integrity sha512-oYyTWgNDkvApcmrJEPF3847JFbfUljZU3ipFIjglwPQyE5uNoT4uwY6R3VsW7PM8y0Kna/BQz5oRJu6iM5C1EQ==
   dependencies:
     axios "^0.21.1"
     pako "^1.0.11"
@@ -9821,10 +9821,10 @@ react-virtualized-auto-sizer@^1.0.5:
   resolved "https://registry.npmjs.org/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.5.tgz#9eeeb8302022de56fbd7a860b08513120ce36509"
   integrity sha512-kivjYVWX15TX2IUrm8F1jaCEX8EXrpy3DD+u41WGqJ1ZqbljWpiwscV+VxOM1l7sSIM1jwi2LADjhhAJkJ9dxA==
 
-react-window-dynamic-size-list@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/react-window-dynamic-size-list/-/react-window-dynamic-size-list-1.0.0.tgz#d3d5fbd33904c363cce8b292c10d3f55ee40451b"
-  integrity sha512-OrHGkNYrC4a8ntqp1HIfh+hvg1VmrC7Wov76HiHMNnAfCUCgi5Iha6xAc4gdDYdqqDinwAh8p7vepubH1DR4JA==
+react-window-dynamic-size-list@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/react-window-dynamic-size-list/-/react-window-dynamic-size-list-1.0.1.tgz#154fcbc21313d0ba291c5436f9f38868cb4aa06c"
+  integrity sha512-A8or6qyPHeEeo8F4crhdzlQn14JlYN9WUHjFHPJrZ4ZYvhyl7lrjTkTHgih2cSv1IdT0lbfNV5LHb3xnJJ5KfA==
   dependencies:
     react-window "^1.8.6"
     shallowequal "^1.1.0"
