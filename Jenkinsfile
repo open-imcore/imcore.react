@@ -22,6 +22,6 @@ node {
 	}
     
     dir('build') {
-        archiveArtifacts artifacts: '*'
+        archiveArtifacts artifacts: '**'
     }
 }
