@@ -24,4 +24,11 @@ node {
     dir('build') {
         archiveArtifacts artifacts: '**'
     }
+
+    dir('Push to Staging') {
+        sh '''
+        ssh host "rm -rf ~/www-staging/imcore.react"
+        scp -r build host:~/www-staging/imcore.react
+        '''
+    }
 }
