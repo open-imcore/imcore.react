@@ -479,6 +479,7 @@
         .item-inner {
             padding: var(--padding);
             color: var(--text-color, black);
+            background: var(--bubble-background);
             font-size: var(--font-size);
         }
     }
