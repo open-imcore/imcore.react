@@ -190,16 +190,16 @@
         margin-left: 1.5em;
         font-size: 10px;
         margin-bottom: 3px;
-        color: #7e7e7e;
+        color: #7E7E7E;
     }
 
     .buddy-name + [data-has-acknowledgments=true] {
-        margin-top: 0px !important;
+        margin-top: 10px !important;
     }
 
     .chat-item-container {
         width: fit-content;
-        max-width: 70%;
+        max-width: 37%;
 
         position: relative;
 
@@ -233,7 +233,7 @@
         }
 
         .acknowledgment-overlay {
-            --bubble-from-me-bg: var(--imessage-gradient);
+            --bubble-from-me-bg: rgb(0, 119, 248);
             --glyph-from-me-color: white;
             --heart-glyph-color: rgb(250, 90, 155);
 
@@ -343,10 +343,11 @@
             mask-border-source: none !important;
             mask-border-slice: none !important;
             mask-border-width: none !important;
-            background: none !important;
+            --bubble-background: var(--background) !important;
             
             &[data-item-type=text] {
                 --font-size: 48px !important;
+                --text-color: var(--background).invert !important;
 
                 .item-inner {
                     padding-left: 8px !important;
@@ -478,6 +479,7 @@
         .item-inner {
             padding: var(--padding);
             color: var(--text-color, black);
+            background: var(--bubble-background);
             font-size: var(--font-size);
         }
     }
