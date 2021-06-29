@@ -190,7 +190,7 @@
         margin-left: 1.5em;
         font-size: 10px;
         margin-bottom: 3px;
-        color: #7e7e7e;
+        color: #7E7E7E;
     }
 
     .buddy-name + [data-has-acknowledgments=true] {
@@ -343,10 +343,11 @@
             mask-border-source: none !important;
             mask-border-slice: none !important;
             mask-border-width: none !important;
-            background: none !important;
+            --bubble-background: var(--background) !important;
             
             &[data-item-type=text] {
                 --font-size: 48px !important;
+                --text-color: var(--background).invert !important;
 
                 .item-inner {
                     padding-left: 8px !important;
