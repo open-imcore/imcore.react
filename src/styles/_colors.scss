@@ -14,7 +14,7 @@ $colors: (
     from-me-text: white,
     not-from-me: (
         light: rgb(229,229,234),
-        dark: #3B3B3D
+        dark: #272729
     ),
     not-from-me-text: (
         light: black,
@@ -29,11 +29,11 @@ $colors: (
     active-chat-text: white,
     master-detail-background: (
         light: #F0F0F0,
-        dark: #242424
+        dark: #010001
     ),
     master-detail-border-color: (
         light: #E2E2E2,
-        dark: #424242
+        dark: #2a2a2c
     ),
     chat-sidebar-title: (
         light: #555655,
@@ -41,11 +41,11 @@ $colors: (
     ),
     ack-bubble-background: (
         light: rgb(229, 229, 234),
-        dark: rgb(92, 86, 84)
+        dark: rgb(39, 39, 41)
     ),
     ack-glyph-color: (
         light: rgb(124, 124, 124),
-        dark: rgb(206, 206, 210)
+        dark: rgb(129, 129, 128)
     ),
     chat-sidebar-description: #808080,
     blue-text: #2888F6,
@@ -61,7 +61,7 @@ $colors: (
         light: linear-gradient($transcript-business-chat-gradient-stop, $transcript-business-chat-gradient-start),
         dark: linear-gradient($transcript-business-chat-gradient-dark-stop, $transcript-business-chat-gradient-dark-start)
     ),
-    heart-active: #E86895,
+    heart-active: #FA5C99,
     ack-active: white,
     attachment-background: (
         light: #E9E9EB,
@@ -75,7 +75,7 @@ $colors: (
     ),
     composition-placeholder: (
         light: rgba(0, 0, 0, 0.3),
-        dark: rgba(255, 255, 255, 0.3)
+        dark: rgba(70, 71, 75, 255)
     ),
     text: (
         light: black,
@@ -87,7 +87,7 @@ $colors: (
     ),
     background: (
         light: white,
-        dark: #1E1E1E
+        dark: #010001
     ),
     background-secondary: (
         light: rgba(0, 0, 0, 0.1),
