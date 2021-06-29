@@ -13,7 +13,7 @@
     width: 200px;
     column-gap: 5px;
 
-    background: white;
+    background: var(--tapback-background);
 
     border-radius: 25px;
 
@@ -39,7 +39,7 @@
         }
 
         &::before {
-            background-color: white;
+            background-color: var(--tapback-background);
         }
 
         &[attr-selected=true] {
