@@ -46,7 +46,7 @@
     margin: 0 12px 0 12px;
 
     &[attr-service=iMessage] {
-        --bubble-background: var(--imessage-gradient);
+        --bubble-background: var(--from-me);
     }
 
     &[attr-service=iMessageBiz] {
@@ -194,7 +194,7 @@
     }
 
     .buddy-name + [data-has-acknowledgments=true] {
-        margin-top: 10px !important;
+        margin-top: 12px !important;
     }
 
     .chat-item-container {
@@ -343,7 +343,7 @@
             mask-border-source: none !important;
             mask-border-slice: none !important;
             mask-border-width: none !important;
-            --bubble-background: var(--background) !important;
+            --bubble-background: transparent !important;
             
             &[data-item-type=text] {
                 --font-size: 48px !important;
@@ -418,7 +418,7 @@
                 display: flex;
                 flex-flow: column;
                 padding: 0;
-                background: var(--background);
+                background: transparent;
 
                 video, img {
                     object-fit: fill;
