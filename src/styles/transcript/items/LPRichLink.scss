@@ -8,7 +8,7 @@
         --lp-background-override: var(--dark-lp-background-override);
     }
 
-    background-color: var(--lp-background-override, rgb(229, 230, 233));
+    background-color: var(--lp-background-override, var(--not-from-me));
 
     max-width: 300px;
 
